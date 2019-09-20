@@ -1,0 +1,54 @@
+{
+  "name": "climate-clock-widget",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "cleanslate": "https://github.com/premasagar/cleanslate",
+    "core-js": "^2.6.5",
+    "document-register-element": "^1.14.3",
+    "vue": "^2.6.10"
+  },
+  "devDependencies": {
+    "@newsdev/archieml-loader": "https://github.com/newsdev/archieml-loader",
+    "@vue/cli-plugin-babel": "^3.11.0",
+    "@vue/cli-plugin-eslint": "^3.11.0",
+    "@vue/cli-service": "^3.11.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "node-sass": "^4.9.0",
+    "postcss-importantly": "^0.0.7",
+    "sass-loader": "^7.1.0",
+    "vue-custom-element": "^3.2.8",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {},
+      "postcss-importantly": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
