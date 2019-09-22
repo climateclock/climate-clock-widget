@@ -13,7 +13,13 @@
       </div>
       <div class="lifeline">
         <div class="title"><span>{{ content.lifeline }}</span></div>
-        <div class="feed"><span>{{ content.feed }}</span></div>
+        <div class="feed">
+          <!--
+            <span>{{ content.feed }}&nbsp;{{ content.feed }}</span>
+          -->
+          <span class="lead">{{ content.feed }}</span>
+          <span class="follow">{{ content.feed }}</span>
+        </div>
       </div>
       <!--
       <h1 :style="{color: imp(deadline)}">CLIMATECLOCK</h1>
@@ -82,6 +88,8 @@ $wide: 11;
 $short: 10;
 $tall: 21;
 
+$duration: 20s;
+
 #climate-clock-widget {
   font-family: 'Raleway', Helvetica, Arial, sans-serif;
   font-weight: 600;
@@ -142,6 +150,27 @@ $tall: 21;
     flex: $wide * 2 0 0;
     overflow: hidden;
     color: $secondary;
+    position: relative;
+    span.lead {
+      white-space: nowrap;
+      position: absolute;
+      transform: translateX(0%);
+      animation: feed-lead $duration linear infinite;
+    }
+    span.follow {
+      white-space: nowrap;
+      position: absolute;
+      transform: translateX(100%);
+      animation: feed-follow $duration linear infinite;
+    }
+  }
+  @keyframes feed-lead {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+  }
+  @keyframes feed-follow {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(0%); }
   }
 }
 </style>
