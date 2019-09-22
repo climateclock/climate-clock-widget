@@ -1,12 +1,13 @@
-This file is written in ArchieML. See https://archieml.org for syntax and parsing information.
 
-header: CLIMATECLOCK
+header: CLIMATECLOCK.WORLD
+header_carbon: Carbon budget remaining
+header_time: Time to act
 
-widget-feed: \#Loremipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Molestie at elementum eu facilisis sed. **Tristique** magna sit amet purus gravida quis blandit.
+deadline: Deadline
+lifeline: Lifeline
 
-budget: Carbon budget remaining
+feed: \#Loremipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. #climatestrikes around world, largest action **tristique** magna sit amet purus gravida quis blandit.
 
-video: https://www.youtube.com/watch?v=ScMzIvxBSi4
-video-caption: Watch Greta Thunberg address the UN General Assembly
+
 
 
