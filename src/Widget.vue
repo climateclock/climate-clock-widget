@@ -1,18 +1,29 @@
 <template>
   <div id="climate-clock-widget" class="cleanslate">
-    <div class="container" :style="{fontSize: imp(size + 'px')}">
-      <div class="header" :style="{fontSize: imp('35%')}">
+    <div class="container">
+      <div class="header">
         <div class="title"><span>CLIMATECLOCK.WORLD</span></div>
-        <div class="carbon"><span>CARBON BUDGET REMAINING</span></div>
+        <div class="carbon">
+          <span class="hide-sm">CARBON BUDGET REMAINING</span>
+          <span class="hide-md hide-lg">CARBON BUDGET (TONS)</span>
+        </div>
         <div class="time"><span>TIME TO ACT</span></div>
       </div>
       <div class="deadline">
         <div class="title"><span>DEADLINE</span></div>
-        <div class="carbon"><span>{{ Math.floor(CO2Budget).toLocaleString() }} TONS</span></div>
+        <div class="carbon">
+          <span class="hide-sm">{{ Math.floor(CO2Budget).toLocaleString() }} TONS</span>
+          <span class="hide-md hide-lg">{{ Math.floor(CO2Budget).toLocaleString() }}</span>
+        </div>
         <div class="time">
-          <span>
+          <span class="hide-sm">
             {{ timeleft.years | plural('YEAR', 'S') }}
             {{ timeleft.days | plural('DAY', 'S') }} 
+            {{ timeleft.hours | pad2 }}:{{ timeleft.minutes | pad2 }}:{{ timeleft.seconds | pad2 }}
+          </span>
+          <span class="hide-md hide-lg">
+            {{ timeleft.years }}Y
+            {{ timeleft.days }}D 
             {{ timeleft.hours | pad2 }}:{{ timeleft.minutes | pad2 }}:{{ timeleft.seconds | pad2 }}
           </span>
         </div>
@@ -99,6 +110,19 @@ export default {
 // All styles are marked !important by postcss-importantly for use w/cleanslate, 
 // an aggressive reset stylesheet designed for embedding external widgets.
 @import 'cleanslate/cleanslate';
+
+// Breakpoints
+@import 'breakpoint-sass/stylesheets/_breakpoint';
+$lg-width: 1280px;
+$md-width: 960px;
+$sm-width: 0px; // real min-width might be 480px
+$lg: $lg-width;
+$md: $md-width $lg-width - 1px;
+$sm: $sm-width $md-width - 1px;
+$upper: $md-width;
+$lower: $sm-width $lg-width - 1px;
+
+// TODO: Get Gotham
 @import url('https://fonts.googleapis.com/css?family=Raleway:600,800&display=swap');
 
 $accent: #f51a25;
@@ -115,21 +139,43 @@ $tall: 21;
 $duration: 20s;
 
 #climate-clock-widget {
-  font-family: 'Raleway', Helvetica, Arial, sans-serif;
-  font-weight: 600;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  .hide-sm { @include breakpoint($sm) { display: none; } }
+  .hide-md { @include breakpoint($md) { display: none; } }
+  .hide-lg { @include breakpoint($lg) { display: none; } }
+
   span {
     text-align: center;
-    letter-spacing: .04rem;
+    letter-spacing: .04em;
     white-space: nowrap;
   }
-  .container {
-    height: 105px;
+  .container { // Flex column of 3 rows
+    height: 3.5em;
     display: flex;
     flex-direction: column;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Raleway', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+
+    @include breakpoint($md) {
+      font-size: 26px;
+    }
+    @include breakpoint($sm) {
+      font-size: 20px;
+      position: relative;
+      &:before {
+        content: "CLIMATECLOCK.WORLD";
+        position: absolute;
+        font-size: 50%;
+        font-weight: 800;
+        letter-spacing: .04em;
+        bottom: -1.25em;
+      }
+    }
   }
-  .header, .deadline, .lifeline {
+  .header, .deadline, .lifeline { // Flex rows of 3 items
     display: flex;
     flex-direction: row;
     > div {
@@ -144,10 +190,11 @@ $duration: 20s;
     flex: $tall 0 0;
   }
   .deadline {
-    margin-bottom: .2rem;
+    margin-bottom: .1em;
   }
   .header {
     flex: $short 0 0;
+    font-size: 35%;
     background-color: $light;
     div {
       color: $dark;
@@ -157,6 +204,10 @@ $duration: 20s;
       color: $dark;
       background-color: white;
     }
+    @include breakpoint($sm) {
+      flex: $short + 5 0 0;
+      font-size: 55%;
+    }
   }
   .carbon, .time, .title, .feed {
     overflow: hidden;
@@ -165,11 +216,25 @@ $duration: 20s;
     border-left: 1px solid $light;
   }
   .carbon, .time {
-    flex: $wide 0 0;
     color: $accent;
+  }
+  .carbon {
+    flex: $wide - 1 0 0;
+    @include breakpoint($sm) {
+      flex: $wide 0 0;
+    }
+  }
+  .time {
+    flex: $wide + 1 0 0;
+    @include breakpoint($sm) {
+      flex: $wide 0 0;
+    }
   }
   .title {
     flex: $narrow 0 0;
+    @include breakpoint($sm) {
+      flex: 0 0 0;
+    }
   }
   .feed {
     flex: $wide * 2 0 0;

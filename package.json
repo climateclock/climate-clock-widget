@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
+    "breakpoint-sass": "^2.7.1",
     "cleanslate": "https://github.com/premasagar/cleanslate",
     "core-js": "^2.6.5",
     "countdown": "^2.6.0",
