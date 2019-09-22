@@ -15,7 +15,7 @@ module.exports = {
         .end()
   },
   configureWebpack: {
-    output: {filename: 'widget.js'}
+    output: {filename: 'widget-v1.js'}
   },
   // Don't produce a separate css file
   css: {extract: false},
