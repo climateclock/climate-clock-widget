@@ -2,20 +2,26 @@
   <div id="climate-clock-widget" class="cleanslate">
     <div class="container" :style="{fontSize: imp(size + 'px')}">
       <div class="header" :style="{fontSize: imp('35%')}">
-        <div class="title"><span>{{ content.header }}</span></div>
-        <div class="carbon"><span>{{ content.header_carbon }}</span></div>
-        <div class="time"><span>{{ content.header_time }}</span></div>
+        <div class="title"><span>CLIMATECLOCK.WORLD</span></div>
+        <div class="carbon"><span>CARBON BUDGET REMAINING</span></div>
+        <div class="time"><span>TIME TO ACT</span></div>
       </div>
       <div class="deadline">
-        <div class="title"><span>{{ content.deadline }}</span></div>
-        <div class="carbon"><span>{{ co2Budget.toLocaleString() }} TONS</span></div>
-        <div class="time"><span>{{ years }} YEARS {{ days }} DAYS {{ hours | pad }}:{{ minutes | pad }}:{{ seconds | pad }}</span></div>
+        <div class="title"><span>DEADLINE</span></div>
+        <div class="carbon"><span>{{ Math.floor(CO2Budget).toLocaleString() }} TONS</span></div>
+        <div class="time">
+          <span>
+            {{ timeleft.years | plural('YEAR', 'S') }}
+            {{ timeleft.days | plural('DAY', 'S') }} 
+            {{ timeleft.hours | pad2 }}:{{ timeleft.minutes | pad2 }}:{{ timeleft.seconds | pad2 }}
+          </span>
+        </div>
       </div>
       <div class="lifeline">
-        <div class="title"><span>{{ content.lifeline }}</span></div>
+        <div class="title"><span>LIFELINE</span></div>
         <div class="feed">
-          <span class="lead">{{ content.feed }}&nbsp;</span>
-          <span class="follow">{{ content.feed }}&nbsp;</span>
+          <span class="lead">{{ feed }}&nbsp;</span>
+          <span class="follow">{{ feed }}&nbsp;</span>
         </div>
       </div>
     </div>
@@ -24,59 +30,67 @@
 
 
 <script>
-import content from './content.aml'
-import countdown from 'countdown/countdown.js'
-
-//const lifeline = '#b0d155'
-//const deadline = '#c42a30'
+let jsonUrl = 'https://cdn.jsdelivr.net/gh/BeautifulTrouble/climate-clock-widget/src/clock.json'
 
 export default {
   name: 'climate-clock-widget',
   data: () => ({
-    content: content,
-    tagline: 'this is the second line',
-    time: '8 years',
-    co2Budget: 420000000000,
-    tonsPerSecond: 1332,
-    startdate: new Date("Oct08, 2018 00:00:00"),
-    deadline: new Date("Jun10, 2028 00:00:00"),
-    interval: 100,
-    years: null,
-    days: null,
-    hours: null,
-    minutes: null,
-    seconds: null,
+    now: null,
+    usingNetworkData: false,
+    // Defaults for clock.json data
+    feed: "#climatestrike in over 150 countries engages over 4 million people for largest climate action to date",
+    startDateUTC: [2018, 1, 1, 0, 0, 0],
+    startDateCO2Budget: 420000000000,
+    tonsPerSecond: 1331,
   }),
+  computed: {
+    CO2Budget() {
+      let tElapsed = this.now - this.startDate.getTime()
+      return this.startDateCO2Budget - tElapsed / 1000 * this.tonsPerSecond
+    },
+    deadline() {
+      let msRemainingAtStartDate = (this.startDateCO2Budget / this.tonsPerSecond * 1000)
+      return new Date(this.startDate.getTime() + msRemainingAtStartDate)
+    },
+    startDate() {
+      return new Date(Date.UTC(...this.startDateUTC))
+    },
+    timeleft() {
+      return this.countdown(this.deadline, this.now,
+        this.countdown.YEARS | 
+        this.countdown.DAYS | 
+        this.countdown.HOURS | 
+        this.countdown.MINUTES | 
+        this.countdown.SECONDS)
+    },
+  },
   props: {
     size: {type: Number, default: 30},
   },
   filters: {
-    pad(n) {
-      return ('00' + n).slice(-2)
-    }
+    pad2(n) { return ('00' + n).slice(-2) },
+    plural(n, pre, suf) { return n > 1 ? `${n} ${pre + suf}` : `${n} ${pre}` },
   },
   methods: {
-    imp(value) { 
-      return value.toString() + '!important' 
-    },
-    updateClock() {
-      let timeleft = countdown(this.deadline, new Date(),
-        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
-      this.seconds = timeleft.seconds
-      this.minutes = timeleft.minutes
-      this.hours = timeleft.hours
-      this.days = timeleft.days
-      this.years = timeleft.years
-      this.co2Budget -= Math.floor(this.tonsPerSecond * (this.interval / 1000))
-    }
+    imp(val) { return `${val}!important` },
   },
   created() {
-    let now = (new Date()).getTime()
-    let start = this.startdate.getTime()
-    let seconds = Math.floor((now - start)/1000)
-    this.co2Budget -= seconds * this.tonsPerSecond
-    setInterval(() => this.updateClock(), this.interval)
-  }
+    this.usingNetworkData = false
+    this.$http.get(jsonUrl).then(res => {
+      let d = res.data
+      if (d.feed && d.startDateCO2Budget && d.startDateUTC && d.tonsPerSecond) {
+        this.feed = d.feed
+        this.startDateCO2Budget = d.startDateCO2Budget
+        this.startDateUTC = d.startDateUTC
+        this.tonsPerSecond = d.tonsPerSecond
+        this.usingNetworkData = true
+      }
+    }).catch(err => { // eslint-disable-next-line
+      console.log(err)
+    })
+    // This produces a "tick" every 100ms which triggers computed properties
+    setInterval(() => { this.now = new Date() }, 100)
+  },
 }
 </script>
 
@@ -142,11 +156,6 @@ $duration: 20s;
     .title {
       color: $dark;
       background-color: white;
-    }
-  }
-  .carbon, .time, .title {
-    span {
-      text-transform: uppercase;
     }
   }
   .carbon, .time, .title, .feed {

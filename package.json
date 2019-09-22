@@ -8,13 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "cleanslate": "https://github.com/premasagar/cleanslate",
     "core-js": "^2.6.5",
+    "countdown": "^2.6.0",
     "document-register-element": "^1.14.3",
     "vue": "^2.6.10"
   },
   "devDependencies": {
-    "@newsdev/archieml-loader": "https://github.com/newsdev/archieml-loader",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",

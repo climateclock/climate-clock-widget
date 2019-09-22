@@ -1,6 +1,6 @@
 {
   "feed": "#climatestrike in over 150 countries engages over 4 million people for largest climate action to date",
   "startDateUTC": [2018, 1, 1, 3, 8, 6],
-  "co2budget": 420000000000,
-  "tonsPerSecond": 1332
+  "startDateCO2Budget": 420000000000,
+  "tonsPerSecond": 1331
 }
