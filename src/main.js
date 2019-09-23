@@ -1,5 +1,5 @@
 // Polyfill to support custom elements in IE9 or whatever
-import 'document-register-element/build/document-register-element'
+//import 'document-register-element/build/document-register-element'
 
 import Vue from 'vue'
 import Widget from './Widget.vue'
