@@ -12,16 +12,16 @@
       <div class="deadline">
         <div class="title"><span>DEADLINE</span></div>
         <div class="carbon">
-          <span class="hide-sm">{{ Math.floor(CO2Budget).toLocaleString() }} TONS</span>
-          <span class="hide-md hide-lg">{{ Math.floor(CO2Budget).toLocaleString() }}</span>
+          <span class="hide-sm digits">{{ Math.floor(CO2Budget).toLocaleString() }} TONS</span>
+          <span class="hide-md hide-lg digits">{{ Math.floor(CO2Budget).toLocaleString() }}</span>
         </div>
         <div class="time">
-          <span class="hide-sm">
+          <span class="hide-sm digits">
             {{ timeleft.years | plural('YEAR', 'S') }}
             {{ timeleft.days | plural('DAY', 'S') }} 
             {{ timeleft.hours | pad2 }}:{{ timeleft.minutes | pad2 }}:{{ timeleft.seconds | pad2 }}
           </span>
-          <span class="hide-md hide-lg">
+          <span class="hide-md hide-lg digits">
             {{ timeleft.years }}Y
             {{ timeleft.days }}D 
             {{ timeleft.hours | pad2 }}:{{ timeleft.minutes | pad2 }}:{{ timeleft.seconds | pad2 }}
@@ -49,9 +49,10 @@ export default {
     now: null,
     usingNetworkData: false,
     // Defaults for clock.json data
-    feed: "#climatestrike in over 150 countries engages over 4 million people for largest climate action to date",
+    feed: "4+ million take to the streets in global #climatestrike | Germany considering \"putting a price on carbon\" | Friday Sept. 20 - #climatestrike in 120+ countries |",
     startDateUTC: [2018, 1, 1, 0, 0, 0],
-    startDateCO2Budget: 420000000000,
+    // TODO: This clock synchronization will drift; update rate from IPCC data
+    startDateCO2Budget: 420000000000 - 3521159000, 
     tonsPerSecond: 1331,
   }),
   computed: {
@@ -147,6 +148,13 @@ $duration: 20s;
     text-align: center;
     letter-spacing: .04em;
     white-space: nowrap;
+  }
+  .digits {
+    // Try to keep the numbers from skipping all over the place
+    font-weight: bold;
+    font-family: 'Gotham', Helvetica, Arial, sans-serif;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
   }
   .container { // Flex column of 3 rows
     height: 3.5em;
