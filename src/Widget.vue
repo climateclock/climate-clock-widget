@@ -155,7 +155,9 @@ $duration: 20s;
     font-family: 'Gotham', Helvetica, Arial, sans-serif;
     font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
-    letter-spacing: -.05em;
+    @include breakpoint($sm) {
+      letter-spacing: -.05em;
+    }
   }
   .container { // Flex column of 3 rows
     height: 3.5em;
