@@ -275,7 +275,7 @@ $duration: 20s;
     100% { transform: translateX(0%); }
   }
   @supports (-ms-ime-align: auto) { // Come on IE
-    .feed {
+    .lifeline > .feed {
       justify-content: flex-start;
       margin-top: .2em;
     }
