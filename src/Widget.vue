@@ -41,11 +41,12 @@
 
 
 <script>
-let jsonUrl = 'https://cdn.jsdelivr.net/gh/BeautifulTrouble/climate-clock-widget/src/clock.json'
 
 export default {
   name: 'climate-clock-widget',
   data: () => ({
+    githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
+    jsonUrl: 'https://cdn.jsdelivr.net/gh/BeautifulTrouble/climate-clock-widget/src/clock.json',
     now: null,
     usingNetworkData: false,
     // Defaults for clock.json data
@@ -85,11 +86,12 @@ export default {
   },
   methods: {
     imp(val) { return `${val}!important` },
+    githubToJSON(res) { return JSON.parse(atob(res.data.content)) },
   },
   created() {
     this.usingNetworkData = false
-    this.$http.get(jsonUrl).then(res => {
-      let d = res.data
+    this.$http.get(this.githubUrl).then(res => {
+      let d = this.githubToJSON(res)
       if (d.feed && d.startDateCO2Budget && d.startDateUTC && d.tonsPerSecond) {
         this.feed = d.feed
         this.startDateCO2Budget = d.startDateCO2Budget
