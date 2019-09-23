@@ -274,5 +274,11 @@ $duration: 20s;
     0% { transform: translateX(100%); }
     100% { transform: translateX(0%); }
   }
+  @supports (-ms-ime-align: auto) { // Come on IE
+    .feed {
+      justify-content: flex-start;
+      margin-top: .2em;
+    }
+  }
 }
 </style>
