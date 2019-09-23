@@ -6,13 +6,6 @@ module.exports = {
     //config.plugins.delete('html')
     //config.plugins.delete('preload')
     //config.plugins.delete('prefetch')
-    // Import ArchieML files with .aml suffixes at build time
-    config.module
-      .rule('archieml')
-      .test(/.+\.aml$/)
-      .use('@newsdev/archieml-loader')
-        .loader('@newsdev/archieml-loader')
-        .end()
   },
   configureWebpack: {
     output: {filename: 'widget-v1.js'}
