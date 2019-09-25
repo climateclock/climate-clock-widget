@@ -1,6 +1,4 @@
-# climate-clock-widget
-
-## How to build it yourself
+# How to build the CLIMATECLOCK widget yourself
 
 ### Install prerequisites
 Make sure you have [git](https://git-scm.com/downloads) and [yarn](https://yarnpkg.com/en/docs/install) for your system.

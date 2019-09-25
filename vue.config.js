@@ -15,6 +15,8 @@ module.exports = {
   },
   // Don't produce a separate css file
   css: {extract: false},
+  // Don't produce a sourcemap
+  productionSourceMap: false,
   // Use one static name
   filenameHashing: false
 }

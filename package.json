@@ -50,6 +50,9 @@
       "postcss-importantly": {}
     }
   },
+  "babel": {
+    "presets": ["@vue/app"]
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions"
