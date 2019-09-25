@@ -31,8 +31,8 @@
       <div class="lifeline">
         <div class="title"><span>LIFELINE</span></div>
         <div class="feed" :style="$browserDetect.isIE ? {flexDirection: I('row'), marginTop: I('.2em')} : {}">
-          <span class="lead">{{ feed }}&nbsp;</span>
-          <span class="follow">{{ feed }}&nbsp;</span>
+          <scrolling-feed class="lead">{{ feed }}&nbsp;</scrolling-feed>
+          <scrolling-feed class="follow">{{ feed }}&nbsp;</scrolling-feed>
         </div>
       </div>
     </div>
@@ -143,7 +143,8 @@ $duration: 20s;
   .hide-md { @include breakpoint($md) { display: none; } }
   .hide-lg { @include breakpoint($lg) { display: none; } }
 
-  span {
+  span, scrolling-feed {
+    // <scrolling-feed> is used to avoid cleanslate's "transform: none !important"
     text-align: center;
     letter-spacing: .04em;
     white-space: nowrap;
@@ -254,22 +255,20 @@ $duration: 20s;
     text-transform: none;
     .lead {
       position: absolute;
-      transform: translateX(0%);
       animation: feed-lead $duration linear infinite;
     }
     .follow {
       position: absolute;
-      transform: translateX(100%);
       animation: feed-follow $duration linear infinite;
     }
   }
   @keyframes feed-lead {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-100%); }
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
   }
   @keyframes feed-follow {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(0%); }
+    0% { transform: translate(100%, 0); }
+    100% { transform: translate(0%, 0); }
   }
 }
 </style>
