@@ -14,7 +14,8 @@
     "core-js": "^2.6.5",
     "countdown": "^2.6.0",
     "document-register-element": "^1.14.3",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vue-browser-detect-plugin": "^0.1.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",

@@ -30,7 +30,7 @@
       </div>
       <div class="lifeline">
         <div class="title"><span>LIFELINE</span></div>
-        <div class="feed">
+        <div class="feed" :style="$browserDetect.isIE ? {flexDirection: I('row'), marginTop: I('.2em')} : {}">
           <span class="lead">{{ feed }}&nbsp;</span>
           <span class="follow">{{ feed }}&nbsp;</span>
         </div>
@@ -52,8 +52,7 @@ export default {
     // Defaults for clock.json data
     feed: "4+ million take to the streets in global #climatestrike | Germany considering \"putting a price on carbon\" | Friday Sept. 20 - #climatestrike in 120+ countries |",
     startDateUTC: [2018, 1, 1, 0, 0, 0],
-    // TODO: This clock synchronization will drift; update rate from IPCC data
-    startDateCO2Budget: 420000000000 - 3521159000, 
+    startDateCO2Budget: 420000000000 - 3521159000,
     tonsPerSecond: 1331,
   }),
   computed: {
@@ -85,7 +84,7 @@ export default {
     plural(n, pre, suf) { return n > 1 ? `${n} ${pre + suf}` : `${n} ${pre}` },
   },
   methods: {
-    imp(val) { return `${val}!important` },
+    I(val) { return `${val}!important` },
     githubToJSON(res) { return JSON.parse(atob(res.data.content)) },
   },
   created() {
@@ -273,12 +272,6 @@ $duration: 20s;
   @keyframes feed-follow {
     0% { transform: translateX(100%); }
     100% { transform: translateX(0%); }
-  }
-  @supports (-ms-ime-align: auto) { // Come on IE
-    .lifeline > div.feed {
-      justify-content: flex-start;
-      margin-top: .2em;
-    }
   }
 }
 </style>

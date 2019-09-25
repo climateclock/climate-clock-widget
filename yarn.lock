@@ -8372,6 +8372,13 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.0.tgz#bd76d6a23323e2ca8ffa12028dc04559c75f9019"
   integrity sha512-iq+S7vZJE60yejDYM0ek6zg308+UZsdtPExWP9VZoCFCz1zkJoXFnAX7aZfd/ZwrkidzdUZL0C/ryW+JwAiIGw==
 
+vue-browser-detect-plugin@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/vue-browser-detect-plugin/-/vue-browser-detect-plugin-0.1.5.tgz#2c72794b864a91069779d486e3779ff2d7ca2936"
+  integrity sha512-qGfELwHMAFJ2ekzdlBUvVKr8MukcuxBMDeMV6i6LT3WvtkoRwWrK8Ewx0BTExvuP9hM4qMQDyVhrbAsYtwZWgw==
+  dependencies:
+    vue "^2.5.17"
+
 vue-custom-element@^3.2.8:
   version "3.2.8"
   resolved "https://registry.yarnpkg.com/vue-custom-element/-/vue-custom-element-3.2.8.tgz#29a70c20e6e5a105ca1c377a69a53f27b9557582"
@@ -8438,7 +8445,7 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue@^2.6.10:
+vue@^2.5.17, vue@^2.6.10:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
   integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==
