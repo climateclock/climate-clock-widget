@@ -50,6 +50,7 @@ export default {
     now: null,
     usingNetworkData: false,
     // Defaults for clock.json data
+    annualGrowth: 1,
     feed: "4+ million take to the streets in global #climatestrike | Germany considering \"putting a price on carbon\" | Friday Sept. 20 - #climatestrike in 120+ countries |",
     startDateUTC: [2018, 1, 1, 0, 0, 0],
     startDateCO2Budget: 420000000000 - 3521159000,
@@ -91,11 +92,8 @@ export default {
     this.usingNetworkData = false
     this.$http.get(this.githubUrl).then(res => {
       let d = this.githubToJSON(res)
-      if (d.feed && d.startDateCO2Budget && d.startDateUTC && d.tonsPerSecond) {
-        this.feed = d.feed
-        this.startDateCO2Budget = d.startDateCO2Budget
-        this.startDateUTC = d.startDateUTC
-        this.tonsPerSecond = d.tonsPerSecond
+      if (d.annualGrowth && d.feed && d.startDateCO2Budget && d.startDateUTC && d.tonsPerSecond) {
+        Object.assign(this, d)
         this.usingNetworkData = true
       }
     }).catch(err => { // eslint-disable-next-line
