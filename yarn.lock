@@ -6298,13 +6298,6 @@ postcss-discard-overridden@^4.0.1:
   dependencies:
     postcss "^7.0.0"
 
-postcss-importantly@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/postcss-importantly/-/postcss-importantly-0.0.7.tgz#b5638218fd819823dcb5c146db29debd97b949ec"
-  integrity sha1-tWOCGP2BmCPctcFG2ynevZe5Sew=
-  dependencies:
-    postcss "^5.0.12"
-
 postcss-load-config@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/postcss-load-config/-/postcss-load-config-2.1.0.tgz#c84d692b7bb7b41ddced94ee62e8ab31b417b003"
@@ -6526,6 +6519,13 @@ postcss-reduce-transforms@^4.0.2:
     postcss "^7.0.0"
     postcss-value-parser "^3.0.0"
 
+postcss-safe-important@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/postcss-safe-important/-/postcss-safe-important-1.1.0.tgz#6ac6841b0a42ba3634167c589b107a54dc03203f"
+  integrity sha1-asaEGwpCujY0FnxYmxB6VNwDID8=
+  dependencies:
+    postcss "^5.0.10"
+
 postcss-selector-parser@^3.0.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/postcss-selector-parser/-/postcss-selector-parser-3.1.1.tgz#4f875f4afb0c96573d5cf4d74011aee250a7e865"
@@ -6573,7 +6573,7 @@ postcss-value-parser@^4.0.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.0.2.tgz#482282c09a42706d1fc9a069b73f44ec08391dc9"
   integrity sha512-LmeoohTpp/K4UiyQCwuGWlONxXamGzCMtFxLq4W1nZVGIQLYvMCJx3yAF9qyyuFpflABI9yVdtJAqbihOsCsJQ==
 
-postcss@^5.0.12:
+postcss@^5.0.10:
   version "5.2.18"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-5.2.18.tgz#badfa1497d46244f6390f58b319830d9107853c5"
   integrity sha512-zrUjRRe1bpXKsX1qAJNJjqZViErVuyEkMTRrwu4ud4sbTtIBRmtaYDrHmcGgmrbsW3MHfmtIf+vJumgQn+PrXg==
