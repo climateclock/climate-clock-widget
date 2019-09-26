@@ -5,11 +5,55 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>CLIMATECLOCK Widget Demo</title>
+    <style>
+      body {
+        padding-bottom: 10em;
+      }
+      @media only screen and (min-width: 768px) {
+        body {
+          margin: 2em 5em;
+        }
+      }
+      h3 { 
+        margin: 3em 0 1em 0;
+      }
+      pre {
+        font-size: 1.25em;
+        background-color: #eee;
+        padding: 1em 3em ;
+        overflow: scroll;
+      }
+      .box {
+        height: 80px;
+        border: 4px #777 dashed;
+      }
+    </style>
   </head>
   <body>
     <h1>CLIMATECLOCK Widget</h1>
+    <p>This is a demo of the CLIMATECLOCK widget which you can add to your website. By altering the code you use on your site, you can change the appearance of the widget.</p>
+
+    <h3>The standard CLIMATECLOCK</h3>
     <climate-clock></climate-clock>
-    <p>You're running the development server for the CLIMATECLOCK widget. To build a javascript file for your server, run: <tt>yarn build</tt></p>
+    <pre>&lt;script src="https://climateclock.world/widget-v1.js" async&gt;&lt;/script&gt;
+&lt;climate-clock&gt;&lt;/climate-clock&gt;</pre>
+
+    <h3>Apply a glow and flicker effect</h3>
+    <climate-clock glow></climate-clock>
+    <pre>&lt;script src="https://climateclock.world/widget-v1.js" async&gt;&lt;/script&gt;
+&lt;climate-clock glow&gt;&lt;/climate-clock&gt;</pre>
+
+    <h3>Combine your organization's message with our feed</h3>
+    <climate-clock lifeline="ACME Climate Org Reforesting Initiative plants 10,000 trees"></climate-clock>
+    <pre>&lt;script src="https://climateclock.world/widget-v1.js" async&gt;&lt;/script&gt;
+&lt;climate-clock lifeline="ACME Climate Org Reforesting Initiative plants 10,000 trees"&gt;&lt;/climate-clock&gt;</pre>
+
+    <climate-clock bottom></climate-clock>
+    <h3>Affix the widget to the bottom of the screen</h3>
+    <div class="box"></div>
+    <pre>&lt;script src="https://climateclock.world/widget-v1.js" async&gt;&lt;/script&gt;
+&lt;climate-clock bottom&gt;&lt;/climate-clock&gt;</pre>
+
     <!-- built files will be auto injected -->
   </body>
 </html>

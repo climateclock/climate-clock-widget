@@ -1,8 +1,8 @@
 <template>
-  <div id="climate-clock-widget" class="cleanslate">
-    <div class="container">
+  <div id="climate-clock-widget">
+    <div :class="['container', glow ? 'glow' : null, bottom ? 'bottom' : null]">
       <div class="header">
-        <div class="title"><span>CLIMATECLOCK.WORLD</span></div>
+        <div class="title" @click="etGoHome"><span>CLIMATECLOCK.WORLD</span></div>
         <div class="carbon">
           <span class="hide-sm">CARBON BUDGET REMAINING</span>
           <span class="hide-md hide-lg">CARBON BUDGET (TONS)</span>
@@ -17,22 +17,22 @@
         </div>
         <div class="time">
           <span class="hide-sm digits">
-            {{ timeleft.years | plural('YEAR', 'S') }}
-            {{ timeleft.days | plural('DAY', 'S') }} 
-            {{ timeleft.hours | pad2 }}:{{ timeleft.minutes | pad2 }}:{{ timeleft.seconds | pad2 }}
+            {{ remaining.years | plural('YEAR', 'S') }}
+            {{ remaining.days | plural('DAY', 'S') }}
+            {{ remaining.hours | pad2 }}:{{ remaining.minutes | pad2 }}:{{ remaining.seconds | pad2 }}
           </span>
           <span class="hide-md hide-lg digits">
-            {{ timeleft.years }}Y
-            {{ timeleft.days }}D 
-            {{ timeleft.hours | pad2 }}:{{ timeleft.minutes | pad2 }}:{{ timeleft.seconds | pad2 }}
+            {{ remaining.years }}Y
+            {{ remaining.days }}D
+            {{ remaining.hours | pad2 }}:{{ remaining.minutes | pad2 }}:{{ remaining.seconds | pad2 }}
           </span>
         </div>
       </div>
       <div class="lifeline">
         <div class="title"><span>LIFELINE</span></div>
         <div class="feed" :style="$browserDetect.isIE ? {flexDirection: I('row'), marginTop: I('.2em')} : {}">
-          <scrolling-feed class="lead">{{ feed }}&nbsp;</scrolling-feed>
-          <scrolling-feed class="follow">{{ feed }}&nbsp;</scrolling-feed>
+          <scrolling-feed class="lead" :style="animationDuration">{{ feedText }}&nbsp;</scrolling-feed>
+          <scrolling-feed class="follow" :style="animationDuration">{{ feedText }}&nbsp;</scrolling-feed>
         </div>
       </div>
     </div>
@@ -68,28 +68,41 @@ export default {
     startDate() {
       return new Date(Date.UTC(...this.startDateUTC))
     },
-    timeleft() {
-      return this.countdown(this.deadline, this.now,
-        this.countdown.YEARS | 
-        this.countdown.DAYS | 
-        this.countdown.HOURS | 
-        this.countdown.MINUTES | 
-        this.countdown.SECONDS)
+    remaining() {
+      return this.countdown(this.deadline, this.now, this.countdown.YEARS
+        | this.countdown.DAYS | this.countdown.HOURS
+        | this.countdown.MINUTES | this.countdown.SECONDS)
+    },
+    feedText() {
+      return (this.lifeline ? `${this.lifeline} | ` : '') + this.feed
+    },
+    animationDuration() {
+      return {animationDuration: .15 * this.feedText.length + 's'}
     },
   },
   props: {
-    size: {type: Number, default: 30},
+    glow: {type: Boolean, default: false},
+    bottom: {type: Boolean, default: false},
+    lifeline: {type: String, default: null},
   },
   filters: {
     pad2(n) { return ('00' + n).slice(-2) },
     plural(n, pre, suf) { return n > 1 ? `${n} ${pre + suf}` : `${n} ${pre}` },
   },
   methods: {
-    I(val) { return `${val}!important` },
-    githubToJSON(res) { return JSON.parse(atob(res.data.content)) },
+    I(val) {
+      return `${val}!important`
+    },
+    githubToJSON(res) {
+      return JSON.parse(atob(res.data.content))
+    },
+    etGoHome() {
+      window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
+    },
   },
   created() {
     this.usingNetworkData = false
+    // Data is fetched from the network because browsers may cache the widget's script
     this.$http.get(this.githubUrl).then(res => {
       let d = this.githubToJSON(res)
       if (d.annualGrowth && d.feed && d.startDateCO2Budget && d.startDateUTC && d.tonsPerSecond) {
@@ -122,8 +135,7 @@ $sm: $sm-width $md-width - 1px;
 $upper: $md-width;
 $lower: $sm-width $lg-width - 1px;
 
-// TODO: Get Gotham
-@import url('https://fonts.googleapis.com/css?family=Raleway:600,800&display=swap');
+@import 'scoreboard';
 
 $accent: #f51a25;
 $secondary: #b0d155;
@@ -131,8 +143,8 @@ $dark: #231f20;
 $light: #8c8d91;
 $text: #080808;
 
-$narrow: 5;
-$wide: 11;
+$narrow: 6;
+$wide: 14;
 $short: 10;
 $tall: 21;
 
@@ -143,16 +155,23 @@ $duration: 20s;
   .hide-md { @include breakpoint($md) { display: none; } }
   .hide-lg { @include breakpoint($lg) { display: none; } }
 
+  box-sizing: border-box;
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+
   span, scrolling-feed {
     // <scrolling-feed> is used to avoid cleanslate's "transform: none !important"
     text-align: center;
-    letter-spacing: .04em;
+    letter-spacing: .02em;
     white-space: nowrap;
+  }
+  scrolling-feed {
+    padding-top: .05em;
+    position: relative;
   }
   .digits {
     // Try to keep the numbers from skipping all over the place
-    font-weight: bold;
-    font-family: 'Gotham', Helvetica, Arial, sans-serif;
     font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
     @include breakpoint($sm) {
@@ -160,30 +179,69 @@ $duration: 20s;
     }
   }
   .container { // Flex column of 3 rows
-    height: 3.5em;
     display: flex;
     flex-direction: column;
 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: 'Raleway', Helvetica, Arial, sans-serif;
+    font-family: 'Scoreboard', 'Lucida Console', Monaco, monospace;
     font-weight: 600;
-    font-size: 30px;
+    font-size: 35px;
 
     @include breakpoint($md) {
-      font-size: 26px;
+      font-size: 30px;
     }
     @include breakpoint($sm) {
       font-size: 20px;
       position: relative;
       &:before {
         content: "CLIMATECLOCK.WORLD";
+        font-family: Helvetica, Arial, sans-serif;
         position: absolute;
+        color: rgba(0, 0, 0, .2);
         font-size: 50%;
         font-weight: 800;
         letter-spacing: .04em;
         bottom: -1.25em;
       }
+    }
+    &.glow {
+      @mixin glow($color) {
+        font-weight: 400;
+        color: lighten($color, 20%);
+        text-shadow:  .5px  .5px .1em $color,
+                     -.5px -.5px .1em $color,
+                     -.5px  .5px .1em $color,
+                      .5px -.5px .1em $color;
+      }
+      scrolling-feed {
+        @include glow($secondary);
+      }
+      .digits {
+        @include glow($accent);
+      }
+      .deadline, .lifeline {
+        .title span {
+          @include glow(darken(white, 5%));
+        }
+      }
+      .deadline .title span {
+        animation: widget-flicker 3s linear infinite;
+      }
+      @keyframes widget-flicker {
+        0%, 8% { opacity:0.1; }
+        2%, 9%, 20%, 30% { opacity:1; }
+        25%, 72% { opacity:0.8; }
+        77%, 100% { opacity:.9; }
+      }
+    }
+    &.bottom {
+      background-color: white;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      box-shadow: 0 20px 30px rgba(black, 50%);
     }
   }
   .header, .deadline, .lifeline { // Flex rows of 3 items
@@ -197,7 +255,7 @@ $duration: 20s;
   }
   .deadline, .lifeline {
     background-color: $dark;
-    color: $light;
+    color: lighten($light, 20%);
     flex: $tall 0 0;
   }
   .deadline {
@@ -205,15 +263,18 @@ $duration: 20s;
   }
   .header {
     flex: $short 0 0;
+    font-family: Helvetica, Arial, sans-serif;
     font-size: 35%;
+    font-weight: 800;
     background-color: $light;
-    div {
+    > div {
       color: $dark;
-      font-weight: 800;
+      padding-top: .2em;
     }
     .title {
       color: $dark;
       background-color: white;
+      cursor: pointer;
     }
     @include breakpoint($sm) {
       flex: $short + 5 0 0;
@@ -252,21 +313,24 @@ $duration: 20s;
     overflow: hidden;
     color: $secondary;
     position: relative;
-    text-transform: none;
     .lead {
       position: absolute;
-      animation: feed-lead $duration linear infinite;
+      animation-name: widget-feed-lead;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
     }
     .follow {
       position: absolute;
-      animation: feed-follow $duration linear infinite;
+      animation-name: widget-feed-follow;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
     }
   }
-  @keyframes feed-lead {
+  @keyframes widget-feed-lead {
     0% { transform: translate(0, 0); }
     100% { transform: translate(-100%, 0); }
   }
-  @keyframes feed-follow {
+  @keyframes widget-feed-follow {
     0% { transform: translate(100%, 0); }
     100% { transform: translate(0%, 0); }
   }

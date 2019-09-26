@@ -11,6 +11,9 @@ import countdown from 'countdown'
 
 Vue.prototype.$http = axios
 Vue.prototype.countdown = countdown
+Vue.config.ignoredElements = ['scrolling-feed']
+
 Vue.use(browserDetect)
 Vue.use(VueCustomElement)
+
 Vue.customElement('climate-clock', Widget)
