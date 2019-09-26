@@ -7,7 +7,6 @@
     <title>CLIMATECLOCK Widget Demo</title>
     <style>
       body {
-        padding-bottom: 10em;
       }
       @media only screen and (min-width: 768px) {
         body {
@@ -26,6 +25,9 @@
       .box {
         height: 80px;
         border: 4px #777 dashed;
+      }
+      .title {
+        font-size: 3em;
       }
     </style>
   </head>
@@ -48,8 +50,8 @@
     <pre>&lt;script src="https://climateclock.world/widget-v1.js" async&gt;&lt;/script&gt;
 &lt;climate-clock lifeline="ACME Climate Org Reforesting Initiative plants 10,000 trees"&gt;&lt;/climate-clock&gt;</pre>
 
-    <climate-clock bottom></climate-clock>
     <h3>Affix the widget to the bottom of the screen</h3>
+    <climate-clock bottom></climate-clock>
     <div class="box"></div>
     <pre>&lt;script src="https://climateclock.world/widget-v1.js" async&gt;&lt;/script&gt;
 &lt;climate-clock bottom&gt;&lt;/climate-clock&gt;</pre>

@@ -1,8 +1,8 @@
 <template>
-  <div id="climate-clock-widget">
-    <div :class="['container', glow ? 'glow' : null, bottom ? 'bottom' : null]">
+  <div class="climate-clock-widget" v-cloak>
+    <div :id="`climate-clock-widget-container-${_uid}`" :class="[containerClasses, sizeClass]">
       <div class="header">
-        <div class="title" @click="etGoHome"><span>CLIMATECLOCK.WORLD</span></div>
+        <div class="title" @click="openHomepage"><span>CLIMATECLOCK.WORLD</span></div>
         <div class="carbon">
           <span class="hide-sm">CARBON BUDGET REMAINING</span>
           <span class="hide-md hide-lg">CARBON BUDGET (TONS)</span>
@@ -45,10 +45,15 @@
 export default {
   name: 'climate-clock-widget',
   data: () => ({
+    // Ascending order classes to be applied by container size, and a default 
+    sizeClasses: [[0, 'sm'], [960, 'md'], [1200, 'lg']], 
+    sizeClass: 'sm',
+
     githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
     jsonUrl: 'https://cdn.jsdelivr.net/gh/BeautifulTrouble/climate-clock-widget/src/clock.json',
     now: null,
     usingNetworkData: false,
+
     // Defaults for clock.json data
     annualGrowth: 1,
     feed: "4+ million take to the streets in global #climatestrike | Germany considering \"putting a price on carbon\" | Friday Sept. 20 - #climatestrike in 120+ countries |",
@@ -79,6 +84,9 @@ export default {
     animationDuration() {
       return {animationDuration: .15 * this.feedText.length + 's'}
     },
+    containerClasses() {
+      return {container: true, bottom: this.bottom, glow: this.glow}
+    }
   },
   props: {
     glow: {type: Boolean, default: false},
@@ -96,13 +104,34 @@ export default {
     githubToJSON(res) {
       return JSON.parse(atob(res.data.content))
     },
-    etGoHome() {
+    openHomepage() {
       window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
+    },
+    addBodyPadding() {
+      let pb = window.getComputedStyle(document.body).getPropertyValue('padding-bottom'),
+          ch = document.getElementById(`climate-clock-widget-container-${this._uid}`).clientHeight
+      document.body.style.paddingBottom = `calc(${pb} + ${ch}px)`
+    },
+    setSizeClass() {
+      let sizeClass
+      let width = document.getElementById(`climate-clock-widget-container-${this._uid}`).clientWidth
+      for (let szCls of this.sizeClasses) {
+        if (width < szCls[0]) break
+        sizeClass = szCls[1]
+      }
+      this.sizeClass = sizeClass
     },
   },
   created() {
-    this.usingNetworkData = false
+    // Watch for container size changes and update sizing classes
+    window.addEventListener('load', this.setSizeClass)
+    window.addEventListener('resize', this.debounce(this.setSizeClass, 50))
+
+    // Add padding for fixed widget
+    this.bottom && window.addEventListener('load', this.addBodyPadding)
+
     // Data is fetched from the network because browsers may cache the widget's script
+    this.usingNetworkData = false
     this.$http.get(this.githubUrl).then(res => {
       let d = this.githubToJSON(res)
       if (d.annualGrowth && d.feed && d.startDateCO2Budget && d.startDateUTC && d.tonsPerSecond) {
@@ -112,6 +141,7 @@ export default {
     }).catch(err => { // eslint-disable-next-line
       console.log(err)
     })
+
     // This produces a "tick" every 100ms which triggers computed properties
     setInterval(() => { this.now = new Date() }, 100)
   },
@@ -150,16 +180,19 @@ $tall: 21;
 
 $duration: 20s;
 
-#climate-clock-widget {
+[v-cloak] {
+  display: none;
+}
+.climate-clock-widget {
   .hide-sm { @include breakpoint($sm) { display: none; } }
   .hide-md { @include breakpoint($md) { display: none; } }
   .hide-lg { @include breakpoint($lg) { display: none; } }
 
   box-sizing: border-box;
+
   *, *:before, *:after {
     box-sizing: inherit;
   }
-
   span, scrolling-feed {
     // <scrolling-feed> is used to avoid cleanslate's "transform: none !important"
     text-align: center;
@@ -236,7 +269,7 @@ $duration: 20s;
       }
     }
     &.bottom {
-      background-color: white;
+      background-color: $light;
       position: fixed;
       bottom: 0;
       left: 0;
