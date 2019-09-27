@@ -1,29 +1,31 @@
 <template>
-  <ccw-container 
-    @click="openHomepage"
-    :id="`ccw-container-${_uid}`" 
-    :size="size" 
-    :glow="glow" 
-    :bottom="bottom" 
-    v-cloak>
-    <ccw-row header>
-      <ccw-label brand >CLIMATECLOCK.WORLD</ccw-label>
-      <ccw-label budget>{{ budgetLabelText }}</ccw-label>
-      <ccw-label time>TIME TO ACT</ccw-label>
-    </ccw-row>
-    <ccw-row deadline>
-      <ccw-clock deadline>DEADLINE</ccw-clock>
-      <ccw-clock budget>{{ budgetText }}</ccw-clock>
-      <ccw-clock time>{{ clockText }}</ccw-clock>
-    </ccw-row>
-    <ccw-row lifeline>
-      <ccw-clock lifeline>LIFELINE</ccw-clock>
-      <ccw-clock feed>
-        <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
-        <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
-      </ccw-clock>
-    </ccw-row>
-  </ccw-container>
+  <div class="cleanslate">
+    <ccw-container
+      @click="openHomepage"
+      :id="`ccw-container-${_uid}`" 
+      :size="size" 
+      :glow="glow" 
+      :bottom="bottom" 
+      v-cloak>
+      <ccw-row header>
+        <ccw-label brand >CLIMATECLOCK.WORLD</ccw-label>
+        <ccw-label budget>{{ budgetLabelText }}</ccw-label>
+        <ccw-label time>TIME TO ACT</ccw-label>
+      </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline>DEADLINE</ccw-clock>
+        <ccw-clock budget>{{ budgetText }}</ccw-clock>
+        <ccw-clock time>{{ clockText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline>LIFELINE</ccw-clock>
+        <ccw-clock feed>
+          <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+          <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+        </ccw-clock>
+      </ccw-row>
+    </ccw-container>
+  </div>
 </template>
 
 
@@ -162,6 +164,7 @@ export default {
   [size="xl"] { @include debug(green, 'xl'); }
 }
 
+@import 'cleanslate';
 @import 'scoreboard';
 
 $accent: #f51a25;
