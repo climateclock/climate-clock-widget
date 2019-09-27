@@ -190,6 +190,7 @@ ccw-container {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  cursor: pointer;
   display: flex;
   flex-direction: column; 
   font-family: 'Scoreboard', 'Lucida Console', Monaco, monospace;
@@ -225,6 +226,7 @@ ccw-container {
   }
   &[size="xs"] {
     font-size: 25px;
+    /*
     &:before {
       content: "CLIMATECLOCK.WORLD";
       font-family: Helvetica, Arial, sans-serif;
@@ -235,6 +237,7 @@ ccw-container {
       letter-spacing: .04em;
       bottom: -1.25em;
     }
+    */
   }
   &[bottom] {
     background-color: $light;
@@ -258,7 +261,6 @@ ccw-row {
     background-color: $light;
     ccw-label[brand] {
       background-color: white;
-      cursor: pointer;
     }
     ccw-container[size="sm"] & {
       font-size: 50%;
