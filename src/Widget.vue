@@ -50,7 +50,7 @@ export default {
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
-    size: 'xl',
+    size: 'hide',
     sizes: [[0, 'hide'], [224, 'xs'], [320, 'sm'], [540, 'md'], [960, 'lg'], [1200, 'xl']], 
   }),
   computed: {
@@ -200,6 +200,7 @@ ccw-container {
   font-size: 37px;
   font-weight: 600;
   position: relative;
+  width: 100%;
   white-space: nowrap;
 
   *, *:before, *:after {
