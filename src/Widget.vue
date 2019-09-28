@@ -1,12 +1,11 @@
 <template>
-  <div class="cleanslate">
+  <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate" v-cloak>
     <ccw-container
       @click="openHomepage"
-      :id="`ccw-container-${_uid}`" 
-      :size="size" 
-      :glow="glow" 
-      :bottom="bottom" 
-      v-cloak>
+      :id="`ccw-container-${_uid}`"
+      :size="size"
+      :glow="glow"
+      :bottom="bottom">
       <ccw-row header>
         <ccw-label brand >CLIMATECLOCK.WORLD</ccw-label>
         <ccw-label budget>{{ budgetLabelText }}</ccw-label>
@@ -80,7 +79,7 @@ export default {
         + (/xs|sm|md/.test(this.size) ? ' (TONS)' : '')
     },
     budgetText() {
-      return `${Math.floor(this.CO2Budget).toLocaleString()} ${/xs|sm|md/.test(this.size) ? '' : 'TONS'}` 
+      return `${Math.floor(this.CO2Budget).toLocaleString()}${/xs|sm|md/.test(this.size) ? '' : ' TONS'}`
     },
     clockText() {
       let r = this.remaining, p2 = this.pad2, pl = this.plural
@@ -113,9 +112,11 @@ export default {
       window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
     },
     addBodyPadding() {
-      let pb = window.getComputedStyle(document.body).getPropertyValue('padding-bottom'),
-          ch = document.getElementById(`ccw-container-${this._uid}`).clientHeight
-      document.body.style.paddingBottom = `calc(${pb} + ${ch}px)`
+      this.$nextTick(() => {
+        let pb = window.getComputedStyle(document.body).getPropertyValue('padding-bottom'),
+            ch = document.getElementById(`ccw-container-${this._uid}`).clientHeight
+        document.body.style.paddingBottom = `calc(${pb} + ${ch}px)`
+      })
     },
   },
   created() {
@@ -248,6 +249,7 @@ ccw-container {
     box-shadow: 0 20px 30px rgba(black, 50%);
     bottom: 0;
     left: 0; right: 0;
+    max-width: 100vw;
     position: fixed;
     z-index: 10000;
   }
@@ -282,6 +284,8 @@ ccw-row {
     // This rule also needs the rule on ccw-label[budget]
     ccw-container[size="xs"] & {
       flex-direction: column;
+      flex-wrap: wrap;
+      height: 2em;
     }
   }
   &[lifeline] {
@@ -304,6 +308,7 @@ ccw-label[brand], ccw-clock[deadline], ccw-clock[lifeline] {
   }
   ccw-container[size="sm"] &, ccw-container[size="xs"] & {
     flex: 0 0 0;
+    //display: none;
   }
 }
 ccw-label, ccw-clock {
@@ -360,10 +365,13 @@ ccw-clock {
   }
   &[budget], &[time], &[feed] {
     border-left: 1px solid $light;
+    ccw-container[bottom] & {
+      border-left: none;
+    }
   }
   &[budget], &[time] {
     ccw-container[size="xs"] & {
-      flex: 1 0 100%;
+      flex: 1 0 50%; // basis is 50% of height (flex column)
     }
   }
   ccw-container[size="sm"] & {
