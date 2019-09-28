@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate" v-cloak>
+  <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <ccw-container
       @click="openHomepage"
       :id="`ccw-container-${_uid}`"
@@ -38,6 +38,7 @@ export default {
   data: () => ({
     githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
     now: null,
+    ready: false,
     usingNetworkData: false,
 
     // Defaults for clock.json data
@@ -99,6 +100,7 @@ export default {
           if (width < sz[0]) break
           this.size = sz[1]
         }
+        this.ready = true
       })
     },
     // Items below are skin/theme-specific
@@ -111,23 +113,8 @@ export default {
     openHomepage() {
       window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
     },
-    addBodyPadding() {
-      this.$nextTick(() => {
-        let pb = window.getComputedStyle(document.body).getPropertyValue('padding-bottom'),
-            ch = document.getElementById(`ccw-container-${this._uid}`).clientHeight
-        document.body.style.paddingBottom = `calc(${pb} + ${ch}px)`
-      })
-    },
   },
   created() {
-    // Watch for container size changes and update sizing classes
-    window.addEventListener('load', this.setSize)
-    //window.addEventListener('resize', this.debounce(this.setSize, 50))
-    window.addEventListener('resize', this.setSize)
-
-    // Add padding for fixed widget
-    this.bottom && window.addEventListener('load', this.addBodyPadding)
-
     // Data is fetched from the network because browsers may cache this script
     this.usingNetworkData = false
     this.$http.get(this.githubUrl).then(res => {
@@ -140,8 +127,27 @@ export default {
       console.log(err)
     })
 
-    // This produces a "tick" every 100ms which triggers computed properties
-    setInterval(() => { this.now = new Date() }, 100)
+    // Watch for container size changes and update sizing classes
+    let resizeInterval = 0, tickInterval = 100
+    if (this.$browserDetect.isEdge) { // Slow down for the special browser
+      resizeInterval = 250
+      tickInterval = 250
+    }
+    window.addEventListener('load', this.setSize)
+    window.addEventListener('resize', 
+      this.resizeInterval ? this.debounce(this.setSize, resizeInterval) : this.setSize)
+    setInterval(() => { this.now = new Date() }, tickInterval)
+  },
+  watch: {
+    ready() {
+      if (!this.bottom || window.climateClockWidgetPaddingAdded) return
+      window.climateClockWidgetPaddingAdded = true
+      this.$nextTick(() => {
+        let pb = window.getComputedStyle(document.body).getPropertyValue('padding-bottom'),
+            ch = document.getElementById(`ccw-container-${this._uid}`).clientHeight
+        document.body.style.paddingBottom = `calc(${pb} + ${ch}px)`
+      })
+    },
   },
 }
 </script>
@@ -175,10 +181,6 @@ $light: #8c8d91;
 
 $narrow: 6;
 $wide: 14;
-
-[v-cloak] {
-  display: none;
-}
 
 @mixin glow($color) {
   font-weight: 400;
