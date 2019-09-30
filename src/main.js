@@ -7,16 +7,8 @@ import Widget from './Widget.vue'
 import VueCustomElement from 'vue-custom-element'
 import browserDetect from 'vue-browser-detect-plugin'
 import axios from 'axios'
-import countdown from 'countdown'
-import debounce from 'lodash.debounce'
 
 Vue.prototype.$http = axios
-Vue.mixin({
-  methods: {
-    countdown: countdown,
-    debounce: debounce,
-  },
-})
 Vue.config.ignoredElements = [/^ccw-/]
 
 Vue.use(browserDetect)

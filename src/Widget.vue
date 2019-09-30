@@ -29,6 +29,9 @@
 
 
 <script>
+import countdown from 'countdown'
+import debounce from 'lodash.debounce'
+
 export default {
   props: {
     glow: {type: Boolean, default: false},
@@ -66,9 +69,8 @@ export default {
       return new Date(Date.UTC(...this.startDateUTC))
     },
     remaining() {
-      return this.countdown(this.deadline, this.now, this.countdown.YEARS
-        | this.countdown.DAYS | this.countdown.HOURS
-        | this.countdown.MINUTES | this.countdown.SECONDS)
+      return countdown(this.deadline, this.now,
+        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
     },
     // Items below are skin/theme-specific
     animationDuration() {
@@ -83,10 +85,10 @@ export default {
       return `${Math.floor(this.CO2Budget).toLocaleString()}${/xs|sm|md/.test(this.size) ? '' : ' TONS'}`
     },
     clockText() {
-      let r = this.remaining, p2 = this.pad2, pl = this.plural
+      let r = this.remaining, p = this.pad, pl = this.plural
       return /xs|sm|md/.test(this.size)
-        ? `${r.years}Y ${r.days}D ${p2(r.hours)}:${p2(r.minutes)}:${p2(r.seconds)}`
-        : `${pl(r.years, 'YEAR', 'S')} ${pl(r.days, 'DAY', 'S')} ${p2(r.hours)}:${p2(r.minutes)}:${p2(r.seconds)}`
+        ? `${r.years}Y ${r.days}D ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
+        : `${pl(r.years, 'YEAR', 'S')} ${pl(r.days, 'DAY', 'S')} ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
     },
     feedText() {
       return (this.lifeline ? `${this.lifeline} | ` : '') + this.feed
@@ -104,11 +106,11 @@ export default {
       })
     },
     // Items below are skin/theme-specific
-    pad2(n) { 
-      return ('00' + n).slice(-2) 
+    pad(i, n = 2, c = '0') {
+      return (c.repeat(n) + i).slice(-n)
     },
-    plural(n, pre, suf) { 
-      return n > 1 ? `${n} ${pre + suf}` : `${n} ${pre}` 
+    plural(n, pre, suf) {
+      return (n == 0 || n > 1) ? `${n} ${pre + suf}` : `${n} ${pre}`
     },
     openHomepage() {
       window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
@@ -279,7 +281,7 @@ ccw-row {
   }
   &[deadline] {
     color: $accent;
-    margin-bottom: .07em;
+    margin-bottom: 1px;
     ccw-container[glow] & {
       @include glow($accent)
     }
@@ -305,6 +307,9 @@ ccw-row {
 // I'm reluctant to overuse * selectors, but this is "ccw-row > *:first-child"
 ccw-label[brand], ccw-clock[deadline], ccw-clock[lifeline] {
   flex: $narrow 0 0;
+  ccw-container[size="lg"] & {
+    flex: $narrow - 1 0 0;
+  }
   ccw-container[size="md"] & {
     flex: $narrow + 1 0 0;
   }
@@ -316,14 +321,20 @@ ccw-label[brand], ccw-clock[deadline], ccw-clock[lifeline] {
 ccw-label, ccw-clock {
   &[budget] { 
     flex: $wide - 1 0 0;
+    ccw-container[size="lg"] & {
+      flex: $wide - 2 0 0;
+    }
     ccw-container[size="sm"] & {
       flex: $wide 0 0;
     }
   }
   &[time] { 
     flex: $wide + 1 0 0; 
+    ccw-container[size="lg"] & {
+      flex: $wide + 1 0 0;
+    }
     ccw-container[size="md"] & {
-      flex: $wide - 2 0 0;
+      flex: $wide 0 0;
     }
     ccw-container[size="sm"] & {
       flex: $wide 0 0;
@@ -350,8 +361,11 @@ ccw-clock {
       &[one] { animation-name: widget-feed-one; }
       &[two] { animation-name: widget-feed-two; }
     }
+    ccw-container[size="lg"] & {
+      flex: $wide * 2 - 1 0 0;
+    }
     ccw-container[size="md"] & {
-      flex: $wide * 2 - 3 0 0;
+      flex: $wide * 2 - 1 0 0;
     }
   }
   &[deadline] {
@@ -367,9 +381,6 @@ ccw-clock {
   }
   &[budget], &[time], &[feed] {
     border-left: 1px solid $light;
-    ccw-container[bottom] & {
-      border-left: none;
-    }
   }
   &[budget], &[time] {
     ccw-container[size="xs"] & {
