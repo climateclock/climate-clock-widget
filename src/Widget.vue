@@ -32,6 +32,8 @@
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
+const SECONDS_PER_YEAR = 365.25 * 24 * 3600
+
 export default {
   props: {
     glow: {type: Boolean, default: false},
@@ -47,9 +49,9 @@ export default {
     // Defaults for clock.json data
     annualGrowth: 1,
     feed: "4+ million take to the streets in global #climatestrike | Germany considering \"putting a price on carbon\" | Friday Sept. 20 - #climatestrike in 120+ countries |",
-    startDateUTC: [2018, 1, 1, 0, 0, 0],
-    startDateCO2Budget: 420000000000 - 3521159000,
-    tonsPerSecond: 1331,
+    startDateUTC: [2018, 0, 1, 0, 0, 0],
+    startDateCO2Budget: 4.2e+11,
+    tonsPerSecond: 4.2e+10 / SECONDS_PER_YEAR,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
@@ -137,7 +139,7 @@ export default {
     }
     window.addEventListener('load', this.setSize)
     window.addEventListener('resize', 
-      this.resizeInterval ? this.debounce(this.setSize, resizeInterval) : this.setSize)
+      this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
   },
   watch: {

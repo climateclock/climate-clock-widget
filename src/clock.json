@@ -1,7 +1,7 @@
 {
   "annualGrowth": 1,
   "feed": "4+ million take to the streets in global #climatestrike | Germany considering \"putting a price on carbon\" | Friday Sept. 20 - #climatestrike in 120+ countries |",
-  "startDateUTC": [2018, 1, 1, 3, 8, 6],
-  "startDateCO2Budget": 416478841000,
-  "tonsPerSecond": 1331
+  "startDateUTC": [2018, 0, 1, 0, 0, 0],
+  "startDateCO2Budget": 4.2e+11,
+  "tonsPerSecond": 1330.899688189216
 }
