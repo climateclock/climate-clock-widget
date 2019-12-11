@@ -32,6 +32,10 @@
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
+// Import defaults from json file to keep them in sync
+import clock from './clock.json'
+
+
 const SECONDS_PER_YEAR = 365.25 * 24 * 3600
 
 export default {
@@ -46,12 +50,11 @@ export default {
     ready: false,
     usingNetworkData: false,
 
-    // Defaults for clock.json data
-    annualGrowth: 1,
-    feed: "4+ million take to the streets in global #climatestrike | Germany considering \"putting a price on carbon\" | Friday Sept. 20 - #climatestrike in 120+ countries |",
-    startDateUTC: [2018, 0, 1, 0, 0, 0],
-    startDateCO2Budget: 4.2e+11,
-    tonsPerSecond: 4.2e+10 / SECONDS_PER_YEAR,
+    annualGrowth: clock.annualGrowth,
+    feed: clock.feed,
+    startDateUTC: clock.startDateUTC,
+    startDateCO2Budget: clock.startDateCO2Budget,
+    tonsPerSecond: clock.tonsPerSecond,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
