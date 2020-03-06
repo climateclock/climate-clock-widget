@@ -8,10 +8,17 @@ import VueCustomElement from 'vue-custom-element'
 import browserDetect from 'vue-browser-detect-plugin'
 import axios from 'axios'
 
+import Datepicker from 'vuejs-datepicker'
+import VueSlider from 'vue-slider-component'
+
 Vue.prototype.$http = axios
 Vue.config.ignoredElements = [/^ccw-/]
 
 Vue.use(browserDetect)
 Vue.use(VueCustomElement)
+
+Vue.component('datepicker', Datepicker)
+Vue.component('vue-slider', VueSlider)
+
 
 Vue.customElement('climate-clock', Widget)

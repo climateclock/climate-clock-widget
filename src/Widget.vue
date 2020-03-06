@@ -1,7 +1,6 @@
 <template>
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <ccw-container
-      @click="openHomepage"
       :id="`ccw-container-${_uid}`"
       :size="size"
       :glow="glow"
@@ -13,7 +12,10 @@
       </ccw-row>
       <ccw-row deadline>
         <ccw-clock deadline>DEADLINE</ccw-clock>
+        <!--
         <ccw-clock budget>{{ budgetText }}</ccw-clock>
+        -->
+        <ccw-clock budget>{{ tempIncrease | fixed(tempPlaces) }}°C</ccw-clock>
         <ccw-clock time>{{ clockText }}</ccw-clock>
       </ccw-row>
       <ccw-row lifeline>
@@ -24,6 +26,43 @@
         </ccw-clock>
       </ccw-row>
     </ccw-container>
+    <ccw-control-panel>
+      <h2>Experimental features</h2>
+      <p>This is designed to demonstrate how an upward-counting temperature clock might look, but has not been designed for scientific accuracy.
+      <h3>* Start Date (UTC)</h3>
+      <datepicker v-model="tempStartDate" :use-utc="true"></datepicker>
+      <h3>* Temperature increase per decade {{ tempIncPerDecade | fixed(3) }}°C</h3>
+      <vue-slider 
+        v-model="tempIncPerDecade"
+        :min=".1"
+        :max=".3"
+        :interval=".005"
+        ></vue-slider>
+      <h3>* Temperature decimal places {{ tempPlaces }} –> {{ tempIncrease | fixed(tempPlaces) }}°C</h3>
+      <vue-slider 
+        v-model="tempPlaces"
+        :min="9"
+        :max="20"
+        :interval="1"
+        ></vue-slider>
+      <h3>* Lifeline (should be wide as widget, use "[RENEWABLE]" for % global renewables)</h3>
+      <textarea type="text" v-model="feed"></textarea>
+      <h3>* Renewables decimal places {{renewPlaces}} –> {{ renewablePercent | fixed(renewPlaces) }}%</h3>
+      <vue-slider 
+        v-model="renewPlaces"
+        :min="1"
+        :max="15"
+        :interval="1"
+        ></vue-slider>
+      <h3>* Temperature budget {{ tempBudget | fixed(2) }}°C (doesn't do anything)</h3>
+      <vue-slider 
+        v-model="tempBudget"
+        :min="1.5"
+        :max="2.0"
+        :interval=".05"
+        ></vue-slider>
+
+    </ccw-control-panel>
   </div>
 </template>
 
@@ -55,12 +94,28 @@ export default {
     startDateUTC: clock.startDateUTC,
     startDateCO2Budget: clock.startDateCO2Budget,
     tonsPerSecond: clock.tonsPerSecond,
+    
+    // Items below are for experimental mockups
+    tempBudget: 1.5,
+    tempPlaces: 15,
+    tempIncPerDecade: .18,
+    tempStartDate: new Date(Date.UTC(1970, 0, 1, 0, 0, 0)),
+    renewPlaces: 9,
+    renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
+    renewStartPct: 26.2,
+    renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
     size: 'hide',
     sizes: [[0, 'hide'], [224, 'xs'], [320, 'sm'], [540, 'md'], [960, 'lg'], [1200, 'xl']], 
   }),
+  // Items below are for experimental mockups
+  filters: {
+    fixed(n, places) {
+      return Number.parseFloat(n).toFixed(places)
+    },
+  },
   computed: {
     CO2Budget() {
       let tElapsed = this.now - this.startDate.getTime()
@@ -77,14 +132,34 @@ export default {
       return countdown(this.deadline, this.now,
         countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
     },
+    
+    // Items below are for experimental mockups
+    tempIncPerSecond() {
+      return this.tempIncPerDecade / (SECONDS_PER_YEAR * 10)
+    },
+    tempIncrease() {
+      let tElapsed = this.now - this.tempStartDate.getTime()
+      return tElapsed / 1000 * this.tempIncPerSecond
+    },
+    renewIncPerSecond() {
+      return this.renewIncPerYear / SECONDS_PER_YEAR
+    },
+    renewablePercent() {
+      let tElapsed = this.now - this.renewStartDate.getTime()
+      return (this.renewStartPct + (tElapsed / 1000 * this.renewIncPerSecond)).toFixed(this.renewPlaces)
+    },
+
     // Items below are skin/theme-specific
     animationDuration() {
       return {animationDuration: .15 * this.feedText.length + 's'}
     },
     budgetLabelText() {
+      return `TEMPERATURE RISE SINCE ${this.tempStartDate}`
+      /*
       return 'CARBON BUDGET' 
         + (/xs|lg|xl/.test(this.size) ? ' REMAINING' : '') 
         + (/xs|sm|md/.test(this.size) ? ' (TONS)' : '')
+      */
     },
     budgetText() {
       return `${Math.floor(this.CO2Budget).toLocaleString()}${/xs|sm|md/.test(this.size) ? '' : ' TONS'}`
@@ -96,7 +171,7 @@ export default {
         : `${pl(r.years, 'YEAR', 'S')} ${pl(r.days, 'DAY', 'S')} ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
     },
     feedText() {
-      return (this.lifeline ? `${this.lifeline} | ` : '') + this.feed
+      return ((this.lifeline ? `${this.lifeline} | ` : '') + this.feed).replace('[RENEWABLE]', this.renewablePercent)
     },
   },
   methods: {
@@ -130,6 +205,7 @@ export default {
         Object.assign(this, d)
         this.usingNetworkData = true
       }
+      this.feed = 'Global renewable energy estimated at [RENEWABLE]% | 500,000 take to streets of Madrid in #climatestrike |'
     }).catch(err => { // eslint-disable-next-line
       console.log(err)
     })
@@ -178,7 +254,8 @@ export default {
   [size="xl"] { @include debug(green, 'xl'); }
 }
 
-@import 'cleanslate';
+// Don't mess up the control panel
+//@import 'cleanslate';
 @import 'scoreboard';
 
 $accent: #f51a25;
@@ -410,5 +487,26 @@ ccw-clock {
   2%, 9%, 20%, 30% { opacity:1; }
   25%, 72% { opacity:0.8; }
   77%, 100% { opacity:.9; }
+}
+
+@import 'vue-slider-component/theme/default';
+ccw-control-panel {
+  background-color: #fff6cd;
+  display: block;
+  padding: 2rem;
+  font-family: Helvetica, Arial, sans-serif;
+  h2, h3 { 
+    margin: .5rem 0; 
+  }
+  h3 {
+    margin-top: 1rem;
+  }
+  .vue-slider {
+    max-width: 30rem;
+  }
+  textarea {
+    width: 30rem;
+    height: 5rem;
+  }
 }
 </style>
