@@ -11,26 +11,39 @@
         <ccw-label time>TIME TO ACT</ccw-label>
       </ccw-row>
       <ccw-row deadline>
-        <ccw-clock deadline>DEADLINE</ccw-clock>
-        <!--
+        <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
         <ccw-clock budget>{{ budgetText }}</ccw-clock>
-        -->
-        <ccw-clock budget>{{ tempIncrease | fixed(tempPlaces) }}°C</ccw-clock>
         <ccw-clock time>{{ clockText }}</ccw-clock>
       </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline>&nbsp;</ccw-clock>
+        <ccw-clock budget>{{ tempIncrease | fixed(tempPlaces) }}°C</ccw-clock>
+        <ccw-clock time>{{ ppmNow }} CO2 PPM</ccw-clock>
+      </ccw-row>
       <ccw-row lifeline>
-        <ccw-clock lifeline>LIFELINE</ccw-clock>
+        <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
         <ccw-clock feed>
           <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
           <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
         </ccw-clock>
       </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline>&nbsp;</ccw-clock>
+        <ccw-clock renew>Global renewable energy estimated @ {{ renewablePercent | fixed(renewPlaces) }}%</ccw-clock>
+      </ccw-row>
     </ccw-container>
     <ccw-control-panel>
       <h2>Experimental features</h2>
-      <p>This is designed to demonstrate how an upward-counting temperature clock might look, but has not been designed for scientific accuracy.
-      <h3>* Start Date (UTC)</h3>
-      <datepicker v-model="tempStartDate" :use-utc="true"></datepicker>
+      <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.
+      <hr>
+      <h3>* Temperature increase start year</h3>
+      <datepicker 
+        v-model="tempStartDate" 
+        :use-utc="true"
+        :minimumView="'year'"
+        :maximumView="'year'"
+        :inline="true"
+        ></datepicker>
       <h3>* Temperature increase per decade {{ tempIncPerDecade | fixed(3) }}°C</h3>
       <vue-slider 
         v-model="tempIncPerDecade"
@@ -45,8 +58,29 @@
         :max="20"
         :interval="1"
         ></vue-slider>
-      <h3>* Lifeline (should be wide as widget, use "[RENEWABLE]" for % global renewables)</h3>
-      <textarea type="text" v-model="feed"></textarea>
+      <hr>
+      <h3>* CO2 PPM Start value {{ ppmStart }}ppm</h3>
+      <vue-slider 
+        v-model="ppmStart"
+        :min="375"
+        :max="470"
+        :interval="5"
+        ></vue-slider>
+      <h3>* CO2 PPM/yr {{ ppmIncrease | fixed(2) }}ppm</h3>
+      <vue-slider 
+        v-model="ppmIncrease"
+        :min="0.85"
+        :max="3.0"
+        :interval=".01"
+        ></vue-slider>
+      <h3>* CO2 PPM decimal places {{ppmPlaces}} -> {{ ppmNow }}</h3>
+      <vue-slider 
+        v-model="ppmPlaces"
+        :min="1"
+        :max="15"
+        :interval="1"
+        ></vue-slider>
+      <hr>
       <h3>* Renewables decimal places {{renewPlaces}} –> {{ renewablePercent | fixed(renewPlaces) }}%</h3>
       <vue-slider 
         v-model="renewPlaces"
@@ -54,6 +88,9 @@
         :max="15"
         :interval="1"
         ></vue-slider>
+      <h3>* Lifeline (should be wide as widget, use "[RENEWABLE]" for % global renewables)</h3>
+      <textarea type="text" v-model="feed"></textarea>
+      <hr>
       <h3>* Temperature budget {{ tempBudget | fixed(2) }}°C (doesn't do anything)</h3>
       <vue-slider 
         v-model="tempBudget"
@@ -100,10 +137,14 @@ export default {
     tempPlaces: 15,
     tempIncPerDecade: .18,
     tempStartDate: new Date(Date.UTC(1970, 0, 1, 0, 0, 0)),
-    renewPlaces: 9,
+    renewPlaces: 8,
     renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
     renewStartPct: 26.2,
     renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
+    ppmIncrease: 2.4,
+    ppmStart: 410,
+    ppmStartDate: new Date(),
+    ppmPlaces: 8,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
@@ -148,18 +189,22 @@ export default {
       let tElapsed = this.now - this.renewStartDate.getTime()
       return (this.renewStartPct + (tElapsed / 1000 * this.renewIncPerSecond)).toFixed(this.renewPlaces)
     },
+    ppmIncPerSecond() {
+      return this.ppmIncrease / SECONDS_PER_YEAR
+    },
+    ppmNow() {
+      let tElapsed = this.now - this.ppmStartDate.getTime()
+      return (this.ppmStart + (tElapsed / 1000 * this.ppmIncPerSecond)).toFixed(this.ppmPlaces) 
+    },
 
     // Items below are skin/theme-specific
     animationDuration() {
       return {animationDuration: .15 * this.feedText.length + 's'}
     },
     budgetLabelText() {
-      return `TEMPERATURE RISE SINCE ${this.tempStartDate}`
-      /*
       return 'CARBON BUDGET' 
         + (/xs|lg|xl/.test(this.size) ? ' REMAINING' : '') 
         + (/xs|sm|md/.test(this.size) ? ' (TONS)' : '')
-      */
     },
     budgetText() {
       return `${Math.floor(this.CO2Budget).toLocaleString()}${/xs|sm|md/.test(this.size) ? '' : ' TONS'}`
@@ -346,6 +391,7 @@ ccw-row {
   background-color: $dark;
   display: flex;
   flex-direction: row;
+  margin-bottom: 1px;
   &[header] {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 35%;
@@ -363,7 +409,6 @@ ccw-row {
   }
   &[deadline] {
     color: $accent;
-    margin-bottom: 1px;
     ccw-container[glow] & {
       @include glow($accent)
     }
@@ -450,6 +495,19 @@ ccw-clock {
       flex: $wide * 2 - 1 0 0;
     }
   }
+  // Mockup
+  &[renew] {
+    flex: $wide * 2 0 0;
+    position: relative;
+    text-align: center;
+    ccw-container[size="lg"] & {
+      flex: $wide * 2 - 1 0 0;
+    }
+    ccw-container[size="md"] & {
+      flex: $wide * 2 - 1 0 0;
+    }
+  }
+
   &[deadline] {
     ccw-container[glow] & {
       animation: widget-flicker 3s linear infinite;
@@ -462,6 +520,10 @@ ccw-clock {
     }
   }
   &[budget], &[time], &[feed] {
+    border-left: 1px solid $light;
+  }
+  // Mockup
+  &[renew] {
     border-left: 1px solid $light;
   }
   &[budget], &[time] {
@@ -496,10 +558,14 @@ ccw-control-panel {
   padding: 2rem;
   font-family: Helvetica, Arial, sans-serif;
   h2, h3 { 
-    margin: .5rem 0; 
+    margin: .25rem 0; 
   }
   h3 {
     margin-top: 1rem;
+  }
+  hr {
+    border-top: 5px dashed orange;
+    margin: 2rem 0;
   }
   .vue-slider {
     max-width: 30rem;
