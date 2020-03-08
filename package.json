@@ -16,8 +16,7 @@
     "lodash.debounce": "^4.0.8",
     "vue": "^2.6.10",
     "vue-browser-detect-plugin": "^0.1.5",
-    "vue-slider-component": "^3.1.1",
-    "vuejs-datepicker": "^1.6.2"
+    "vue-slider-component": "^3.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",

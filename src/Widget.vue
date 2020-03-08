@@ -16,40 +16,32 @@
         <ccw-clock time>{{ clockText }}</ccw-clock>
       </ccw-row>
       <ccw-row deadline>
-        <ccw-clock deadline>&nbsp;</ccw-clock>
+        <ccw-clock deadline contenteditable>&nbsp;</ccw-clock>
         <ccw-clock budget>{{ tempIncrease | fixed(tempPlaces) }}°C</ccw-clock>
         <ccw-clock time>{{ ppmNow }} CO2 PPM</ccw-clock>
       </ccw-row>
       <ccw-row lifeline>
         <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
+        <ccw-clock renew>{{ renewablePercent | fixed(renewPlaces) }}% {{ renewText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>&nbsp;</ccw-clock>
         <ccw-clock feed>
           <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
           <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
         </ccw-clock>
-      </ccw-row>
-      <ccw-row lifeline>
-        <ccw-clock lifeline>&nbsp;</ccw-clock>
-        <ccw-clock renew>Global renewable energy estimated @ {{ renewablePercent | fixed(renewPlaces) }}%</ccw-clock>
       </ccw-row>
     </ccw-container>
     <ccw-control-panel>
       <h2>Experimental features</h2>
       <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.
       <hr>
-      <h3>* Temperature increase start year</h3>
-      <datepicker 
-        v-model="tempStartDate" 
-        :use-utc="true"
-        :minimumView="'year'"
-        :maximumView="'year'"
-        :inline="true"
-        ></datepicker>
-      <h3>* Temperature increase per decade {{ tempIncPerDecade | fixed(3) }}°C</h3>
+      <h3>* Temperature increase per year {{ tempIncPerYear | fixed(3) }}°C ({{ .5 / tempIncPerYear | fixed(1) }} years from 2018 for .5°C increase)</h3>
       <vue-slider 
-        v-model="tempIncPerDecade"
-        :min=".1"
+        v-model="tempIncPerYear"
+        :min=".018"
         :max=".3"
-        :interval=".005"
+        :interval=".0005"
         ></vue-slider>
       <h3>* Temperature decimal places {{ tempPlaces }} –> {{ tempIncrease | fixed(tempPlaces) }}°C</h3>
       <vue-slider 
@@ -88,17 +80,10 @@
         :max="15"
         :interval="1"
         ></vue-slider>
+      <h3>* Renewable text –> {{ renewText }}</h3>
+      <input type="text" v-model="renewText"/>
       <h3>* Lifeline (should be wide as widget, use "[RENEWABLE]" for % global renewables)</h3>
       <textarea type="text" v-model="feed"></textarea>
-      <hr>
-      <h3>* Temperature budget {{ tempBudget | fixed(2) }}°C (doesn't do anything)</h3>
-      <vue-slider 
-        v-model="tempBudget"
-        :min="1.5"
-        :max="2.0"
-        :interval=".05"
-        ></vue-slider>
-
     </ccw-control-panel>
   </div>
 </template>
@@ -133,11 +118,12 @@ export default {
     tonsPerSecond: clock.tonsPerSecond,
     
     // Items below are for experimental mockups
-    tempBudget: 1.5,
     tempPlaces: 15,
-    tempIncPerDecade: .18,
-    tempStartDate: new Date(Date.UTC(1970, 0, 1, 0, 0, 0)),
-    renewPlaces: 8,
+    tempIncStart: 1.0,
+    tempIncPerYear: .05,
+    tempStartDate: new Date(Date.UTC(2018, 0, 1, 0, 0, 0)),
+    renewText: "Renewable energy production",
+    renewPlaces: 10,
     renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
     renewStartPct: 26.2,
     renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
@@ -176,11 +162,11 @@ export default {
     
     // Items below are for experimental mockups
     tempIncPerSecond() {
-      return this.tempIncPerDecade / (SECONDS_PER_YEAR * 10)
+      return this.tempIncPerYear / SECONDS_PER_YEAR
     },
     tempIncrease() {
       let tElapsed = this.now - this.tempStartDate.getTime()
-      return tElapsed / 1000 * this.tempIncPerSecond
+      return this.tempIncStart + (tElapsed / 1000 * this.tempIncPerSecond)
     },
     renewIncPerSecond() {
       return this.renewIncPerYear / SECONDS_PER_YEAR
@@ -250,7 +236,6 @@ export default {
         Object.assign(this, d)
         this.usingNetworkData = true
       }
-      this.feed = 'Global renewable energy estimated at [RENEWABLE]% | 500,000 take to streets of Madrid in #climatestrike |'
     }).catch(err => { // eslint-disable-next-line
       console.log(err)
     })
