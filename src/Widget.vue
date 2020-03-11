@@ -1,24 +1,115 @@
 <template>
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
-    <ccw-container
-      :id="`ccw-container-${_uid}`"
+    <!-- time/renewable -->
+    <ccw-container mockup
+      v-if="showA"
       :size="size"
       :glow="glow"
       :bottom="bottom">
       <ccw-row header>
-        <ccw-label brand >CLIMATECLOCK.WORLD</ccw-label>
-        <ccw-label budget>{{ budgetLabelText }}</ccw-label>
+        <ccw-label brand >Option A</ccw-label>
         <ccw-label time>TIME TO ACT</ccw-label>
       </ccw-row>
       <ccw-row deadline>
         <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
-        <ccw-clock budget>{{ budgetText }}</ccw-clock>
-        <ccw-clock time>{{ clockText }}</ccw-clock>
+        <ccw-clock time>{{ clockText }}.{{ clockMs }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
+        <ccw-clock renew>{{ renewablePercent | fixed(renewPlaces) }}% {{ renewText }}</ccw-clock>
+      </ccw-row>
+    </ccw-container>
+    <p/><!-- time/renewable/feed -->
+    <ccw-container mockup
+      v-if="showB"
+      :size="size"
+      :glow="glow"
+      :bottom="bottom">
+      <ccw-row header>
+        <ccw-label brand >Option B</ccw-label>
+        <ccw-label time>TIME TO ACT</ccw-label>
+      </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
+        <ccw-clock time>{{ clockText }}.{{ clockMs }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
+        <ccw-clock renew>{{ renewablePercent | fixed(renewPlaces) }}% {{ renewText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>&nbsp;</ccw-clock>
+        <ccw-clock feed>
+          <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+          <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+        </ccw-clock>
+      </ccw-row>
+    </ccw-container>
+    <p/><!-- temp/renewable -->
+    <ccw-container mockup
+      v-if="showC"
+      :size="size"
+      :glow="glow"
+      :bottom="bottom">
+      <ccw-row header>
+        <ccw-label brand >Option C</ccw-label>
+        <ccw-label time contenteditable>GLOBAL TEMPERATURE RISE</ccw-label>
+      </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
+        <ccw-clock time>{{ tempIncrease | fixed(tempPlaces) }}°C {{ tempText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
+        <ccw-clock renew>{{ renewablePercent | fixed(renewPlaces) }}% {{ renewText }}</ccw-clock>
+      </ccw-row>
+    </ccw-container>
+    <p/><!-- temp/renewable/feed -->
+    <ccw-container mockup
+      v-if="showD"
+      :size="size"
+      :glow="glow"
+      :bottom="bottom">
+      <ccw-row header>
+        <ccw-label brand >Option D</ccw-label>
+        <ccw-label time contenteditable>GLOBAL TEMPERATURE RISE</ccw-label>
+      </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
+        <ccw-clock time>{{ tempIncrease | fixed(tempPlaces) }}°C {{ tempText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
+        <ccw-clock renew>{{ renewablePercent | fixed(renewPlaces) }}% {{ renewText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>&nbsp;</ccw-clock>
+        <ccw-clock feed>
+          <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+          <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+        </ccw-clock>
+      </ccw-row>
+    </ccw-container>
+    <p/><!-- feed/temp/renewable/feed -->
+    <ccw-container mockup
+      v-if="showE"
+      :size="size"
+      :glow="glow"
+      :bottom="bottom">
+      <ccw-row header>
+        <ccw-label brand >Option E</ccw-label>
+        <ccw-label time contenteditable>&nbsp;</ccw-label>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>DEADLINE</ccw-clock>
+        <ccw-clock feed mockup>
+          <ccw-feed one :style="animationDurationMockup">{{ badFeed }}&nbsp;</ccw-feed>
+          <ccw-feed two :style="animationDurationMockup">{{ badFeed }}&nbsp;</ccw-feed>
+        </ccw-clock>
       </ccw-row>
       <ccw-row deadline>
         <ccw-clock deadline contenteditable>&nbsp;</ccw-clock>
-        <ccw-clock budget>{{ tempIncrease | fixed(tempPlaces) }}°C</ccw-clock>
-        <ccw-clock time>{{ ppmNow }} CO2 PPM</ccw-clock>
+        <ccw-clock time>{{ tempIncrease | fixed(tempPlaces) }}°C {{ tempText }}</ccw-clock>
       </ccw-row>
       <ccw-row lifeline>
         <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
@@ -35,6 +126,12 @@
     <ccw-control-panel>
       <h2>Experimental features</h2>
       <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.
+      <b>Show/Hide mockups: </b>
+      <input type="checkbox" v-model="showA"><label>A&nbsp;</label>
+      <input type="checkbox" v-model="showB"><label>B&nbsp;</label>
+      <input type="checkbox" v-model="showC"><label>C&nbsp;</label>
+      <input type="checkbox" v-model="showD"><label>D&nbsp;</label>
+      <input type="checkbox" v-model="showE"><label>E&nbsp;</label>
       <hr>
       <h3>* Temperature increase per year {{ tempIncPerYear | fixed(3) }}°C ({{ .5 / tempIncPerYear | fixed(1) }} years from 2018 for .5°C increase)</h3>
       <vue-slider 
@@ -50,7 +147,10 @@
         :max="20"
         :interval="1"
         ></vue-slider>
+      <h3>* Temperature text (goes at the end, e.g. <input type="button" value="global temperature rise" @click="tempText = 'global temperature rise'"> <input type="button" value="global climate warming" @click="tempText = 'global climate warming'"> <input type="button" value="(blank)" @click="tempText = ''">) –> {{ tempText }}</h3>
+      <input type="text" v-model="tempText"/>
       <hr>
+      <!--
       <h3>* CO2 PPM Start value {{ ppmStart }}ppm</h3>
       <vue-slider 
         v-model="ppmStart"
@@ -73,6 +173,7 @@
         :interval="1"
         ></vue-slider>
       <hr>
+      -->
       <h3>* Renewables decimal places {{renewPlaces}} –> {{ renewablePercent | fixed(renewPlaces) }}%</h3>
       <vue-slider 
         v-model="renewPlaces"
@@ -82,9 +183,52 @@
         ></vue-slider>
       <h3>* Renewable text –> {{ renewText }}</h3>
       <input type="text" v-model="renewText"/>
-      <h3>* Lifeline (should be wide as widget, use "[RENEWABLE]" for % global renewables)</h3>
+      <hr>
+      <h3>* Lifeline feed (should be wide as widget)</h3>
       <textarea type="text" v-model="feed"></textarea>
+      <h3>* Deadline feed (should be wide as widget)</h3>
+      <textarea type="text" v-model="badFeed"></textarea>
     </ccw-control-panel>
+    <h1>The everything widget, for reference</h1>
+    <ccw-container
+      :id="`ccw-container-${_uid}`"
+      :size="size"
+      :glow="glow"
+      :bottom="bottom">
+      <ccw-row header>
+        <ccw-label brand >CLIMATECLOCK.WORLD</ccw-label>
+        <ccw-label budget>{{ budgetLabelText }}</ccw-label>
+        <ccw-label time>TIME TO ACT</ccw-label>
+      </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
+        <ccw-clock budget>{{ budgetText }}</ccw-clock>
+        <ccw-clock time>{{ clockText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline contenteditable>&nbsp;</ccw-clock>
+        <ccw-clock budget>{{ tempIncrease | fixed(tempPlaces) }}°C</ccw-clock>
+        <ccw-clock time>{{ ppmNow }} CO2 PPM</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>&nbsp;</ccw-clock>
+        <ccw-clock feed mockup>
+          <ccw-feed one :style="animationDurationMockup">{{ badFeed }}&nbsp;</ccw-feed>
+          <ccw-feed two :style="animationDurationMockup">{{ badFeed }}&nbsp;</ccw-feed>
+        </ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
+        <ccw-clock renew>{{ renewablePercent | fixed(renewPlaces) }}% {{ renewText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>&nbsp;</ccw-clock>
+        <ccw-clock feed>
+          <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+          <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+        </ccw-clock>
+      </ccw-row>
+    </ccw-container>
   </div>
 </template>
 
@@ -122,7 +266,8 @@ export default {
     tempIncStart: 1.0,
     tempIncPerYear: .05,
     tempStartDate: new Date(Date.UTC(2018, 0, 1, 0, 0, 0)),
-    renewText: "Renewable energy production",
+    tempText: "",
+    renewText: "of global energy is now renewable",
     renewPlaces: 10,
     renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
     renewStartPct: 26.2,
@@ -131,6 +276,8 @@ export default {
     ppmStart: 410,
     ppmStartDate: new Date(),
     ppmPlaces: 8,
+    badFeed: "AUS PM attempts to exploit loophole in Paris Agreement | Kenyan locusts find ideal conditions to hatch | US election could further delay climate goals |",
+    showA: true, showB: true, showC: true, showD: true, showE: true,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
@@ -157,7 +304,7 @@ export default {
     },
     remaining() {
       return countdown(this.deadline, this.now,
-        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
+        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS | countdown.MILLISECONDS)
     },
     
     // Items below are for experimental mockups
@@ -187,6 +334,9 @@ export default {
     animationDuration() {
       return {animationDuration: .15 * this.feedText.length + 's'}
     },
+    animationDurationMockup() {
+      return {animationDuration: .15 * this.badFeed.length + 's'}
+    },
     budgetLabelText() {
       return 'CARBON BUDGET' 
         + (/xs|lg|xl/.test(this.size) ? ' REMAINING' : '') 
@@ -201,8 +351,12 @@ export default {
         ? `${r.years}Y ${r.days}D ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
         : `${pl(r.years, 'YEAR', 'S')} ${pl(r.days, 'DAY', 'S')} ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
     },
+    // mockup
+    clockMs() {
+      return this.pad(this.remaining.milliseconds, 3)
+    },
     feedText() {
-      return ((this.lifeline ? `${this.lifeline} | ` : '') + this.feed).replace('[RENEWABLE]', this.renewablePercent)
+      return (this.lifeline ? `${this.lifeline} | ` : '') + this.feed
     },
   },
   methods: {
@@ -241,7 +395,9 @@ export default {
     })
 
     // Watch for container size changes and update sizing classes
-    let resizeInterval = 0, tickInterval = 100
+    // mockup fast timer
+    let resizeInterval = 0, tickInterval = 35
+    //let resizeInterval = 0, tickInterval = 100
     if (this.$browserDetect.isEdge) { // Slow down for the special browser
       resizeInterval = 250
       tickInterval = 250
@@ -451,6 +607,22 @@ ccw-label, ccw-clock {
     ccw-container[size="sm"] & {
       flex: $wide 0 0;
     }
+
+    ccw-container[size="xl"][mockup] & {
+      flex: $wide * 2 0 0
+    }
+    ccw-container[size="lg"][mockup] & {
+      flex: $wide * 2 - 1 0 0;
+    }
+    ccw-container[size="md"][mockup] & {
+      flex: $wide * 2 - 1 0 0;
+    }
+    ccw-container[size="sm"][mockup] & {
+      flex: $wide * 2 0 0;
+    }
+    .two-column {
+      flex: 30 0 0;
+    }
   }
 }
 ccw-label[time] {
@@ -492,7 +664,9 @@ ccw-clock {
       flex: $wide * 2 - 1 0 0;
     }
   }
-
+  &[feed][mockup] {
+    color: $accent;
+  }
   &[deadline] {
     ccw-container[glow] & {
       animation: widget-flicker 3s linear infinite;
@@ -536,6 +710,9 @@ ccw-clock {
   77%, 100% { opacity:.9; }
 }
 
+p.mockup {
+  margin: 2rem 0 0 0;
+}
 @import 'vue-slider-component/theme/default';
 ccw-control-panel {
   background-color: #fff6cd;
