@@ -12,7 +12,7 @@
       </ccw-row>
       <ccw-row deadline>
         <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
-        <ccw-clock time>{{ clockText }}.{{ clockMs }}</ccw-clock>
+        <ccw-clock time>{{ clockText }}</ccw-clock>
       </ccw-row>
       <ccw-row lifeline>
         <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
@@ -31,7 +31,7 @@
       </ccw-row>
       <ccw-row deadline>
         <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
-        <ccw-clock time>{{ clockText }}.{{ clockMs }}</ccw-clock>
+        <ccw-clock time>{{ clockText }}</ccw-clock>
       </ccw-row>
       <ccw-row lifeline>
         <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
@@ -123,6 +123,62 @@
         </ccw-clock>
       </ccw-row>
     </ccw-container>
+    <p/><!-- budget/time/renewable/feed -->
+    <ccw-container 
+      v-if="showF"
+      :size="size"
+      :glow="glow"
+      :bottom="bottom">
+      <ccw-row header>
+        <ccw-label brand >Option F</ccw-label>
+        <ccw-label budget contenteditable>CARBON BUDGET REMAINING</ccw-label>
+        <ccw-label time contenteditable>TIME TO ACT</ccw-label>
+      </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
+        <ccw-clock budget>{{ budgetText }}</ccw-clock>
+        <ccw-clock time>{{ clockText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
+        <ccw-clock renew>{{ renewablePercent | fixed(renewPlaces) }}% {{ renewText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>&nbsp;</ccw-clock>
+        <ccw-clock feed>
+          <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+          <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+        </ccw-clock>
+      </ccw-row>
+    </ccw-container>
+    <p/><!-- temp/time/renewable/feed -->
+    <ccw-container 
+      v-if="showG"
+      :size="size"
+      :glow="glow"
+      :bottom="bottom">
+      <ccw-row header>
+        <ccw-label brand >Option G</ccw-label>
+        <ccw-label budget contenteditable>GLOBAL TEMPERATURE RISE</ccw-label>
+        <ccw-label time contenteditable>TIME TO ACT</ccw-label>
+      </ccw-row>
+      <ccw-row deadline>
+        <ccw-clock deadline contenteditable>DEADLINE</ccw-clock>
+        <ccw-clock budget>{{ tempIncrease | fixed(tempPlaces) }}°C</ccw-clock>
+        <ccw-clock time>{{ clockText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>LIFELINE</ccw-clock>
+        <ccw-clock renew>{{ renewablePercent | fixed(renewPlaces) }}% {{ renewText }}</ccw-clock>
+      </ccw-row>
+      <ccw-row lifeline>
+        <ccw-clock lifeline contenteditable>&nbsp;</ccw-clock>
+        <ccw-clock feed>
+          <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+          <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
+        </ccw-clock>
+      </ccw-row>
+    </ccw-container>
     <ccw-control-panel>
       <h2>Experimental features</h2>
       <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.
@@ -132,6 +188,8 @@
       <input type="checkbox" v-model="showC"><label>C&nbsp;</label>
       <input type="checkbox" v-model="showD"><label>D&nbsp;</label>
       <input type="checkbox" v-model="showE"><label>E&nbsp;</label>
+      <input type="checkbox" v-model="showF"><label>F&nbsp;</label>
+      <input type="checkbox" v-model="showG"><label>G&nbsp;</label>
       <hr>
       <h3>* Temperature increase per year {{ tempIncPerYear | fixed(3) }}°C ({{ .5 / tempIncPerYear | fixed(1) }} years from 2018 for .5°C increase)</h3>
       <vue-slider 
@@ -277,7 +335,7 @@ export default {
     ppmStartDate: new Date(),
     ppmPlaces: 8,
     badFeed: "AUS PM attempts to exploit loophole in Paris Agreement | Kenyan locusts find ideal conditions to hatch | US election could further delay climate goals |",
-    showA: true, showB: true, showC: true, showD: true, showE: true,
+    showA: true, showB: true, showC: true, showD: true, showE: true, showF: true, showG: true,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
@@ -304,7 +362,7 @@ export default {
     },
     remaining() {
       return countdown(this.deadline, this.now,
-        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS | countdown.MILLISECONDS)
+        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
     },
     
     // Items below are for experimental mockups
@@ -352,9 +410,6 @@ export default {
         : `${pl(r.years, 'YEAR', 'S')} ${pl(r.days, 'DAY', 'S')} ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
     },
     // mockup
-    clockMs() {
-      return this.pad(this.remaining.milliseconds, 3)
-    },
     feedText() {
       return (this.lifeline ? `${this.lifeline} | ` : '') + this.feed
     },
