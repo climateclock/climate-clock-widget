@@ -450,9 +450,7 @@ export default {
     })
 
     // Watch for container size changes and update sizing classes
-    // mockup fast timer
-    let resizeInterval = 0, tickInterval = 35
-    //let resizeInterval = 0, tickInterval = 100
+    let resizeInterval = 0, tickInterval = 100
     if (this.$browserDetect.isEdge) { // Slow down for the special browser
       resizeInterval = 250
       tickInterval = 250
