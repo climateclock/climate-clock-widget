@@ -1,6 +1,7 @@
 <template>
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <!-- time/renewable -->
+    <ccw-chart v-if="false" :width="chartWidth"></ccw-chart>
     <ccw-container mockup
       v-if="showA"
       :size="size"
@@ -295,6 +296,8 @@
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
+import Chart from './Chart.vue'
+
 // Import defaults from json file to keep them in sync
 import clock from './clock.json'
 
@@ -306,6 +309,9 @@ export default {
     glow: {type: Boolean, default: false},
     bottom: {type: Boolean, default: false},
     lifeline: {type: String, default: null},
+  },
+  components: {
+    'ccw-chart': Chart,
   },
   data: () => ({
     githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
@@ -336,6 +342,7 @@ export default {
     ppmPlaces: 8,
     badFeed: "AUS PM attempts to exploit loophole in Paris Agreement | Kenyan locusts find ideal conditions to hatch | US election could further delay climate goals |",
     showA: true, showB: true, showC: true, showD: true, showE: true, showF: true, showG: true,
+    chartWidth: 0,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
@@ -423,6 +430,9 @@ export default {
           this.size = sz[1]
         }
         this.ready = true
+
+        // chart mockup
+        this.chartWidth = width
       })
     },
     // Items below are skin/theme-specific
