@@ -2,6 +2,102 @@
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <!-- time/renewable -->
     <ccw-chart v-if="false" :width="chartWidth"></ccw-chart>
+    <p>
+      Option JW23 (Josiah Werning, p.23 of <a href="https://drive.google.com/open?id=1adFkoF2LF1jx78LQmDg8qDmFBPgVCfxP" target="_blank">PDF</a>)
+    </p>
+    <ccw-jw v-if="showJW" :size="size">
+      <ccw-brand>
+        <ccw-c>c</ccw-c>
+        <ccw-c>C</ccw-c>
+      </ccw-brand>
+      <ccw-flexwrap>
+        <ccw-panel deadline>
+          <ccw-div>
+            <ccw-text>DEADLINE:</ccw-text>
+            <ccw-ticker-wrap>
+              <ccw-ticker-label>{{ actText }}</ccw-ticker-label>
+              <ccw-ticker one :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+              <ccw-ticker two :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+            </ccw-ticker-wrap>
+          </ccw-div>
+          <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
+          </ccw-numbers>
+        </ccw-panel>
+        <ccw-panel lifeline>
+          <ccw-div>
+            <ccw-text>LIFELINE:</ccw-text>
+            <ccw-ticker-wrap>
+              <ccw-ticker-label>{{ renewText }}</ccw-ticker-label>
+              <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+              <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+            </ccw-ticker-wrap>
+          </ccw-div>
+          <ccw-numbers>{{ renewablePercent }}%</ccw-numbers>
+        </ccw-panel>
+      </ccw-flexwrap>
+    </ccw-jw>
+    <ccw-jw v-if="showJW" size="md">
+      <ccw-brand>
+        <ccw-c>c</ccw-c>
+        <ccw-c>C</ccw-c>
+      </ccw-brand>
+      <ccw-flexwrap>
+        <ccw-panel deadline>
+          <ccw-div>
+            <ccw-text>DEADLINE:</ccw-text>
+            <ccw-ticker-wrap>
+              <ccw-ticker-label>{{ actText }}</ccw-ticker-label>
+              <ccw-ticker one :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+              <ccw-ticker two :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+            </ccw-ticker-wrap>
+          </ccw-div>
+          <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
+          </ccw-numbers>
+        </ccw-panel>
+        <ccw-panel lifeline>
+          <ccw-div>
+            <ccw-text>LIFELINE:</ccw-text>
+            <ccw-ticker-wrap>
+              <ccw-ticker-label>{{ renewText }}</ccw-ticker-label>
+              <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+              <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+            </ccw-ticker-wrap>
+          </ccw-div>
+          <ccw-numbers>{{ renewablePercent }}%</ccw-numbers>
+        </ccw-panel>
+      </ccw-flexwrap>
+    </ccw-jw>
+    <ccw-jw v-if="showJW" limit size="md">
+      <ccw-brand>
+        <ccw-c>c</ccw-c>
+        <ccw-c>C</ccw-c>
+      </ccw-brand>
+      <ccw-flexwrap>
+        <ccw-panel deadline>
+          <ccw-div>
+            <ccw-text>DEADLINE:</ccw-text>
+            <ccw-ticker-wrap>
+              <ccw-ticker-label>{{ actText }}</ccw-ticker-label>
+              <ccw-ticker one :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+              <ccw-ticker two :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+            </ccw-ticker-wrap>
+          </ccw-div>
+          <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
+          </ccw-numbers>
+        </ccw-panel>
+        <ccw-panel lifeline>
+          <ccw-div>
+            <ccw-text>LIFELINE:</ccw-text>
+            <ccw-ticker-wrap>
+              <ccw-ticker-label>{{ renewText }}</ccw-ticker-label>
+              <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+              <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+            </ccw-ticker-wrap>
+          </ccw-div>
+          <ccw-numbers>{{ renewablePercent }}%</ccw-numbers>
+        </ccw-panel>
+      </ccw-flexwrap>
+    </ccw-jw>
     <ccw-container mockup
       v-if="showA"
       :size="size"
@@ -182,8 +278,9 @@
     </ccw-container>
     <ccw-control-panel>
       <h2>Experimental features</h2>
-      <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.
+      <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.</p>
       <b>Show/Hide mockups: </b>
+      <input type="checkbox" v-model="showJW"><label>JW23&nbsp;</label>
       <input type="checkbox" v-model="showA"><label>A&nbsp;</label>
       <input type="checkbox" v-model="showB"><label>B&nbsp;</label>
       <input type="checkbox" v-model="showC"><label>C&nbsp;</label>
@@ -240,6 +337,8 @@
         :max="15"
         :interval="1"
         ></vue-slider>
+      <h3>* Time to act text –> {{ actText }}</h3>
+      <input type="text" v-model="actText"/>
       <h3>* Renewable text –> {{ renewText }}</h3>
       <input type="text" v-model="renewText"/>
       <hr>
@@ -331,8 +430,9 @@ export default {
     tempIncPerYear: .05,
     tempStartDate: new Date(Date.UTC(2018, 0, 1, 0, 0, 0)),
     tempText: "",
-    renewText: "of global energy is now renewable",
-    renewPlaces: 10,
+    renewText: "global energy now renewable",
+    actText: "how much time we have to act",
+    renewPlaces: 9,
     renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
     renewStartPct: 26.2,
     renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
@@ -341,7 +441,8 @@ export default {
     ppmStartDate: new Date(),
     ppmPlaces: 8,
     badFeed: "AUS PM attempts to exploit loophole in Paris Agreement | Kenyan locusts find ideal conditions to hatch | US election could further delay climate goals |",
-    showA: true, showB: true, showC: true, showD: true, showE: true, showF: true, showG: true,
+    showA: false, showB: false, showC: false, showD: false, showE: false, showF: false, showG: false,
+    showJW: true,
     chartWidth: 0,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
@@ -369,7 +470,7 @@ export default {
     },
     remaining() {
       return countdown(this.deadline, this.now,
-        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
+        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS | countdown.MILLISECONDS)
     },
     
     // Items below are for experimental mockups
@@ -409,6 +510,10 @@ export default {
     },
     budgetText() {
       return `${Math.floor(this.CO2Budget).toLocaleString()}${/xs|sm|md/.test(this.size) ? '' : ' TONS'}`
+    },
+    clockNums() {
+      // Mockup
+      return {y: this.remaining.years} 
     },
     clockText() {
       let r = this.remaining, p = this.pad, pl = this.plural
@@ -460,7 +565,9 @@ export default {
     })
 
     // Watch for container size changes and update sizing classes
-    let resizeInterval = 0, tickInterval = 100
+    //let resizeInterval = 0, tickInterval = 100
+    // mockup
+    let resizeInterval = 0, tickInterval = 97
     if (this.$browserDetect.isEdge) { // Slow down for the special browser
       resizeInterval = 250
       tickInterval = 250
@@ -506,9 +613,10 @@ export default {
 // Don't mess up the control panel
 //@import 'cleanslate';
 @import 'scoreboard';
+@import 'matthewha';
 
-$accent: #f51a25;
-$secondary: #b0d155;
+$accent: #ff0000;
+$secondary: #00dd72;
 $dark: #231f20;
 $light: #8c8d91;
 
@@ -523,6 +631,174 @@ $wide: 14;
                -.5px  .5px .1em $color,
                 .5px -.5px .1em $color;
 }
+
+// <ccw-jw>
+ccw-jw {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row-reverse; 
+  justify-content: space-between;
+  font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+  font-size: 23px;
+  //font-weight: 600;
+  position: relative;
+  width: 100%;
+  white-space: nowrap;
+  padding-bottom: 1rem;
+
+  *, *:before, *:after {
+    box-sizing: inherit;
+    display: inline-block;
+    overflow: hidden;
+    text-align: center;
+  }
+  &[size="lg"] {
+    font-size: 20px;
+  }
+  &[size="md"]{
+    font-size: 25px;
+  }
+  &[limit][size="md"]{
+    max-width: 700px;
+    font-size: 25px;
+  }
+  &[size="sm"] {
+    font-size: 20px;
+  }
+  &[size="xs"] {
+    font-size: 25px;
+  }
+  &[size="md"], &[size="sm"], &[size="xs"] {
+    flex-direction: row; 
+  }
+}
+
+$panelH: 8rem;
+
+ccw-flexwrap {
+  display: flex;
+  flex-direction: row;
+  flex: 10 0 0;
+  width: 100%;
+  height: $panelH;
+  ccw-jw[size="md"] &, ccw-jw[size="sm"] &, ccw-jw[size="xs"] & {
+    height: $panelH * 2;
+    flex-direction: column;
+  }
+
+}
+ccw-panel {
+  height: 100%;
+  flex: 1 0 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: .5rem .75rem;
+  &[deadline] {
+    background: $accent;
+  }
+  &[lifeline] {
+    background: $secondary;
+  }
+}
+ccw-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 1 0 0;
+}
+ccw-numbers {
+  flex: 2 0 0;
+  font-size: 72px;
+  line-height: 1;
+  &[size="md"] {
+    font-size: 80px;
+  }
+}
+ccw-lb {
+  line-height: 1;
+  margin-bottom: -3px;
+  font-size: 35px;
+}
+ccw-ticker-wrap {
+  position: relative;
+  text-align: left;
+  height: 100%;
+  flex: 2 0 0;
+  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  text-transform: uppercase;
+}
+ccw-ticker {
+  position: absolute;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  &[one] { animation-name: widget-feed-one; }
+  &[two] { animation-name: widget-feed-two; }
+}
+ccw-ticker-label {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  text-align: left;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-name: feed-fade;
+  animation-duration: 10s;
+  ccw-panel[deadline] & {
+    background-color: $accent;
+  }
+  ccw-panel[lifeline] & {
+    background-color: $secondary;
+  }
+  ccw-flexwrap:hover & {
+    animation-name: none;
+  }
+}
+@keyframes feed-fade {
+  0% { opacity: 1; }
+  25% { opacity: 1; }
+  30% { opacity: 0; }
+  95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+ccw-text {
+  flex: 1 0 1;
+  padding-right: .5rem;
+}
+ccw-brand {
+  font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
+  font-size: 90px;
+  line-height: .85;
+  flex: 1.5 0 0;
+  background: black;
+  color: $secondary;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  ccw-c:first-of-type {
+    color: $accent;
+    margin-right: 7px;
+  }
+  ccw-jw[size="md"] &, ccw-jw[size="sm"] &, ccw-jw[size="xs"] & {
+    ccw-c:first-of-type {
+      margin-right: 0;
+    }
+    flex-direction: column;
+    flex: 1 0 0;
+    min-width: 80px;
+    max-width: 80px;
+    font-size: 65px;
+  }
+}
+
+
 
 // <ccw-container> is a column of 3 flex rows
 ccw-container {
