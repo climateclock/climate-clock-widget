@@ -18,19 +18,25 @@ export default {
       maintainAspectRatio: false,
       title: {
         display: false,
-        fontSize: 30,
-        text: '#FLATTENTHECURVE ON CLIMATE',
-        fontColor: 'black',
       },
       scales: {
         yAxes: [{
           id: 'right-y-axis',
           type: 'linear',
-          position: 'right',
+          position: 'left',
+          scaleLabel: {
+            display: true,
+            labelString: 'CONSEQUENCES',
+          },
           ticks: {
             suggestedMin: 0, 
-            suggestedMax: 10000,
-            maxTicksLimit: 5,
+            suggestedMax: 100,
+            maxTicksLimit: 2,
+          },
+          gridLines: {
+            lineWidth: 1,
+            zeroLineWidth: 1,
+            drawBorder: false,
           },
         }],
       },
@@ -42,10 +48,15 @@ export default {
       },
       tooltips: {
         titleFontSize: 20,
+        titleFontFamily: 'katwijk_monolight',
         bodyFontSize: 14,
+        bodyFontFamily: 'katwijk_monolight',
         position: 'average',
         mode: 'index',
         intersect: false,
+      },
+      elements: {
+        line: {tension: .4},
       },
     },
   }),
@@ -56,11 +67,15 @@ export default {
   watch: {
     factor() {
       this.updateData()
-      console.log(this.$data._chart)
     },
-    green() {
-
+    width() {
+      this.updateData()
     },
+  },
+  computed: {
+    actualChartWidth() {
+      return this.width - 95
+    }
   },
   methods: {
     updateData() {
@@ -69,16 +84,24 @@ export default {
         labels: [2020, 2022, 2024, 2026, 2028, 2030],
         datasets: [
           {
+            label: 'Clipped thing',
+            fill: false,
+            data: [0, 0 + this.factor * 2, 20 + this.factor * (this.factor / 4), 100 + this.factor, 30, 0],
+            //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
+            borderColor: 'black',
+            borderDash: [10, 5],
+            clip: {left: false, top: false, right: this.actualChartWidth * -.4, bottom: false}
+          }, {
             label: 'Green New Deal',
             backgroundColor: '#00dd77',
-            //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
             data: [0, 0 + this.factor * 2, 20 + this.factor * (this.factor / 4), 100 + this.factor, 30, 0],
+            //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
             borderColor: '#00dd77',
           }, {
             label: 'Current Trajectory',
             backgroundColor: this.factor > 50 ? '#ff0000' : '#00dd77',
-            //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
             data: [0, 0 + this.factor, Math.pow(this.factor, 2), 100 + this.factor, 30, 0],
+            //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
             borderColor: this.factor > 50 ? '#ff0000' : '#00dd77',
             yAxisID: 'right-y-axis',
           }

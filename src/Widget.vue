@@ -2,12 +2,12 @@
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <!-- time/renewable -->
     <ccw-ixed v-if="showJW">
-      <ccw-jw :size="size" :dark="dark">
+      <ccw-jw :size="size" :dark="dark" @click="showChart = !showChart">
         <ccw-brand adrian>
           <img v-if="roundEarth" svg-inline src="./earth-round.svg">
           <img v-if="!roundEarth" svg-inline src="./earth.svg">
           <span>Climate<span lifeline>Clock</span></span>
-          <input type="button" @click="showChart = !showChart" :value="`${!showChart ? '🡻' : '🡹'}`">
+          <input type="button" :value="`${!showChart ? '🡻' : '🡹'}`">
         </ccw-brand>
         <ccw-flexwrap>
           <ccw-panel deadline>
@@ -660,6 +660,7 @@ ccw-fixed {
   box-shadow: 0 20px 30px rgba(black, 50%);
 }
 ccw-jw {
+  user-select: none;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
@@ -803,7 +804,7 @@ ccw-ticker-label {
     }
     background-color: $secondary;
   }
-  ccw-flexwrap:hover & {
+  ccw-panel:hover & {
     animation-name: none;
   }
 }
@@ -856,7 +857,6 @@ ccw-brand {
     font-size: 5vw;
     svg {
       max-height: 100px;
-      max-width: 80%;
     }
     span {
       display: none;
@@ -871,6 +871,7 @@ ccw-brand {
 
   }
   svg {
+    outline: none;
     max-height: 80px;
     max-width: 80%;
     margin-bottom: 7px;
@@ -891,18 +892,20 @@ ccw-chart-wrapper {
   border-bottom: 1rem solid black;
   position: relative;
   canvas {
+    // Allows the text to go behind the graph
     background: rgba(0,0,0,0);
+    position: relative;
   }
   h1 {
-    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+    font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
     font-weight: normal;
     text-align: center;
     left: 0;
     width: 100%;
     position: absolute;
     opacity: .1;
-    font-size: 60px;
-    margin-top: 1rem;
+    font-size: 72px;
+    margin-top: 1.3rem;
     //color: transparent;
     //text-shadow: 1px 3px 6px #ddd, 0 0 0 #000, 1px 3px 6px #ddd;
   }
@@ -923,7 +926,7 @@ ccw-chart-control-panel {
   }
   .vue-slider-dot-handle::after,
   .vue-slider-rail {
-    background-color: lighten($accent, 35%);
+    background-color: rgba(lighten($accent, 35%), .5);
   }
 }
 .slide-enter-active {
