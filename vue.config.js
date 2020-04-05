@@ -4,7 +4,7 @@ module.exports = {
     config.optimization.splitChunks(false)
   },
   configureWebpack: {
-    output: {filename: 'widget-v1.js'}
+    output: {filename: 'widget-v1jw.js'}
   },
   css: {
     // Don't produce a separate css file

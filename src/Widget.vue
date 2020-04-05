@@ -1,41 +1,66 @@
 <template>
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <!-- time/renewable -->
-    <ccw-chart v-if="false" :width="chartWidth"></ccw-chart>
     <p>
       Option JW23 (Josiah Werning, p.23 of <a href="https://drive.google.com/open?id=1adFkoF2LF1jx78LQmDg8qDmFBPgVCfxP" target="_blank">PDF</a>)
     </p>
-    <ccw-jw v-if="showJW" :size="size">
-      <ccw-brand>
-        <ccw-c>c</ccw-c>
-        <ccw-c>C</ccw-c>
-      </ccw-brand>
-      <ccw-flexwrap>
-        <ccw-panel deadline>
-          <ccw-div>
-            <ccw-text>DEADLINE:</ccw-text>
-            <ccw-ticker-wrap>
-              <ccw-ticker-label>{{ actText }}</ccw-ticker-label>
-              <ccw-ticker one :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
-              <ccw-ticker two :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
-            </ccw-ticker-wrap>
-          </ccw-div>
-          <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
-          </ccw-numbers>
-        </ccw-panel>
-        <ccw-panel lifeline>
-          <ccw-div>
-            <ccw-text>LIFELINE:</ccw-text>
-            <ccw-ticker-wrap>
-              <ccw-ticker-label>{{ renewText }}</ccw-ticker-label>
-              <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
-              <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
-            </ccw-ticker-wrap>
-          </ccw-div>
-          <ccw-numbers>{{ renewablePercent }}%</ccw-numbers>
-        </ccw-panel>
-      </ccw-flexwrap>
-    </ccw-jw>
+    <ccw-mockup>
+      <ccw-jw v-if="showJW" :size="size" dark>
+        <ccw-brand>
+          <ccw-c>c</ccw-c>
+          <ccw-c>C</ccw-c>
+          <input type="button" @click="showChart = !showChart" :value="`Chart ${!showChart ? '🡻' : '🡹'}`">
+        </ccw-brand>
+        <ccw-flexwrap>
+          <ccw-panel deadline>
+            <ccw-div>
+              <ccw-text>DEADLINE:</ccw-text>
+              <ccw-ticker-wrap>
+                <ccw-ticker-label>{{ actText }}</ccw-ticker-label>
+                <ccw-ticker one :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+                <ccw-ticker two :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+              </ccw-ticker-wrap>
+            </ccw-div>
+            <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
+            </ccw-numbers>
+          </ccw-panel>
+          <ccw-panel lifeline>
+            <ccw-div>
+              <ccw-text>LIFELINE:</ccw-text>
+              <ccw-ticker-wrap>
+                <ccw-ticker-label>{{ renewText }}</ccw-ticker-label>
+                <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+                <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+              </ccw-ticker-wrap>
+            </ccw-div>
+            <ccw-numbers>{{ renewablePercent }}%</ccw-numbers>
+          </ccw-panel>
+        </ccw-flexwrap>
+      </ccw-jw>
+      <transition name="slide">
+        <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper">
+          <ccw-chart :width="chartWidth" :factor="factor" :styles="{height: '200px'}"></ccw-chart>
+          <ccw-chart-control-panel>
+            Scaling Factor
+            <vue-slider 
+              v-model="factor"
+              :marks="true"
+              :interval="10"
+              :adsorb="true"
+              ></vue-slider>
+            <vue-slider 
+              v-model="factor"
+              :marks="true"
+              :interval="10"
+              :adsorb="true"
+              :included="true"
+              ></vue-slider>
+          </ccw-chart-control-panel>
+        </ccw-chart-wrapper>
+      </transition>
+    </ccw-mockup>
+    <br><br>
+
     <ccw-jw v-if="showJW" size="md">
       <ccw-brand>
         <ccw-c>c</ccw-c>
@@ -101,8 +126,7 @@
     <ccw-container mockup
       v-if="showA"
       :size="size"
-      :glow="glow"
-      :bottom="bottom">
+      :glow="glow">
       <ccw-row header>
         <ccw-label brand >Option A</ccw-label>
         <ccw-label time>TIME TO ACT</ccw-label>
@@ -120,8 +144,7 @@
     <ccw-container mockup
       v-if="showB"
       :size="size"
-      :glow="glow"
-      :bottom="bottom">
+      :glow="glow">
       <ccw-row header>
         <ccw-label brand >Option B</ccw-label>
         <ccw-label time>TIME TO ACT</ccw-label>
@@ -146,8 +169,7 @@
     <ccw-container mockup
       v-if="showC"
       :size="size"
-      :glow="glow"
-      :bottom="bottom">
+      :glow="glow">
       <ccw-row header>
         <ccw-label brand >Option C</ccw-label>
         <ccw-label time contenteditable>GLOBAL TEMPERATURE RISE</ccw-label>
@@ -165,8 +187,7 @@
     <ccw-container mockup
       v-if="showD"
       :size="size"
-      :glow="glow"
-      :bottom="bottom">
+      :glow="glow">
       <ccw-row header>
         <ccw-label brand >Option D</ccw-label>
         <ccw-label time contenteditable>GLOBAL TEMPERATURE RISE</ccw-label>
@@ -191,8 +212,7 @@
     <ccw-container mockup
       v-if="showE"
       :size="size"
-      :glow="glow"
-      :bottom="bottom">
+      :glow="glow">
       <ccw-row header>
         <ccw-label brand >Option E</ccw-label>
         <ccw-label time contenteditable>&nbsp;</ccw-label>
@@ -224,8 +244,7 @@
     <ccw-container 
       v-if="showF"
       :size="size"
-      :glow="glow"
-      :bottom="bottom">
+      :glow="glow">
       <ccw-row header>
         <ccw-label brand >Option F</ccw-label>
         <ccw-label budget contenteditable>CARBON BUDGET REMAINING</ccw-label>
@@ -252,8 +271,7 @@
     <ccw-container 
       v-if="showG"
       :size="size"
-      :glow="glow"
-      :bottom="bottom">
+      :glow="glow">
       <ccw-row header>
         <ccw-label brand >Option G</ccw-label>
         <ccw-label budget contenteditable>GLOBAL TEMPERATURE RISE</ccw-label>
@@ -288,6 +306,7 @@
       <input type="checkbox" v-model="showE"><label>E&nbsp;</label>
       <input type="checkbox" v-model="showF"><label>F&nbsp;</label>
       <input type="checkbox" v-model="showG"><label>G&nbsp;</label>
+      <hr>
       <hr>
       <h3>* Temperature increase per year {{ tempIncPerYear | fixed(3) }}°C ({{ .5 / tempIncPerYear | fixed(1) }} years from 2018 for .5°C increase)</h3>
       <vue-slider 
@@ -347,11 +366,11 @@
       <h3>* Deadline feed (should be wide as widget)</h3>
       <textarea type="text" v-model="badFeed"></textarea>
     </ccw-control-panel>
-    <h1>The everything widget, for reference</h1>
+    <h1>The original "GAN TRON" widget, for reference</h1>
     <ccw-container
       :id="`ccw-container-${_uid}`"
       :size="size"
-      :glow="glow"
+      :glow="true"
       :bottom="bottom">
       <ccw-row header>
         <ccw-label brand >CLIMATECLOCK.WORLD</ccw-label>
@@ -429,7 +448,7 @@ export default {
     tempIncStart: 1.0,
     tempIncPerYear: .05,
     tempStartDate: new Date(Date.UTC(2018, 0, 1, 0, 0, 0)),
-    tempText: "",
+    tempText: "global temperature rise",
     renewText: "global energy now renewable",
     actText: "how much time we have to act",
     renewPlaces: 9,
@@ -442,8 +461,10 @@ export default {
     ppmPlaces: 8,
     badFeed: "AUS PM attempts to exploit loophole in Paris Agreement | Kenyan locusts find ideal conditions to hatch | US election could further delay climate goals |",
     showA: false, showB: false, showC: false, showD: false, showE: false, showF: false, showG: false,
-    showJW: true,
+    showJW: true, 
+    showChart: true,
     chartWidth: 0,
+    factor: 50,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
@@ -511,10 +532,6 @@ export default {
     budgetText() {
       return `${Math.floor(this.CO2Budget).toLocaleString()}${/xs|sm|md/.test(this.size) ? '' : ' TONS'}`
     },
-    clockNums() {
-      // Mockup
-      return {y: this.remaining.years} 
-    },
     clockText() {
       let r = this.remaining, p = this.pad, pl = this.plural
       return /xs|sm|md/.test(this.size)
@@ -537,7 +554,8 @@ export default {
         this.ready = true
 
         // chart mockup
-        this.chartWidth = width
+        //this.chartWidth = width
+        this.chartWidth = document.getElementById('ccw-chart-wrapper').clientWidth
       })
     },
     // Items below are skin/theme-specific
@@ -579,6 +597,13 @@ export default {
   },
   watch: {
     ready() {
+      // chart mockup
+      this.$nextTick(() => {
+        let pb = window.getComputedStyle(document.body).getPropertyValue('padding-bottom'),
+            ch = document.getElementsByTagName('ccw-fixed')[0].clientHeight
+        document.body.style.paddingBottom = `calc(${pb} + ${ch}px)`
+      })
+
       if (!this.bottom || window.climateClockWidgetPaddingAdded) return
       window.climateClockWidgetPaddingAdded = true
       this.$nextTick(() => {
@@ -597,7 +622,7 @@ export default {
   &:after {
     content: $text;
     position: absolute;
-    bottom: 0; right: 0;
+    bottom: 0; left: 0;
     background-color: $color;
     padding: .25rem;
   }
@@ -633,6 +658,13 @@ $wide: 14;
 }
 
 // <ccw-jw>
+ccw-fixed {
+  position: fixed;
+  bottom: 0; 
+  left: 0; right: 0;
+  z-index: 1000;
+  box-shadow: 0 20px 30px rgba(black, 50%);
+}
 ccw-jw {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -647,7 +679,7 @@ ccw-jw {
   position: relative;
   width: 100%;
   white-space: nowrap;
-  padding-bottom: 1rem;
+  //padding-bottom: 1rem;
 
   *, *:before, *:after {
     box-sizing: inherit;
@@ -700,9 +732,17 @@ ccw-panel {
   padding: .5rem .75rem;
   &[deadline] {
     background: $accent;
+    ccw-jw[dark] & {
+      color: $accent;
+      background-color: black;
+    }
   }
   &[lifeline] {
     background: $secondary;
+    ccw-jw[dark] & {
+      color: $secondary;
+      background-color: black;
+    }
   }
 }
 ccw-div {
@@ -721,7 +761,7 @@ ccw-numbers {
 }
 ccw-lb {
   line-height: 1;
-  margin-bottom: -3px;
+  margin-bottom: -6px;
   font-size: 35px;
 }
 ccw-ticker-wrap {
@@ -731,6 +771,9 @@ ccw-ticker-wrap {
   flex: 2 0 0;
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   text-transform: uppercase;
+  ccw-jw[dark] & {
+    font-weight: 600;
+  }
 }
 ccw-ticker {
   position: absolute;
@@ -749,9 +792,17 @@ ccw-ticker-label {
   animation-name: feed-fade;
   animation-duration: 10s;
   ccw-panel[deadline] & {
+    ccw-jw[dark] & {
+      color: $accent;
+      background-color: black;
+    }
     background-color: $accent;
   }
   ccw-panel[lifeline] & {
+    ccw-jw[dark] & {
+      color: $secondary;
+      background-color: black;
+    }
     background-color: $secondary;
   }
   ccw-flexwrap:hover & {
@@ -782,6 +833,8 @@ ccw-brand {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  position: relative;
+
   ccw-c:first-of-type {
     color: $accent;
     margin-right: 7px;
@@ -796,8 +849,57 @@ ccw-brand {
     max-width: 80px;
     font-size: 65px;
   }
+  input[type="button"] {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+  }
 }
-
+ccw-chart-wrapper {
+  $chartBorder: 1rem;
+  width: calc(100% - $chartBorder * 2);
+  //border: $chartBorder solid lighten(black, 35%);
+  padding: $chartBorder $chartBorder * 2;
+  display: block;
+  background: lighten(black, 90%);
+  canvas {
+    background: lighten(black, 90%);
+  }
+}
+ccw-chart-control-panel {
+  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-size: 23px;
+  font-weight: normal;
+  padding: 1rem 3rem;
+  display: block;
+  .vue-slider-dot-handle, 
+  .vue-slider-dot-handle::after,
+  .vue-slider-dot-tooltip-inner,
+  .vue-slider-mark-step,
+  .vue-slider-process {
+    background-color: $accent;
+  }
+  .vue-slider-dot-handle::after,
+  .vue-slider-rail {
+    background-color: lighten($accent, 35%);
+  }
+}
+.slide-enter-active {
+   transition-duration: 0.2s;
+   //transition-timing-function: ease-out;
+}
+.slide-leave-active {
+   transition-duration: 0.2s;
+   //transition-timing-function: ease-out; //cubic-bezier(0, 1, 0.5, 1);
+}
+.slide-enter-to, .slide-leave {
+   max-height: 100px;
+   overflow: hidden;
+}
+.slide-enter, .slide-leave-to {
+   overflow: hidden;
+   max-height: 0;
+}
 
 
 // <ccw-container> is a column of 3 flex rows
@@ -871,7 +973,7 @@ ccw-row {
   background-color: $dark;
   display: flex;
   flex-direction: row;
-  margin-bottom: 1px;
+  //margin-bottom: 1px;
   &[header] {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 35%;
@@ -903,6 +1005,11 @@ ccw-row {
     color: $secondary;
     ccw-container[glow] & {
       @include glow($secondary)
+    }
+    ccw-clock[mockup] {
+      ccw-container[glow] & {
+        @include glow(desaturate($accent, 50%))
+      }
     }
   }
   // Leave the container
@@ -1006,6 +1113,13 @@ ccw-clock {
   &[feed][mockup] {
     color: $accent;
   }
+  // mockup
+  &[lifeline] {
+    ccw-feed[one] {
+      animation: widget-flicker 3s linear infinite;
+    }
+  }
+
   &[deadline] {
     ccw-container[glow] & {
       animation: widget-flicker 3s linear infinite;
@@ -1052,7 +1166,7 @@ ccw-clock {
 p.mockup {
   margin: 2rem 0 0 0;
 }
-@import 'vue-slider-component/theme/default';
+@import 'vue-slider-component/theme/material';
 ccw-control-panel {
   background-color: #fff6cd;
   display: block;
