@@ -18,7 +18,8 @@
     "vue": "^2.6.10",
     "vue-browser-detect-plugin": "^0.1.5",
     "vue-chartjs": "^3.5.0",
-    "vue-slider-component": "^3.1.1"
+    "vue-slider-component": "^3.1.1",
+    "vue-svg-inline-loader": "^1.5.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
