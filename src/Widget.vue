@@ -4,7 +4,7 @@
     <p>
       Option JW23 (Josiah Werning, p.23 of <a href="https://drive.google.com/open?id=1adFkoF2LF1jx78LQmDg8qDmFBPgVCfxP" target="_blank">PDF</a>)
     </p>
-    <ccw-mockup>
+    <ccw-ixed>
       <ccw-jw v-if="showJW" :size="size" dark>
         <ccw-brand>
           <ccw-c>c</ccw-c>
@@ -16,9 +16,7 @@
             <ccw-div>
               <ccw-text>DEADLINE:</ccw-text>
               <ccw-ticker-wrap>
-                <ccw-ticker-label>{{ actText }}</ccw-ticker-label>
-                <ccw-ticker one :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
-                <ccw-ticker two :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
+                <ccw-ticker-label solid>{{ actText }}</ccw-ticker-label>
               </ccw-ticker-wrap>
             </ccw-div>
             <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
@@ -39,6 +37,7 @@
       </ccw-jw>
       <transition name="slide">
         <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper">
+          <h1>#FLATTENTHECURVE</h1>
           <ccw-chart :width="chartWidth" :factor="factor" :styles="{height: '200px'}"></ccw-chart>
           <ccw-chart-control-panel>
             Scaling Factor
@@ -58,7 +57,7 @@
           </ccw-chart-control-panel>
         </ccw-chart-wrapper>
       </transition>
-    </ccw-mockup>
+    </ccw-ixed>
     <br><br>
 
     <ccw-jw v-if="showJW" size="md">
@@ -464,7 +463,7 @@ export default {
     showJW: true, 
     showChart: true,
     chartWidth: 0,
-    factor: 50,
+    factor: 80,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
@@ -791,6 +790,9 @@ ccw-ticker-label {
   animation-iteration-count: infinite;
   animation-name: feed-fade;
   animation-duration: 10s;
+  &[solid] {
+    animation: none;
+  }
   ccw-panel[deadline] & {
     ccw-jw[dark] & {
       color: $accent;
@@ -856,19 +858,29 @@ ccw-brand {
   }
 }
 ccw-chart-wrapper {
+  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-size: 23px;
   $chartBorder: 1rem;
   width: calc(100% - $chartBorder * 2);
   //border: $chartBorder solid lighten(black, 35%);
   padding: $chartBorder $chartBorder * 2;
+  box-shadow: 0 10px 80px rgba(black, .1) inset;
   display: block;
   background: lighten(black, 90%);
+  border-bottom: 1rem solid black;
+  position: relative;
   canvas {
-    background: lighten(black, 90%);
+    background: rgba(0,0,0,0);
+  }
+  h1 {
+    text-align: center;
+    left: 0;
+    width: 100%;
+    position: absolute;
+    opacity: .25;
   }
 }
 ccw-chart-control-panel {
-  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
-  font-size: 23px;
   font-weight: normal;
   padding: 1rem 3rem;
   display: block;

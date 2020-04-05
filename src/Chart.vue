@@ -16,6 +16,7 @@ export default {
     height: 100,
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       title: {
         display: false,
         fontSize: 30,
@@ -30,13 +31,16 @@ export default {
           ticks: {
             suggestedMin: 0, 
             suggestedMax: 10000,
-            maxTicksLimit: 3,
+            maxTicksLimit: 5,
           },
         }],
       },
       legend: {
         display: false,
-      }
+      },
+      layout: {
+        padding: {left: 0, right: 0, top: 0, bottom: 0},
+      },
     },
   }),
   props: {
@@ -61,7 +65,7 @@ export default {
             label: 'Green New Deal',
             backgroundColor: '#00dd77',
             //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
-            data: [0, 20, 100, 30, 0],
+            data: [0 + this.factor * 2, 20 + this.factor * (this.factor / 4), 100 + this.factor, 30, 0],
             borderColor: '#00dd77',
           }, {
             label: 'Current Trajectory',
