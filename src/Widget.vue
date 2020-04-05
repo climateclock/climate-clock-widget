@@ -1,15 +1,13 @@
 <template>
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <!-- time/renewable -->
-    <p>
-      Option JW23 (Josiah Werning, p.23 of <a href="https://drive.google.com/open?id=1adFkoF2LF1jx78LQmDg8qDmFBPgVCfxP" target="_blank">PDF</a>)
-    </p>
-    <ccw-ixed>
-      <ccw-jw v-if="showJW" :size="size" dark>
-        <ccw-brand>
-          <ccw-c>c</ccw-c>
-          <ccw-c>C</ccw-c>
-          <input type="button" @click="showChart = !showChart" :value="`Chart ${!showChart ? '🡻' : '🡹'}`">
+    <ccw-ixed v-if="showJW">
+      <ccw-jw :size="size" :dark="dark">
+        <ccw-brand adrian>
+          <img v-if="roundEarth" svg-inline src="./earth-round.svg">
+          <img v-if="!roundEarth" svg-inline src="./earth.svg">
+          <span>Climate<span lifeline>Clock</span></span>
+          <input type="button" @click="showChart = !showChart" :value="`${!showChart ? '🡻' : '🡹'}`">
         </ccw-brand>
         <ccw-flexwrap>
           <ccw-panel deadline>
@@ -19,7 +17,7 @@
                 <ccw-ticker-label solid>{{ actText }}</ccw-ticker-label>
               </ccw-ticker-wrap>
             </ccw-div>
-            <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
+            <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.minutes, 2) }}<ccw-lb>M</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>
             </ccw-numbers>
           </ccw-panel>
           <ccw-panel lifeline>
@@ -38,7 +36,7 @@
       <transition name="slide">
         <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper">
           <h1>#FLATTENTHECURVE</h1>
-          <ccw-chart :width="chartWidth" :factor="factor" :styles="{height: '200px'}"></ccw-chart>
+          <ccw-chart :width="chartWidth" :height="200" :factor="factor"></ccw-chart>
           <ccw-chart-control-panel>
             Scaling Factor
             <vue-slider 
@@ -75,7 +73,7 @@
               <ccw-ticker two :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
             </ccw-ticker-wrap>
           </ccw-div>
-          <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
+          <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.minutes, 2) }}<ccw-lb>M</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>
           </ccw-numbers>
         </ccw-panel>
         <ccw-panel lifeline>
@@ -106,7 +104,7 @@
               <ccw-ticker two :style="animationDuration">{{ badFeed }}&nbsp;</ccw-ticker>
             </ccw-ticker-wrap>
           </ccw-div>
-          <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>{{ pad(remaining.milliseconds, 2) }}<ccw-lb>MS</ccw-lb>
+          <ccw-numbers>{{ remaining.years }}<ccw-lb>Y</ccw-lb>{{ pad(remaining.days, 3) }}<ccw-lb>D</ccw-lb>{{ pad(remaining.hours, 2) }}<ccw-lb>H</ccw-lb>{{ pad(remaining.minutes, 2) }}<ccw-lb>M</ccw-lb>{{ pad(remaining.seconds, 2) }}<ccw-lb>S</ccw-lb>
           </ccw-numbers>
         </ccw-panel>
         <ccw-panel lifeline>
@@ -306,6 +304,22 @@
       <input type="checkbox" v-model="showF"><label>F&nbsp;</label>
       <input type="checkbox" v-model="showG"><label>G&nbsp;</label>
       <hr>
+      <h3>Josiah edition tunables!</h3>
+      <input type="checkbox" v-model="roundEarth"><label>Round earth</label>
+      <input type="checkbox" v-model="dark"><label>Dark</label>
+      <h3>* Renewables decimal places {{renewPlaces}} –> {{ renewablePercent | fixed(renewPlaces) }}%</h3>
+      <vue-slider 
+        v-model="renewPlaces"
+        :min="1"
+        :max="15"
+        :interval="1"
+        ></vue-slider>
+      <h3>* Time to act text –> {{ actText }}</h3>
+      <input type="text" v-model="actText"/>
+      <h3>* Renewable text –> {{ renewText }}</h3>
+      <input type="text" v-model="renewText"/>
+      <h3>* Lifeline feed (should be wide as widget)</h3>
+      <textarea type="text" v-model="feed"></textarea>
       <hr>
       <h3>* Temperature increase per year {{ tempIncPerYear | fixed(3) }}°C ({{ .5 / tempIncPerYear | fixed(1) }} years from 2018 for .5°C increase)</h3>
       <vue-slider 
@@ -348,20 +362,6 @@
         ></vue-slider>
       <hr>
       -->
-      <h3>* Renewables decimal places {{renewPlaces}} –> {{ renewablePercent | fixed(renewPlaces) }}%</h3>
-      <vue-slider 
-        v-model="renewPlaces"
-        :min="1"
-        :max="15"
-        :interval="1"
-        ></vue-slider>
-      <h3>* Time to act text –> {{ actText }}</h3>
-      <input type="text" v-model="actText"/>
-      <h3>* Renewable text –> {{ renewText }}</h3>
-      <input type="text" v-model="renewText"/>
-      <hr>
-      <h3>* Lifeline feed (should be wide as widget)</h3>
-      <textarea type="text" v-model="feed"></textarea>
       <h3>* Deadline feed (should be wide as widget)</h3>
       <textarea type="text" v-model="badFeed"></textarea>
     </ccw-control-panel>
@@ -462,6 +462,8 @@ export default {
     showA: false, showB: false, showC: false, showD: false, showE: false, showF: false, showG: false,
     showJW: true, 
     showChart: true,
+    roundEarth: false,
+    dark: true,
     chartWidth: 0,
     factor: 80,
 
@@ -490,7 +492,7 @@ export default {
     },
     remaining() {
       return countdown(this.deadline, this.now,
-        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS | countdown.MILLISECONDS)
+        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS )
     },
     
     // Items below are for experimental mockups
@@ -582,9 +584,9 @@ export default {
     })
 
     // Watch for container size changes and update sizing classes
-    //let resizeInterval = 0, tickInterval = 100
+    let resizeInterval = 0, tickInterval = 100
     // mockup
-    let resizeInterval = 0, tickInterval = 97
+    //let resizeInterval = 0, tickInterval = 97
     if (this.$browserDetect.isEdge) { // Slow down for the special browser
       resizeInterval = 250
       tickInterval = 250
@@ -596,13 +598,6 @@ export default {
   },
   watch: {
     ready() {
-      // chart mockup
-      this.$nextTick(() => {
-        let pb = window.getComputedStyle(document.body).getPropertyValue('padding-bottom'),
-            ch = document.getElementsByTagName('ccw-fixed')[0].clientHeight
-        document.body.style.paddingBottom = `calc(${pb} + ${ch}px)`
-      })
-
       if (!this.bottom || window.climateClockWidgetPaddingAdded) return
       window.climateClockWidgetPaddingAdded = true
       this.$nextTick(() => {
@@ -754,6 +749,7 @@ ccw-numbers {
   flex: 2 0 0;
   font-size: 72px;
   line-height: 1;
+  text-align: left;
   &[size="md"] {
     font-size: 80px;
   }
@@ -837,6 +833,14 @@ ccw-brand {
   align-items: center;
   position: relative;
 
+  &[adrian] {
+    flex-direction: column;
+    font-size: 10px;
+    color: $accent;
+    span[lifeline] {
+      color: $secondary;
+    }
+  }
   ccw-c:first-of-type {
     color: $accent;
     margin-right: 7px;
@@ -846,24 +850,41 @@ ccw-brand {
       margin-right: 0;
     }
     flex-direction: column;
-    flex: 1 0 0;
+    //flex: 2 0 0;
     min-width: 80px;
-    max-width: 80px;
-    font-size: 65px;
+    //max-width: 80px;
+    font-size: 5vw;
+    svg {
+      max-height: 100px;
+      max-width: 80%;
+    }
+    span {
+      display: none;
+    }
   }
   input[type="button"] {
     position: absolute;
-    bottom: 1rem;
-    right: 1rem;
+    bottom: 0rem;
+    right: 0rem;
+    cursor: pointer;
+    z-index: 2001;
+
+  }
+  svg {
+    max-height: 80px;
+    max-width: 80%;
+    margin-bottom: 7px;
   }
 }
 ccw-chart-wrapper {
+  $chartWidth: 1rem;
+
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   font-size: 23px;
-  $chartBorder: 1rem;
-  width: calc(100% - $chartBorder * 2);
-  //border: $chartBorder solid lighten(black, 35%);
-  padding: $chartBorder $chartBorder * 2;
+  width: calc(100% - $chartWidth * 2);
+  //border: $chartWidth solid lighten(black, 35%);
+  padding: $chartWidth;
+
   box-shadow: 0 10px 80px rgba(black, .1) inset;
   display: block;
   background: lighten(black, 90%);
@@ -873,17 +894,26 @@ ccw-chart-wrapper {
     background: rgba(0,0,0,0);
   }
   h1 {
+    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+    font-weight: normal;
     text-align: center;
     left: 0;
     width: 100%;
     position: absolute;
-    opacity: .25;
+    opacity: .1;
+    font-size: 60px;
+    margin-top: 1rem;
+    //color: transparent;
+    //text-shadow: 1px 3px 6px #ddd, 0 0 0 #000, 1px 3px 6px #ddd;
   }
 }
 ccw-chart-control-panel {
   font-weight: normal;
-  padding: 1rem 3rem;
+  padding: 0rem 3rem;
   display: block;
+  .vue-slider {
+    margin-bottom: 1.5rem;
+  }
   .vue-slider-dot-handle, 
   .vue-slider-dot-handle::after,
   .vue-slider-dot-tooltip-inner,
@@ -897,20 +927,22 @@ ccw-chart-control-panel {
   }
 }
 .slide-enter-active {
-   transition-duration: 0.2s;
+   transition-duration: .2s;
    //transition-timing-function: ease-out;
 }
 .slide-leave-active {
-   transition-duration: 0.2s;
+   transition-duration: .2s;
    //transition-timing-function: ease-out; //cubic-bezier(0, 1, 0.5, 1);
 }
 .slide-enter-to, .slide-leave {
-   max-height: 100px;
+   max-height: 310px;
    overflow: hidden;
+   opacity: 1;
 }
 .slide-enter, .slide-leave-to {
    overflow: hidden;
    max-height: 0;
+   opacity: 0;
 }
 
 

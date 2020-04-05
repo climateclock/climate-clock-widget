@@ -13,7 +13,6 @@ export default {
   data: () => ({
     green: '#00dd72',
     red: '#ff0000',
-    height: 100,
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -41,6 +40,13 @@ export default {
       layout: {
         padding: {left: 0, right: 0, top: 0, bottom: 0},
       },
+      tooltips: {
+        titleFontSize: 20,
+        bodyFontSize: 14,
+        position: 'average',
+        mode: 'index',
+        intersect: false,
+      },
     },
   }),
   props: {
@@ -50,6 +56,7 @@ export default {
   watch: {
     factor() {
       this.updateData()
+      console.log(this.$data._chart)
     },
     green() {
 
@@ -65,14 +72,14 @@ export default {
             label: 'Green New Deal',
             backgroundColor: '#00dd77',
             //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
-            data: [0 + this.factor * 2, 20 + this.factor * (this.factor / 4), 100 + this.factor, 30, 0],
+            data: [0, 0 + this.factor * 2, 20 + this.factor * (this.factor / 4), 100 + this.factor, 30, 0],
             borderColor: '#00dd77',
           }, {
             label: 'Current Trajectory',
-            backgroundColor: this.factor > 30 ? '#ff0000' : '#00dd77',
+            backgroundColor: this.factor > 50 ? '#ff0000' : '#00dd77',
             //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
-            data: [0 + this.factor, 20 + this.factor * this.factor, 100 + this.factor, 30, 0],
-            borderColor: this.factor > 30 ? '#ff0000' : '#00dd77',
+            data: [0, 0 + this.factor, Math.pow(this.factor, 2), 100 + this.factor, 30, 0],
+            borderColor: this.factor > 50 ? '#ff0000' : '#00dd77',
             yAxisID: 'right-y-axis',
           }
         ]
