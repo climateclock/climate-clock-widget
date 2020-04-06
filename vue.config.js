@@ -10,7 +10,7 @@ module.exports = {
         .options({})
   },
   configureWebpack: {
-    output: {filename: 'widget-v1jw.js'}
+    output: {filename: 'widget-v2jw.js'}
   },
   css: {
     // Don't produce a separate css file

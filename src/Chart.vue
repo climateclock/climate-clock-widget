@@ -117,8 +117,8 @@ export default {
             //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
             borderColor: 'black',
             borderDash: [10, 5],
-            clip: {left: false, top: false, right: this.actualChartWidth * -.4, bottom: false},
             order: 1,
+            clip: {left: false, top: false, right: this.actualChartWidth * -.4, bottom: false},
           }
         ]
       }
