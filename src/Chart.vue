@@ -83,7 +83,7 @@ export default {
     updateData() {
       this.chartData = {
         //labels: [...Array(6).keys()].map(i => (2020 + 2 * i)),
-        labels: [2020, 2022, 2024, 2026, 2028, 2030],
+        labels: [2020, 2030, 2040, 2050, 2060, 2070],
         datasets: [
           {
             label: 'Renewables economy',
