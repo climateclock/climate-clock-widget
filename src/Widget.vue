@@ -465,7 +465,7 @@ export default {
     roundEarth: false,
     dark: true,
     chartWidth: 0,
-    factor: 80,
+    factor: 100,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container

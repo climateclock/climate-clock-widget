@@ -54,6 +54,8 @@ export default {
         position: 'average',
         mode: 'index',
         intersect: false,
+        // Exclude 1.5°C line from tooltip
+        filter: tooltip => tooltip.datasetIndex != 1,
       },
       elements: {
         line: {tension: .4},
@@ -84,26 +86,39 @@ export default {
         labels: [2020, 2022, 2024, 2026, 2028, 2030],
         datasets: [
           {
-            label: 'Clipped thing',
-            fill: false,
-            data: [0, 0 + this.factor * 2, 20 + this.factor * (this.factor / 4), 100 + this.factor, 30, 0],
-            //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
-            borderColor: 'black',
-            borderDash: [10, 5],
-            clip: {left: false, top: false, right: this.actualChartWidth * -.4, bottom: false}
-          }, {
-            label: 'Green New Deal',
+            label: 'Renewables economy',
             backgroundColor: '#00dd77',
             data: [0, 0 + this.factor * 2, 20 + this.factor * (this.factor / 4), 100 + this.factor, 30, 0],
             //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
             borderColor: '#00dd77',
+            order: 2,
           }, {
-            label: 'Current Trajectory',
+            label: '1.5°C ceiling',
+            data: [200, 200, 200, 200, 200, 200],
+            fill: false,
+            backgroundColor: 'red',
+            borderColor: 'red',
+            borderWidth: 1,
+            pointStyle: 'dash',
+            tooltips: false,
+            order: 0,
+          }, {
+            label: 'Big cost, emissions, etc.',
             backgroundColor: this.factor > 50 ? '#ff0000' : '#00dd77',
             data: [0, 0 + this.factor, Math.pow(this.factor, 2), 100 + this.factor, 30, 0],
             //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
             borderColor: this.factor > 50 ? '#ff0000' : '#00dd77',
             yAxisID: 'right-y-axis',
+            order: 3,
+          }, {
+            label: 'Clipped thing',
+            fill: false,
+            data: [0, 0 + this.factor * 2, 20 + this.factor * (this.factor / 4), 100 + this.factor, 30, 0].map(i => i + 50),
+            //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
+            borderColor: 'black',
+            borderDash: [10, 5],
+            clip: {left: false, top: false, right: this.actualChartWidth * -.4, bottom: false},
+            order: 1,
           }
         ]
       }
