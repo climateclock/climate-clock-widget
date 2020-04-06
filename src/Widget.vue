@@ -108,9 +108,6 @@ export default {
           this.size = sz[1]
         }
         this.ready = true
-
-        // chart mockup
-        this.chartWidth = width
       })
     },
     // Items below are skin/theme-specific
