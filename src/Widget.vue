@@ -34,7 +34,7 @@
         </ccw-flexwrap>
       </ccw-jw>
       <transition name="slide">
-        <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper">
+        <ccw-chart-wrapper v-if="showChart" :dark="dark" id="ccw-chart-wrapper">
           <h1>#FLATTENTHECURVE</h1>
           <ccw-chart :width="chartWidth" :height="200" :factor="factor"></ccw-chart>
           <ccw-chart-control-panel>
@@ -888,7 +888,6 @@ ccw-chart-wrapper {
   box-shadow: 0 10px 80px rgba(black, .1) inset;
   display: block;
   background: lighten(black, 90%);
-  border-bottom: 1rem solid black;
   position: relative;
   canvas {
     // Allows the text to go behind the graph
@@ -907,6 +906,9 @@ ccw-chart-wrapper {
     margin-top: 1.3rem;
     //color: transparent;
     //text-shadow: 1px 3px 6px #ddd, 0 0 0 #000, 1px 3px 6px #ddd;
+  }
+  &[dark] {
+    border-bottom: 1rem solid black;
   }
 }
 ccw-chart-control-panel {
