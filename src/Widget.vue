@@ -555,8 +555,7 @@ export default {
         this.ready = true
 
         // chart mockup
-        //this.chartWidth = width
-        this.chartWidth = document.getElementById('ccw-chart-wrapper').clientWidth
+        this.chartWidth = width
       })
     },
     // Items below are skin/theme-specific
