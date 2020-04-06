@@ -104,10 +104,10 @@ export default {
             order: 0,
           }, {
             label: 'Big cost, emissions, etc.',
-            backgroundColor: this.factor > 50 ? '#ff0000' : '#00dd77',
+            backgroundColor: this.factor > 10 ? '#ff0000' : '#00dd77',
             data: [0, 0 + this.factor, Math.pow(this.factor, 2), 100 + this.factor, 30, 0],
             //data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
-            borderColor: this.factor > 50 ? '#ff0000' : '#00dd77',
+            borderColor: this.factor > 10 ? '#ff0000' : '#00dd77',
             yAxisID: 'right-y-axis',
             order: 3,
           }, {

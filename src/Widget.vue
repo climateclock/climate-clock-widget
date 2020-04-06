@@ -461,7 +461,7 @@ export default {
     badFeed: "AUS PM attempts to exploit loophole in Paris Agreement | Kenyan locusts find ideal conditions to hatch | US election could further delay climate goals |",
     showA: false, showB: false, showC: false, showD: false, showE: false, showF: false, showG: false,
     showJW: true, 
-    showChart: true,
+    showChart: false,
     roundEarth: false,
     dark: true,
     chartWidth: 0,
@@ -882,7 +882,7 @@ ccw-chart-wrapper {
 
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   font-size: 23px;
-  width: calc(100% - $chartWidth * 2);
+  width: calc(100% - #{$chartWidth * 2});
   //border: $chartWidth solid lighten(black, 35%);
   padding: $chartWidth;
 
