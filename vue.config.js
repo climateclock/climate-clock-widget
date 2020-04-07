@@ -10,7 +10,7 @@ module.exports = {
         .options({})
   },
   configureWebpack: {
-    output: {filename: 'widget-v2jw.js'}
+    output: {filename: 'widget-v2jw.js?id=[chunkhash]'}
   },
   css: {
     // Don't produce a separate css file
@@ -23,5 +23,5 @@ module.exports = {
   // Don't produce a sourcemap
   productionSourceMap: false,
   // Use one static name
-  filenameHashing: false
+  //filenameHashing: false
 }

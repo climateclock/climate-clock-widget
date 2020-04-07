@@ -413,8 +413,6 @@
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
-import Chart from './Chart.vue'
-
 // Import defaults from json file to keep them in sync
 import clock from './clock.json'
 
@@ -428,7 +426,7 @@ export default {
     lifeline: {type: String, default: null},
   },
   components: {
-    'ccw-chart': Chart,
+    'ccw-chart': () => import(/* webpackChunkName: "../flatten" */ './Chart.vue'),
   },
   data: () => ({
     githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
