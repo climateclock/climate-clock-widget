@@ -53,6 +53,7 @@
               :marks="true"
               :interval="10"
               :adsorb="true"
+              v-bind:class="{good: factorA >= 90}"
               ></vue-slider>
             Speed of action
             <vue-slider 
@@ -61,8 +62,9 @@
               :data="Object.keys(speeds)"
               :included="true"
               :adsorb="true"
+              v-bind:class="{good: speeds[factorB] >= 90}"
               ></vue-slider>
-            <p>This is a mockup, the data is fake.</p>
+            <p>This is a mockup, the data is fake and bad.</p>
             <p>Here's a blurb explaining what this chart means and some dynamically changing text. Currently "investment" is {{ factorA }} and "speed" is {{ speeds[factorB] }}. This paragraph will show implications of these values.</p>
           </ccw-chart-control-panel>
         </ccw-chart-wrapper>
@@ -884,9 +886,11 @@ ccw-chart-wrapper {
     //text-shadow: 1px 3px 6px #ddd, 0 0 0 #000, 1px 3px 6px #ddd;
   }
   h2 {
-    font-size: 20px;
+    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+    font-size: 14px;
     margin-top: 15rem;
-    opacity: .5;
+    opacity: 1;
+    text-transform: uppercase;
   }
   &[dark] {
     border-bottom: 1rem solid black;
@@ -918,6 +922,19 @@ ccw-chart-wrapper {
     .vue-slider-dot-handle::after,
     .vue-slider-rail {
       background-color: rgba(lighten($accent, 35%), .5);
+    }
+    .good {
+      .vue-slider-dot-handle, 
+      .vue-slider-dot-handle::after,
+      .vue-slider-dot-tooltip-inner,
+      .vue-slider-mark-step,
+      .vue-slider-process {
+        background-color: $secondary;
+      }
+      .vue-slider-dot-handle::after,
+      .vue-slider-rail {
+        background-color: rgba(lighten($secondary, 35%), .5);
+      }
     }
   }
 }
