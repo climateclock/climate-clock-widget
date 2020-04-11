@@ -158,4 +158,8 @@ export default {
 </script>
 
 <style lang="scss">
+
+$accent: #ff0000;
+$secondary: #00dd72;
+
 </style>
