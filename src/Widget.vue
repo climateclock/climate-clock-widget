@@ -3,7 +3,13 @@
     <!-- Main Widget -->
     <ccw-wrapper :id="`ccw-container-${_uid}`" :size="size" :dark="dark">
       <ccw-brand @click="showChart = !showChart">
-        <img svg-inline src="./climateclock.svg">
+        <img logo svg-inline src="./climateclock.svg">
+        <ccw-div>
+          <img science svg-inline src="./seethescience.svg">
+          <ccw-div>
+          SEE THE<br>SCIENCE
+          </ccw-div>
+        </ccw-div>
       </ccw-brand>
       <ccw-flexwrap>
         <ccw-panel deadline>
@@ -317,6 +323,8 @@ ccw-fixed {
   z-index: 1000;
   box-shadow: 0 20px 30px rgba(black, 50%);
 }
+
+$wrapHeight: 7rem; // 16 * 7 = 112
 ccw-wrapper {
   user-select: none;
   -moz-osx-font-smoothing: grayscale;
@@ -327,26 +335,22 @@ ccw-wrapper {
   justify-content: space-between;
   font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
   font-size: 22px;
-  //font-weight: 600;
   position: relative;
   width: 100%;
   white-space: nowrap;
-  //padding-bottom: 1rem;
+  height: $wrapHeight;
 
   *, *:before, *:after {
-    box-sizing: inherit;
+    box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     text-align: center;
   }
   &[size="lg"] {
-    font-size: 20px;
+    font-size: 19px;
+    height: $wrapHeight - 1rem;
   }
   &[size="md"]{
-    font-size: 25px;
-  }
-  &[limit][size="md"]{
-    max-width: 700px;
     font-size: 25px;
   }
   &[size="sm"] {
@@ -357,19 +361,21 @@ ccw-wrapper {
   }
   &[size="md"], &[size="sm"], &[size="xs"] {
     flex-direction: row; 
+    height: 2 * $wrapHeight;
   }
 }
-
-$panelH: 7rem;
 
 ccw-flexwrap {
   display: flex;
   flex-direction: row;
   flex: 10 0 0;
   width: 100%;
-  height: $panelH;
+  height: $wrapHeight;
+  ccw-wrapper[size="lg"] & {
+    height: $wrapHeight - 1rem;
+  }
   ccw-wrapper[size="md"] &, ccw-wrapper[size="sm"] &, ccw-wrapper[size="xs"] & {
-    height: $panelH * 2;
+    height: $wrapHeight * 2;
     flex-direction: column;
   }
 
@@ -381,7 +387,6 @@ ccw-panel {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  //padding: .5rem .75rem;
   &[deadline] {
     color: $accent;
     background: $accentDark;
@@ -397,40 +402,62 @@ ccw-panel {
     flex: 1 0 0;
   }
 }
+$ccwFont: 70px;
 ccw-display {
   flex: 2 0 0;
   font-size: 70px;
-  line-height: 1;
+  line-height: 1.1;
   text-align: left;
   margin: 0rem .75rem;
   position: relative;
-  &[size="md"] {
+  ccw-wrapper[size="lg"] & {
+    line-height: 1.2;
+    font-size: 54px;
+  }
+  ccw-wrapper[size="md"] & {
     font-size: 80px;
   }
-}
-ccw-display[decimal] {
-  &::after {
+  &[decimal]::after {
     content: "";
     position: absolute;
-    left: 76px;
-    bottom: 17px;
+    left: $ccwFont + 6px;
+    bottom: 14px;
     width: 10px;
     height: 10px;
     background-color: $secondary;
   }
 }
+ccw-wrapper[size="lg"] ccw-display[decimal]::after {
+  left: $ccwFont - 12px;
+  width: 8px;
+  height: 8px;
+}
 ccw-span {
   line-height: 1;
   margin-bottom: -6px;
   font-size: 35px;
+  ccw-wrapper[size="lg"] & {
+    font-size: 30px;
+    margin-bottom: -4px;
+  }
+  ccw-wrapper[size="md"] & {
+    font-size: 80px;
+  }
 }
 ccw-ticker-wrap {
   position: relative;
   text-align: left;
-  height: 100%;
+  //height: 100%;
   flex: 2 0 0;
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   text-transform: uppercase;
+  line-height: 1;
+  background: black;
+  padding-top: 6px;
+
+  ccw-wrapper[size="lg"] & {
+    font-size: 17px;
+  }
   ccw-wrapper[dark] & {
     font-weight: 600;
   }
@@ -472,56 +499,49 @@ ccw-ticker-label {
 }
 
 ccw-text {
-  flex: 1 0 1;
-  //padding-right: .5rem;
-  margin: .2rem .4rem;
+  margin: .3rem .5rem;
 }
 ccw-brand {
   font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
   line-height: .85;
   cursor: pointer;
-  //flex: 1.5 0 0;
   width: 8rem;
   background: black;
   color: $secondary;
 
   display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-
+  justify-content: space-around;
   flex-direction: column;
-  font-size: 10px;
-  span[lifeline] {
-    color: $accent;
-  }
+  align-items: center;
 
+  font-size: 10px;
+
+  ccw-wrapper[size="lg"] & {
+    width: 7rem;
+  }
   ccw-wrapper[size="md"] &, ccw-wrapper[size="sm"] &, ccw-wrapper[size="xs"] & {
     flex-direction: column;
-    //flex: 2 0 0;
     min-width: 80px;
-    //max-width: 80px;
-    font-size: 5vw;
-    svg {
-      max-height: 100px;
-    }
-    span {
-      display: none;
-    }
-  }
-  input[type="button"] {
-    position: absolute;
-    bottom: 0rem;
-    right: 0rem;
-    cursor: pointer;
-    z-index: 2001;
-
   }
   svg {
     outline: none;
-    //max-height: 80px;
+    display: block;
+  }
+  svg[logo] {
+    max-height: 35%;
     max-width: 80%;
-    //margin-bottom: 7px;
+    padding-top: .5rem;
+  }
+  svg[science] {
+    margin-right: .5rem;
+  }
+  > ccw-div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    font-size: .75rem;
   }
 }
 @import "slider";
@@ -550,24 +570,19 @@ ccw-brand {
   h2 {
     font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
     font-weight: normal;
-    text-align: center;
-    left: 0;
-    width: 100%;
+    right: 2rem;
     position: absolute;
     opacity: 1;
     font-size: 14px;
-    margin-top: 19rem;
-    margin-right: 30px;
+    margin-top: 17.5rem;
     text-transform: uppercase;
     z-index: 1;
   }
   ccw-div {
     flex: 3 0 0;
     position: relative;
-    box-sizing: border-box;
   }
   ccw-control-panel {
-    box-sizing: border-box;
     flex: 1 0 0;
     font-weight: normal;
     padding: 2rem 3rem;
