@@ -43,7 +43,6 @@ export default {
       plugins: {
         'datalabels': {
           anchor: 'end',
-          //rotation: -30,
           align: 'top',
           offset: 0,
           color: 'black',
@@ -54,7 +53,9 @@ export default {
           display: context => {
             return context.dataIndex == 9
           },
-          formatter: (value, context) => [, 'EMISSIONS', '', 'TEMPERATURE'][context.dataset.order],
+          formatter: (value, context) => {
+            return [, 'EMISSIONS', '', 'TEMPERATURE'][context.dataset.order]
+          },
         },
       },
       responsive: true,
@@ -67,12 +68,17 @@ export default {
           scaleLabel: {
             display: true,
             labelString: 'CONSEQUENCES',
+            fontFamily: 'katwijk_monoblack',
+            fontSize: 14,
+            fontColor: 'black',
           },
           ticks: {
+            fontFamily: 'katwijk_monolight',
+            fontSize: 14,
+            fontColor: 'black',
             min: 0,
             max: 100,
             maxTicksLimit: 2,
-            //beginAtZero: true,
             callback: (value, index) => (['Worse', 'Better'][index]),
           },
           gridLines: {
@@ -140,6 +146,7 @@ export default {
             borderColor: this.color(k),
             backgroundColor: this.color(k),
             pointBorderColor: 'transparent',
+            pointStyle: 'dash',
             fill: false,
             data: E[Math.floor(k / 10)],
             yAxisID: 'right-y-axis',
@@ -151,6 +158,7 @@ export default {
             borderColor: this.color(k, false),
             backgroundColor: this.color(k, false),
             pointBorderColor: 'transparent',
+            pointStyle: 'dash',
             fill: false,
             data: T[Math.floor(k / 10)],
             yAxisID: 'right-y-axis',
