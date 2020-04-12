@@ -2,10 +2,8 @@
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <!-- Main Widget -->
     <ccw-wrapper :id="`ccw-container-${_uid}`" :size="size" :dark="dark">
-      <ccw-brand @click="showChart = !showChart" adrian>
-        <img svg-inline src="./earth.svg">
-        <span>Climate<span lifeline>Clock</span></span>
-        <input type="button" :value="`${!showChart ? '🡻' : '🡹'}`">
+      <ccw-brand @click="showChart = !showChart">
+        <img svg-inline src="./climateclock.svg">
       </ccw-brand>
       <ccw-flexwrap>
         <ccw-panel deadline>
@@ -27,7 +25,7 @@
               <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
             </ccw-ticker-wrap>
           </ccw-div>
-          <ccw-display>{{ renewablePercent }}%</ccw-display>
+          <ccw-display decimal>{{ renewablePercent }}%</ccw-display>
         </ccw-panel>
       </ccw-flexwrap>
     </ccw-wrapper>
@@ -178,6 +176,7 @@ export default {
     renewablePercent() {
       let tElapsed = this.now - this.renewStartDate.getTime()
       return (this.renewStartPct + (tElapsed / 1000 * this.renewIncPerSecond)).toFixed(this.renewPlaces)
+        .replace('.', '\u200a')
     },
 
     // Items below are skin/theme-specific
@@ -404,8 +403,20 @@ ccw-display {
   line-height: 1;
   text-align: left;
   margin: 0rem .75rem;
+  position: relative;
   &[size="md"] {
     font-size: 80px;
+  }
+}
+ccw-display[decimal] {
+  &::after {
+    content: "";
+    position: absolute;
+    left: 76px;
+    bottom: 17px;
+    width: 10px;
+    height: 10px;
+    background-color: $secondary;
   }
 }
 ccw-span {
@@ -508,9 +519,9 @@ ccw-brand {
   }
   svg {
     outline: none;
-    max-height: 80px;
+    //max-height: 80px;
     max-width: 80%;
-    margin-bottom: 7px;
+    //margin-bottom: 7px;
   }
 }
 @import "slider";
