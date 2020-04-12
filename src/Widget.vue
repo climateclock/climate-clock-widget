@@ -156,6 +156,7 @@ export default {
     // Ascending sizes work like breakpoints, adding an html attribute to the container
     size: 'hide',
     sizes: [[0, 'hide'], [224, 'xs'], [320, 'sm'], [540, 'md'], [960, 'lg'], [1200, 'xl']], 
+    lastSize: 0,
   }),
   computed: {
     // Deadline calculation
@@ -213,9 +214,12 @@ export default {
     setSize() {
       // Toggle this to force-re-render (hack: https://michaelnthiessen.com/force-re-render/)
       let chartShouldBeShown = this.showChart
-      if (this.ready) { // Don't force-re-render before the first view
+      let currentViewportSize = window.innerWidth
+      // Don't force-re-render before the first view, or when size hasn't changed
+      if (this.ready && this.lastSize != currentViewportSize) { 
         this.showChart = false
       }
+      this.lastSize = currentViewportSize
 
       this.$nextTick(() => {
         let width = document.getElementById(`ccw-container-${this._uid}`).clientWidth
