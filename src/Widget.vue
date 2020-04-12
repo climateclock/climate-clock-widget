@@ -1,7 +1,7 @@
 <template>
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <!-- Main Widget -->
-    <ccw-wrapper :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
+    <ccw-wrapper :id="`ccw-container-${_uid}`" :size="size" :dark="dark">
       <ccw-brand @click="showChart = !showChart" adrian>
         <img svg-inline src="./earth.svg">
         <span>Climate<span lifeline>Clock</span></span>
@@ -38,7 +38,7 @@
         <ccw-div>
           <h2>1.5°C Global Temperature Rise</h2>
           <ccw-chart 
-            :width="chartWidth" :height="400" 
+            :height="400" 
             :factorA="factorA" :factorB="speeds[factorB]"
             :weightA="weightA" :weightB="weightB"
             ></ccw-chart>
@@ -140,9 +140,8 @@ export default {
     renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
     
     // Chart 
-    chartWidth: 0,
     factorA: 0, factorB: 0,
-    showChart: true,
+    showChart: false,
     speeds: {'Slow':0, ' ':20, '  ':40, '   ':60, '    ':80, 'Fast':100},
     weightA: .5, weightB: .5,
 
@@ -206,19 +205,21 @@ export default {
     */
   },
   methods: {
-    setChartRatio(width) {
-      width = width || document.getElementById(`ccw-container-${this._uid}`).clientWidth
-      this.chartWidth = width * .666 // XXX: Based on 2/3rds layout
-    },
     setSize() {
+      // Toggle this to force-re-render (hack: https://michaelnthiessen.com/force-re-render/)
+      let chartShouldBeShown = this.showChart
+      if (this.ready) { // Don't force-re-render before the first view
+        this.showChart = false
+      }
+
       this.$nextTick(() => {
         let width = document.getElementById(`ccw-container-${this._uid}`).clientWidth
         for (let sz of this.sizes) {
           if (width < sz[0]) break
           this.size = sz[1]
         }
-        this.setChartRatio(width)
         this.ready = true
+        this.showChart = chartShouldBeShown
       })
     },
     // Items below are skin/theme-specific
@@ -257,7 +258,6 @@ export default {
     setInterval(() => { this.now = new Date() }, tickInterval)
   },
   mounted() {
-    this.setChartRatio()
   },
   watch: {
     ready() {
@@ -323,7 +323,6 @@ ccw-wrapper {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
-  cursor: pointer;
   display: flex;
   flex-direction: row-reverse; 
   justify-content: space-between;
@@ -469,7 +468,9 @@ ccw-text {
 ccw-brand {
   font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
   line-height: .85;
-  flex: 1.5 0 0;
+  cursor: pointer;
+  //flex: 1.5 0 0;
+  width: 8rem;
   background: black;
   color: $secondary;
 
@@ -519,13 +520,8 @@ ccw-brand {
   //@import "node_modules/vue-slider-component/lib/styles/slider.scss";
   //@import "node_modules/vue-slider-component/lib/theme/material.scss";
 
-  $chartWidth: 1rem;
-
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   font-size: 23px;
-  //width: calc(100% - #{$chartWidth * 2});
-  //border: $chartWidth solid lighten(black, 35%);
-  //padding: $chartWidth;
 
   border-bottom: 1rem solid black;
   box-shadow: 0 10px 80px rgba(black, .1) inset;

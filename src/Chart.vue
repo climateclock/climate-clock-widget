@@ -52,7 +52,6 @@ export default {
             family: 'katwijk_monoblack',
           },
           display: context => {
-            console.log(context)
             return context.dataIndex == 9
           },
           formatter: (value, context) => [, 'EMISSIONS', '', 'TEMPERATURE'][context.dataset.order],
@@ -110,15 +109,12 @@ export default {
     factorB() { this.updateData() },
     weightA() { this.updateData() },
     weightB() { this.updateData() },
-    width() {
-      this.renderChart(this.chartData, this.options)
-    },
   },
   methods: {
     color(k, bold = true) {
       if (bold)
-        return k > 90 ? this.green : (k > 60 ? this.brown : this.red)
-      return k > 90 ? this.ltGreen : (k > 60 ? this.ltBrown : this.ltRed)
+        return k > 90 ? this.green : (k > 40 ? this.brown : this.red)
+      return k > 90 ? this.ltGreen : (k > 40 ? this.ltBrown : this.ltRed)
     },
     updateData() {
       // Apply weights to the factors
