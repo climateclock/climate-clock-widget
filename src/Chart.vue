@@ -53,7 +53,7 @@ export default {
           },
           display: context => {
             console.log(context)
-            return context.dataIndex == 14
+            return context.dataIndex == 9
           },
           formatter: (value, context) => [, 'EMISSIONS', '', 'TEMPERATURE'][context.dataset.order],
         },
@@ -117,8 +117,8 @@ export default {
   methods: {
     color(k, bold = true) {
       if (bold)
-        return k > 90 ? this.green : (k > 50 ? this.brown : this.red)
-      return k > 90 ? this.ltGreen : (k > 50 ? this.ltBrown : this.ltRed)
+        return k > 90 ? this.green : (k > 60 ? this.brown : this.red)
+      return k > 90 ? this.ltGreen : (k > 60 ? this.ltBrown : this.ltRed)
     },
     updateData() {
       // Apply weights to the factors

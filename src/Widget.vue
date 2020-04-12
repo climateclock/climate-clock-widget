@@ -144,7 +144,7 @@ export default {
     factorA: 0, factorB: 0,
     showChart: true,
     speeds: {'Slow':0, ' ':20, '  ':40, '   ':60, '    ':80, 'Fast':100},
-    weightA: .3, weightB: .7,
+    weightA: .5, weightB: .5,
 
     // Items below are for experimental mockups
     dark: true,
