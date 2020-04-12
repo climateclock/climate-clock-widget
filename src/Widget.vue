@@ -45,7 +45,6 @@
         </ccw-div>
         <ccw-control-panel id="ccw-slider">
           Investment
-          <range-slider v-model="factorA"></range-slider>
           <vue-slider
             v-model="factorA"
             :marks="true"
@@ -145,7 +144,7 @@ export default {
     factorA: 0, factorB: 0,
     showChart: true,
     speeds: {'Slow':0, ' ':20, '  ':40, '   ':60, '    ':80, 'Fast':100},
-    weightA: .7, weightB: .3,
+    weightA: .3, weightB: .7,
 
     // Items below are for experimental mockups
     dark: true,
