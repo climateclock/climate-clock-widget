@@ -37,7 +37,7 @@ export default {
         display: false,
       },
       layout: {
-        padding: {left: 16, right: 16, top: 32, bottom: 16},
+        padding: {left: 16, right: 48, top: 32, bottom: 16},
       },
       maintainAspectRatio: false,
       plugins: {
@@ -122,6 +122,14 @@ export default {
         return k > 90 ? this.green : (k > 40 ? this.brown : this.red)
       return k > 90 ? this.ltGreen : (k > 40 ? this.ltBrown : this.ltRed)
     },
+    getAlignmentOptions() {
+      // Configuration junk: { axisSide, paddingRight, paddingLeft }
+      if (/xs|sm|md/.test(this.size)) {
+        return ['right', 0, 32]
+      } else {
+        return ['left', 16, 0]
+      }
+    },
     updateData() {
       // Apply weights to the factors
       let wA = this.weightA
@@ -176,8 +184,4 @@ export default {
 </script>
 
 <style lang="scss">
-
-$accent: #ff0000;
-$secondary: #00dd72;
-
 </style>

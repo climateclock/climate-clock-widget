@@ -1,8 +1,8 @@
 <template>
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
     <!-- Main Widget -->
-    <ccw-wrapper :id="`ccw-container-${_uid}`" :size="size" :dark="dark">
-      <ccw-brand @click="showChart = !showChart">
+    <ccw-wrapper :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
+      <ccw-brand>
         <img logo svg-inline src="./climateclock.svg">
         <ccw-div>
           <img science svg-inline src="./seethescience.svg">
@@ -14,7 +14,7 @@
       <ccw-flexwrap>
         <ccw-panel deadline>
           <ccw-div>
-            <ccw-text>DEADLINE:</ccw-text>
+            <ccw-life-and-death>DEADLINE:</ccw-life-and-death>
             <ccw-ticker-wrap>
               <ccw-ticker-label still>{{ deadlineLabel }}</ccw-ticker-label>
             </ccw-ticker-wrap>
@@ -24,7 +24,7 @@
         </ccw-panel>
         <ccw-panel lifeline>
           <ccw-div>
-            <ccw-text>LIFELINE:</ccw-text>
+            <ccw-life-and-death>LIFELINE:</ccw-life-and-death>
             <ccw-ticker-wrap>
               <ccw-ticker-label>{{ lifelineLabel }}</ccw-ticker-label>
               <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
@@ -38,7 +38,7 @@
 
     <!-- Chart portion (component is lazy loaded) -->
     <transition name="slide">
-      <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper">
+      <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper" :size="size">
         <ccw-div>
           <h2>1.5°C Global Temperature Rise</h2>
           <ccw-chart 
@@ -76,7 +76,7 @@
       <h2>Experimental features</h2>
       <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.</p>
       <hr>
-      <input type="checkbox" v-model="dark"><label>Dark</label>
+      <input type="checkbox" v-model="dark"><label>Dark</label><br>
       <!--
       <h3>* Investment Weighting</h3>
       <vue-slider 
@@ -324,8 +324,9 @@ ccw-fixed {
   box-shadow: 0 20px 30px rgba(black, 50%);
 }
 
-$wrapHeight: 7rem; // 16 * 7 = 112
+$constant: 7rem; // 16 * 7 = 112
 ccw-wrapper {
+  cursor: pointer;
   user-select: none;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -338,7 +339,7 @@ ccw-wrapper {
   position: relative;
   width: 100%;
   white-space: nowrap;
-  height: $wrapHeight;
+  height: $constant;
 
   *, *:before, *:after {
     box-sizing: border-box;
@@ -348,20 +349,22 @@ ccw-wrapper {
   }
   &[size="lg"] {
     font-size: 19px;
-    height: $wrapHeight - 1rem;
+    height: $constant - 1rem;
   }
   &[size="md"]{
-    font-size: 25px;
+    font-size: 18px;
+    height: 2 * ($constant - 1rem);
   }
   &[size="sm"] {
-    font-size: 20px;
+    font-size: 13px;
+    height: ($constant - 3rem) * 2;
   }
   &[size="xs"] {
-    font-size: 25px;
+    font-size: 9px;
+    height: ($constant - 4rem) * 2;
   }
   &[size="md"], &[size="sm"], &[size="xs"] {
     flex-direction: row; 
-    height: 2 * $wrapHeight;
   }
 }
 
@@ -370,30 +373,54 @@ ccw-flexwrap {
   flex-direction: row;
   flex: 10 0 0;
   width: 100%;
-  height: $wrapHeight;
+  height: $constant;
   ccw-wrapper[size="lg"] & {
-    height: $wrapHeight - 1rem;
+    height: $constant - 1rem;
   }
-  ccw-wrapper[size="md"] &, ccw-wrapper[size="sm"] &, ccw-wrapper[size="xs"] & {
-    height: $wrapHeight * 2;
+  ccw-wrapper[size="md"] & {
+    height: ($constant - 1rem) * 2;
+    flex-direction: column;
+  }
+  ccw-wrapper[size="sm"] & {
+    height: ($constant - 3rem) * 2;
+    flex-direction: column;
+  }
+  ccw-wrapper[size="xs"] & {
+    height: ($constant - 4rem) * 2;
     flex-direction: column;
   }
 
 }
 ccw-panel {
-  height: 100%;
   flex: 1 0 0;
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   &[deadline] {
-    color: $accent;
-    background: $accentDark;
+    color: black;
+    background: $accent;
+    ccw-ticker-label {
+      color: $accent;
+    }
+    ccw-wrapper[dark] & {
+      color: $accent;
+      background: $accentDark;
+    }
   }
   &[lifeline] {
+    color: black;
+    background: $secondary;
+    ccw-ticker-label {
+      color: $secondary;
+    }
+    ccw-wrapper[dark] & {
+      color: $secondary;
+      background: $secondaryDark;
+    }
+  }
+  ccw-ticker {
+    // This is required for the dark/light theme
     color: $secondary;
-    background: $secondaryDark;
   }
   ccw-div {
     display: flex;
@@ -415,7 +442,14 @@ ccw-display {
     font-size: 54px;
   }
   ccw-wrapper[size="md"] & {
-    font-size: 80px;
+    font-size: 57px;
+  }
+  ccw-wrapper[size="sm"] & {
+    font-size: 40px;
+  }
+  ccw-wrapper[size="xs"] & {
+    line-height: 1.2;
+    font-size: 27px;
   }
   &[decimal]::after {
     content: "";
@@ -432,6 +466,23 @@ ccw-wrapper[size="lg"] ccw-display[decimal]::after {
   width: 8px;
   height: 8px;
 }
+ccw-wrapper[size="md"] ccw-display[decimal]::after {
+  left: $ccwFont - 8px;
+  width: 8px;
+  height: 8px;
+}
+ccw-wrapper[size="sm"] ccw-display[decimal]::after {
+  left: $ccwFont - 27px;
+  width: 6px;
+  height: 6px;
+  bottom: 7px;
+}
+ccw-wrapper[size="xs"] ccw-display[decimal]::after {
+  left: $ccwFont - 40px;
+  width: 4px;
+  height: 4px;
+  bottom: 6px;
+}
 ccw-span {
   line-height: 1;
   margin-bottom: -6px;
@@ -441,15 +492,24 @@ ccw-span {
     margin-bottom: -4px;
   }
   ccw-wrapper[size="md"] & {
-    font-size: 80px;
+    font-size: 30px;
+    margin-bottom: -5px;
+  }
+  ccw-wrapper[size="sm"] & {
+    font-size: 24px;
+    margin-bottom: -3px;
+  }
+  ccw-wrapper[size="xs"] & {
+    font-size: 15px;
+    margin-bottom: -3px;
   }
 }
 ccw-ticker-wrap {
   position: relative;
   text-align: left;
-  //height: 100%;
   flex: 2 0 0;
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-weight: bold;
   text-transform: uppercase;
   line-height: 1;
   background: black;
@@ -458,8 +518,11 @@ ccw-ticker-wrap {
   ccw-wrapper[size="lg"] & {
     font-size: 17px;
   }
-  ccw-wrapper[dark] & {
-    font-weight: 600;
+  ccw-wrapper[size="sm"] & {
+    padding-top: 2px;
+  }
+  ccw-wrapper[size="xs"] & {
+    padding-top: 1px;
   }
 }
 $tickerPadding: .15rem;
@@ -498,13 +561,18 @@ ccw-ticker-label {
   100% { opacity: 1; }
 }
 
-ccw-text {
+ccw-life-and-death {
   margin: .3rem .5rem;
+  ccw-wrapper[size="sm"] & {
+    margin: .2rem .3rem;
+  }
+  ccw-wrapper[size="xs"] & {
+    margin: .1rem .2rem;
+  }
 }
 ccw-brand {
   font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
   line-height: .85;
-  cursor: pointer;
   width: 8rem;
   background: black;
   color: $secondary;
@@ -517,11 +585,14 @@ ccw-brand {
   font-size: 10px;
 
   ccw-wrapper[size="lg"] & {
-    width: 7rem;
+    width: $constant;
   }
-  ccw-wrapper[size="md"] &, ccw-wrapper[size="sm"] &, ccw-wrapper[size="xs"] & {
+  ccw-wrapper[size="md"] & {
+    width: $constant - 1rem;
     flex-direction: column;
-    min-width: 80px;
+  }
+  ccw-wrapper[size="sm"] &, ccw-wrapper[size="xs"] & {
+    display: none;
   }
   svg {
     outline: none;
@@ -556,25 +627,29 @@ ccw-brand {
 
   border-bottom: 1rem solid black;
   box-shadow: 0 10px 80px rgba(black, .1) inset;
-  background: lighten(black, 90%);
+  background: #e3e4e5;
   position: relative;
 
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+
+  &[size="md"], &[size="sm"], &[size="xs"] {
+    flex-direction: column; 
+  }
   canvas {
     // Allows the text to go behind the graph
     background: rgba(0,0,0,0);
     position: relative;
   }
-  h2 {
+  h2 { // TODO: no h2-type elements!
     font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
     font-weight: normal;
-    right: 2rem;
+    right: 7rem;
     position: absolute;
     opacity: 1;
     font-size: 14px;
-    margin-top: 17.5rem;
+    margin-top: 17rem;
     text-transform: uppercase;
     z-index: 1;
   }
@@ -585,9 +660,9 @@ ccw-brand {
   ccw-control-panel {
     flex: 1 0 0;
     font-weight: normal;
-    padding: 2rem 3rem;
     display: block;
-    p {
+    padding: 2rem 3rem 2rem 0;
+    p { // TODO: no p-type elements
       font-size: 14px; // just match the sliders
     }
     .vue-slider {
@@ -618,6 +693,11 @@ ccw-brand {
       }
     }
   }
+  &[size="md"], &[size="sm"], &[size="xs"] {
+    ccw-control-panel {
+      padding: 2rem 3rem;
+    }
+  }
 }
 .slide-enter-active {
    transition-duration: .2s;
@@ -629,6 +709,13 @@ ccw-brand {
    max-height: 400px;
    overflow: hidden;
    opacity: 1;
+}
+ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[size="md"] {
+  &.slide-enter-to, &.slide-leave {
+     max-height: 724px; // slide height
+     overflow: hidden;
+     opacity: 1;
+  }
 }
 .slide-enter, .slide-leave-to {
    overflow: hidden;
