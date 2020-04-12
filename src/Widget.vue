@@ -95,7 +95,7 @@
 
 
 <script>
-import VueRangeSlider from 'vue-range-slider'
+//import VueRangeSlider from 'vue-range-slider'
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
@@ -113,7 +113,7 @@ export default {
   components: {
     // Lazy-load this component
     'ccw-chart': () => import(/* webpackChunkName: "flatten" */ './Chart.vue'),
-    'range-slider': VueRangeSlider,
+    //'range-slider': VueRangeSlider,
   },
   data: () => ({
     // Component loading
@@ -293,7 +293,7 @@ export default {
 }
 
 //@import 'cleanslate';
-@import '../node_modules/vue-range-slider/dist/vue-range-slider.css';
+//@import '../node_modules/vue-range-slider/dist/vue-range-slider.css';
 @import 'matthewha';
 
 $accent: #ff0000;
