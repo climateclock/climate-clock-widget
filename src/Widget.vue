@@ -12,7 +12,7 @@
           <ccw-div>
             <ccw-text>DEADLINE:</ccw-text>
             <ccw-ticker-wrap>
-              <ccw-ticker-label solid>{{ deadlineLabel }}</ccw-ticker-label>
+              <ccw-ticker-label still>{{ deadlineLabel }}</ccw-ticker-label>
             </ccw-ticker-wrap>
           </ccw-div>
           <ccw-display>{{ remaining.years }}<ccw-span>Y</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>D</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
@@ -36,7 +36,6 @@
     <transition name="slide">
       <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper">
         <ccw-div>
-          <h1>#FLATTENTHECURVE</h1>
           <h2>1.5°C Global Temperature Rise</h2>
           <ccw-chart 
             :width="chartWidth" :height="400" 
@@ -46,6 +45,7 @@
         </ccw-div>
         <ccw-control-panel id="ccw-slider">
           Investment
+          <range-slider v-model="factorA"></range-slider>
           <vue-slider
             v-model="factorA"
             :marks="true"
@@ -62,7 +62,7 @@
             :adsorb="true"
             v-bind:class="{good: speeds[factorB] >= 90}"
             ></vue-slider>
-          <p>This is a mockup, the data is fake and bad.</p>
+          <p>This is a mockup, the data is still missing.</p>
           <p>Here's a blurb explaining what this chart means and some dynamically changing text. Currently "investment" is {{ factorA }} and "speed" is {{ speeds[factorB] }}. This paragraph will show implications of these values.</p>
         </ccw-control-panel>
       </ccw-chart-wrapper>
@@ -96,6 +96,7 @@
 
 
 <script>
+import VueRangeSlider from 'vue-range-slider'
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
@@ -112,7 +113,8 @@ export default {
   },
   components: {
     // Lazy-load this component
-    'ccw-chart': () => import(/* webpackChunkName: "flatten" */ './Chart.vue')
+    'ccw-chart': () => import(/* webpackChunkName: "flatten" */ './Chart.vue'),
+    'range-slider': VueRangeSlider,
   },
   data: () => ({
     // Component loading
@@ -291,12 +293,14 @@ export default {
   [size="xl"] { @include debug(green, 'xl'); }
 }
 
-@import 'cleanslate';
-//@import 'vue-slider-component/theme/material';
+//@import 'cleanslate';
+@import '../node_modules/vue-range-slider/dist/vue-range-slider.css';
 @import 'matthewha';
 
 $accent: #ff0000;
+$accentDark: #940000;
 $secondary: #00dd72;
+$secondaryDark: #008040;
 
 @mixin glow($color) {
   font-weight: 400;
@@ -382,18 +386,12 @@ ccw-panel {
   justify-content: space-between;
   //padding: .5rem .75rem;
   &[deadline] {
-    background: $accent;
-    ccw-wrapper[dark] & {
-      color: $accent;
-      background-color: black;
-    }
+    color: $accent;
+    background: $accentDark;
   }
   &[lifeline] {
-    background: $secondary;
-    ccw-wrapper[dark] & {
-      color: $secondary;
-      background-color: black;
-    }
+    color: $secondary;
+    background: $secondaryDark;
   }
   ccw-div {
     display: flex;
@@ -407,6 +405,7 @@ ccw-display {
   font-size: 70px;
   line-height: 1;
   text-align: left;
+  margin: 0rem .75rem;
   &[size="md"] {
     font-size: 80px;
   }
@@ -427,10 +426,13 @@ ccw-ticker-wrap {
     font-weight: 600;
   }
 }
+$tickerPadding: .15rem;
 ccw-ticker {
   position: absolute;
+  background: black;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  padding: $tickerPadding .5rem;
   &[one] { animation-name: widget-feed-one; }
   &[two] { animation-name: widget-feed-two; }
 }
@@ -443,22 +445,10 @@ ccw-ticker-label {
   animation-iteration-count: infinite;
   animation-name: feed-fade;
   animation-duration: 10s;
-  &[solid] {
+  background: black;
+  padding: $tickerPadding .5rem;
+  &[still] {
     animation: none;
-  }
-  ccw-panel[deadline] & {
-    ccw-wrapper[dark] & {
-      color: $accent;
-      background-color: black;
-    }
-    background-color: $accent;
-  }
-  ccw-panel[lifeline] & {
-    ccw-wrapper[dark] & {
-      color: $secondary;
-      background-color: black;
-    }
-    background-color: $secondary;
   }
   ccw-panel:hover & {
     animation-name: none;
@@ -474,7 +464,8 @@ ccw-ticker-label {
 
 ccw-text {
   flex: 1 0 1;
-  padding-right: .5rem;
+  //padding-right: .5rem;
+  margin: .2rem .4rem;
 }
 ccw-brand {
   font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
@@ -550,26 +541,19 @@ ccw-brand {
     background: rgba(0,0,0,0);
     position: relative;
   }
-  h1, h2 {
-    font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+  h2 {
+    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
     font-weight: normal;
     text-align: center;
     left: 0;
     width: 100%;
     position: absolute;
-    opacity: .1;
-    font-size: 70px;
-    margin-top: 2rem;
-    margin-right: 30px;
-    //color: transparent;
-    //text-shadow: 1px 3px 6px #ddd, 0 0 0 #000, 1px 3px 6px #ddd;
-  }
-  h2 {
-    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
-    font-size: 14px;
-    margin-top: 15rem;
     opacity: 1;
+    font-size: 14px;
+    margin-top: 19rem;
+    margin-right: 30px;
     text-transform: uppercase;
+    z-index: 1;
   }
   ccw-div {
     flex: 3 0 0;
