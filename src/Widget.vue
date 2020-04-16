@@ -1,40 +1,47 @@
 <template>
-  <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
+  <!-- Reject IE9 entirely (better to display nothing than something broken) -->
+  <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)">
     <!-- Main Widget -->
-    <ccw-wrapper :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
-      <ccw-brand>
-        <img logo svg-inline src="./climateclock.svg">
-        <ccw-div>
-          <img science svg-inline src="./seethescience.svg">
+    <div class="cleanslate">
+      <ccw-wrapper 
+        :id="`ccw-container-${_uid}`" 
+        :size="size" 
+        :dark="dark" 
+        @click="showChart = !showChart">
+        <ccw-brand>
+          <img logo svg-inline src="./climateclock.svg">
           <ccw-div>
-          SEE THE<br>SCIENCE
+            <img science svg-inline src="./seethescience.svg">
+            <ccw-div>
+            SEE THE<br>CURVES
+            </ccw-div>
           </ccw-div>
-        </ccw-div>
-      </ccw-brand>
-      <ccw-flexwrap>
-        <ccw-panel deadline>
-          <ccw-div>
-            <ccw-life-and-death>DEADLINE:</ccw-life-and-death>
-            <ccw-ticker-wrap>
-              <ccw-ticker-label still>{{ deadlineLabel }}</ccw-ticker-label>
-            </ccw-ticker-wrap>
-          </ccw-div>
-          <ccw-display>{{ remaining.years }}<ccw-span>Y</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>D</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
-          </ccw-display>
-        </ccw-panel>
-        <ccw-panel lifeline>
-          <ccw-div>
-            <ccw-life-and-death>LIFELINE:</ccw-life-and-death>
-            <ccw-ticker-wrap>
-              <ccw-ticker-label>{{ lifelineLabel }}</ccw-ticker-label>
-              <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
-              <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
-            </ccw-ticker-wrap>
-          </ccw-div>
-          <ccw-display decimal>{{ renewablePercent }}%</ccw-display>
-        </ccw-panel>
-      </ccw-flexwrap>
-    </ccw-wrapper>
+        </ccw-brand>
+        <ccw-flexwrap>
+          <ccw-panel deadline>
+            <ccw-div>
+              <ccw-life-and-death>DEADLINE:</ccw-life-and-death>
+              <ccw-ticker-wrap>
+                <ccw-ticker-label still>We must achieve 100% Renewable in</ccw-ticker-label>
+              </ccw-ticker-wrap>
+            </ccw-div>
+            <ccw-display>{{ remaining.years }}<ccw-span>Y</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>D</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
+            </ccw-display>
+          </ccw-panel>
+          <ccw-panel lifeline>
+            <ccw-div>
+              <ccw-life-and-death>LIFELINE:</ccw-life-and-death>
+              <ccw-ticker-wrap>
+                <ccw-ticker-label>Global Energy Now Renewable</ccw-ticker-label>
+                <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+                <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+              </ccw-ticker-wrap>
+            </ccw-div>
+            <ccw-display decimal>{{ renewablePercent }}%</ccw-display>
+          </ccw-panel>
+        </ccw-flexwrap>
+      </ccw-wrapper>
+    </div>
 
     <!-- Chart portion (component is lazy loaded) -->
     <transition name="slide">
@@ -131,23 +138,21 @@ export default {
     // Deadline
     annualGrowth: clock.annualGrowth,
     feed: clock.feed,
-    lifelineLabel: "global energy now renewable",
     startDateUTC: clock.startDateUTC,
     startDateCO2Budget: clock.startDateCO2Budget,
     tonsPerSecond: clock.tonsPerSecond,
     
     // Lifeline
-    deadlineLabel: "how much time we have to act",
-    renewPlaces: 9,
+    renewPlaces: 7,
     renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
     renewStartPct: 26.2,
     renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
     
     // Chart 
     factorA: 0, factorB: 0,
-    showChart: false,
+    showChart: true,
     speeds: {'Slow':0, ' ':20, '  ':40, '   ':60, '    ':80, 'Fast':100},
-    weightA: .5, weightB: .5,
+    weightA: .4, weightB: .6,
 
     // Items below are for experimental mockups
     dark: true,
@@ -262,8 +267,7 @@ export default {
       tickInterval = 250
     }
     window.addEventListener('load', this.setSize)
-    window.addEventListener('resize', 
-      this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
+    window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
   },
   mounted() {
@@ -301,7 +305,7 @@ export default {
   [size="xl"] { @include debug(green, 'xl'); }
 }
 
-//@import 'cleanslate';
+@import 'cleanslate';
 //@import '../node_modules/vue-range-slider/dist/vue-range-slider.css';
 @import 'matthewha';
 
