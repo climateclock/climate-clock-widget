@@ -20,25 +20,23 @@
         <ccw-flexwrap>
           <ccw-panel deadline>
             <ccw-div>
-              <ccw-life-and-death>DEADLINE:</ccw-life-and-death>
-              <ccw-ticker-wrap>
-                <ccw-ticker-label still>We must achieve 100% Renewable in</ccw-ticker-label>
-              </ccw-ticker-wrap>
+              <ccw-span>DEADLINE</ccw-span>
+              <ccw-span>We must achieve net zero emissions in:</ccw-span>
             </ccw-div>
             <ccw-display>{{ remaining.years }}<ccw-span>Y</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>D</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
             </ccw-display>
           </ccw-panel>
           <ccw-panel lifeline>
-            <ccw-div>
-              <ccw-life-and-death>LIFELINE:</ccw-life-and-death>
-              <ccw-ticker-wrap>
-                <ccw-ticker-label>Global Energy Now Renewable</ccw-ticker-label>
-                <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
-                <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
-              </ccw-ticker-wrap>
-            </ccw-div>
+            <ccw-row>
+              <ccw-life-and-death>LIFELINE</ccw-life-and-death>
+              <ccw-cta>% of world energy now renewable:</ccw-cta>
+            </ccw-row>
             <ccw-display decimal>{{ renewablePercent }}%</ccw-display>
           </ccw-panel>
+          <ccw-ticker-wrap>
+            <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+            <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
+          </ccw-ticker-wrap>
         </ccw-flexwrap>
       </ccw-wrapper>
     </div>
@@ -150,7 +148,7 @@ export default {
     
     // Chart 
     factorA: 0, factorB: 0,
-    showChart: true,
+    showChart: false,
     speeds: {'Slow':0, ' ':20, '  ':40, '   ':60, '    ':80, 'Fast':100},
     weightA: .4, weightB: .6,
 
@@ -324,7 +322,7 @@ $secondaryDark: #008040;
 }
 
 // <ccw-wrapper>
-ccw-fixed {
+ccw-fixed { // For "fixed" prop ;not yet used
   position: fixed;
   bottom: 0; 
   left: 0; right: 0;
@@ -343,6 +341,7 @@ ccw-wrapper {
   flex-direction: row-reverse; 
   justify-content: space-between;
   font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+  font-weight: normal;
   font-size: 22px;
   position: relative;
   width: 100%;
@@ -351,9 +350,9 @@ ccw-wrapper {
 
   *, *:before, *:after {
     box-sizing: border-box;
-    display: inline-block;
-    overflow: hidden;
-    text-align: center;
+    //display: inline-block; // why is this madness here? copypaste?
+    //overflow: scroll;
+    //text-align: center;
   }
   &[size="lg"] {
     font-size: 19px;
@@ -379,9 +378,12 @@ ccw-wrapper {
 ccw-flexwrap {
   display: flex;
   flex-direction: row;
-  flex: 10 0 0;
+  flex-wrap: wrap;
+  align-items: stretch;
   width: 100%;
   height: $constant;
+
+  flex: 10 0 0;
   ccw-wrapper[size="lg"] & {
     height: $constant - 1rem;
   }
@@ -397,46 +399,66 @@ ccw-flexwrap {
     height: ($constant - 4rem) * 2;
     flex-direction: column;
   }
+}
 
+ccw-div {
+  display: block;
+}
+ccw-span {
+  display: inline-block;
 }
 ccw-panel {
-  flex: 1 0 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: $constant - 1rem;
+  text-transform: uppercase;
+  color: black;
+
+  flex: 1 0 45%;
+  ccw-span {
+    padding: 5px;
+  }
   &[deadline] {
-    color: black;
     background: $accent;
-    ccw-ticker-label {
+    ccw-div {
+      background: black;
       color: $accent;
+    }
+    ccw-span:first-of-type {
+      background: $accent;
+      color: black;
     }
     ccw-wrapper[dark] & {
       color: $accent;
       background: $accentDark;
+      ccw-span:first-of-type {
+        background: $accentDark;
+        color: $accent;
+      }
     }
   }
   &[lifeline] {
-    color: black;
     background: $secondary;
-    ccw-ticker-label {
+    ccw-div {
+      background: black;
       color: $secondary;
+    }
+    ccw-span:first-of-type {
+      background: $secondary;
+      color: black;
     }
     ccw-wrapper[dark] & {
       color: $secondary;
       background: $secondaryDark;
+      ccw-span:first-of-type {
+        background: $secondaryDark;
+        color: $secondary;
+      }
     }
   }
-  ccw-ticker {
-    // This is required for the dark/light theme
-    color: $secondary;
-  }
-  ccw-div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    flex: 1 0 0;
-  }
 }
+
 $ccwFont: 70px;
 ccw-display {
   flex: 2 0 0;
@@ -468,6 +490,27 @@ ccw-display {
     height: 10px;
     background-color: $secondary;
   }
+  ccw-span { // Smaller labels
+    line-height: 1;
+    margin-bottom: -6px;
+    font-size: 35px;
+    ccw-wrapper[size="lg"] & {
+      font-size: 30px;
+      margin-bottom: -4px;
+    }
+    ccw-wrapper[size="md"] & {
+      font-size: 30px;
+      margin-bottom: -5px;
+    }
+    ccw-wrapper[size="sm"] & {
+      font-size: 24px;
+      margin-bottom: -3px;
+    }
+    ccw-wrapper[size="xs"] & {
+      font-size: 15px;
+      margin-bottom: -3px;
+    }
+  }
 }
 ccw-wrapper[size="lg"] ccw-display[decimal]::after {
   left: $ccwFont - 12px;
@@ -491,28 +534,7 @@ ccw-wrapper[size="xs"] ccw-display[decimal]::after {
   height: 4px;
   bottom: 6px;
 }
-ccw-span {
-  line-height: 1;
-  margin-bottom: -6px;
-  font-size: 35px;
-  ccw-wrapper[size="lg"] & {
-    font-size: 30px;
-    margin-bottom: -4px;
-  }
-  ccw-wrapper[size="md"] & {
-    font-size: 30px;
-    margin-bottom: -5px;
-  }
-  ccw-wrapper[size="sm"] & {
-    font-size: 24px;
-    margin-bottom: -3px;
-  }
-  ccw-wrapper[size="xs"] & {
-    font-size: 15px;
-    margin-bottom: -3px;
-  }
-}
-ccw-ticker-wrap {
+ccw-cta {
   position: relative;
   text-align: left;
   flex: 2 0 0;
@@ -534,32 +556,27 @@ ccw-ticker-wrap {
   }
 }
 $tickerPadding: .15rem;
+ccw-ticker-wrap {
+  position: relative;
+  line-height: 1;
+  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: left;
+  background: pink;
+
+  flex: 2 0 100%;
+  height: 1rem; // TODO:
+}
 ccw-ticker {
   position: absolute;
   background: black;
+  color: $secondary;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   padding: $tickerPadding .5rem;
   &[one] { animation-name: widget-feed-one; }
   &[two] { animation-name: widget-feed-two; }
-}
-ccw-ticker-label {
-  position: absolute;
-  z-index: 1;
-  width: 100%;
-  text-align: left;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-name: feed-fade;
-  animation-duration: 10s;
-  background: black;
-  padding: $tickerPadding .5rem;
-  &[still] {
-    animation: none;
-  }
-  ccw-panel:hover & {
-    animation-name: none;
-  }
 }
 @keyframes feed-fade {
   0% { opacity: 1; }
