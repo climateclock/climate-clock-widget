@@ -9,11 +9,11 @@
         :dark="dark" 
         @click="showChart = !showChart">
         <ccw-brand>
-          <img logo svg-inline src="./climateclock.svg">
+          <img logo svg-inline src="./climateclockurl.svg">
           <ccw-div>
             <img science svg-inline src="./seethescience.svg">
             <ccw-div>
-            SEE THE<br>CURVES
+              FLATTEN THE<br>CURVES<ccw-span>(open)</ccw-span> 
             </ccw-div>
           </ccw-div>
         </ccw-brand>
@@ -23,20 +23,21 @@
               <ccw-span>DEADLINE</ccw-span>
               <ccw-span>We must achieve net zero emissions in:</ccw-span>
             </ccw-div>
-            <ccw-display>{{ remaining.years }}<ccw-span>Y</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>D</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
-            </ccw-display>
+            <ccw-readout>
+              {{ remaining.years }}<ccw-span>YRS</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>DAYS</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
+            </ccw-readout>
           </ccw-panel>
           <ccw-panel lifeline>
-            <ccw-row>
-              <ccw-life-and-death>LIFELINE</ccw-life-and-death>
-              <ccw-cta>% of world energy now renewable:</ccw-cta>
-            </ccw-row>
-            <ccw-display decimal>{{ renewablePercent }}%</ccw-display>
+            <ccw-div>
+              <ccw-span>LIFELINE</ccw-span>
+              <ccw-span>% of world energy now renewable:</ccw-span>
+            </ccw-div>
+            <ccw-readout decimal>{{ renewablePercent }}%</ccw-readout>
           </ccw-panel>
-          <ccw-ticker-wrap>
-            <ccw-ticker one :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
-            <ccw-ticker two :style="animationDuration">{{ feedText }}&nbsp;</ccw-ticker>
-          </ccw-ticker-wrap>
+          <ccw-ticker>
+            <ccw-div one :style="animationDuration">{{ feedText }}&nbsp;</ccw-div>
+            <ccw-div two :style="animationDuration">{{ feedText }}&nbsp;</ccw-div>
+          </ccw-ticker>
         </ccw-flexwrap>
       </ccw-wrapper>
     </div>
@@ -78,6 +79,9 @@
 
 
     <div class="mockup-control-panel">
+      <h1>NON-WORKING PARTIAL DEMO</h1>
+      <p>Resize your browser until the widget appears properly, it's in the middle of being redesigned and won't work properly almost anywhere.</p>
+
       <h2>Experimental features</h2>
       <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.</p>
       <hr>
@@ -152,8 +156,8 @@ export default {
     speeds: {'Slow':0, ' ':20, '  ':40, '   ':60, '    ':80, 'Fast':100},
     weightA: .4, weightB: .6,
 
-    // Items below are for experimental mockups
-    dark: true,
+    // To become a prop when the mockup is done
+    dark: false,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
@@ -176,7 +180,7 @@ export default {
     },
     remaining() {
       return countdown(this.deadline, this.now,
-        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS )
+        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
     },
     
     // Lifeline calculation
@@ -186,7 +190,7 @@ export default {
     renewablePercent() {
       let tElapsed = this.now - this.renewStartDate.getTime()
       return (this.renewStartPct + (tElapsed / 1000 * this.renewIncPerSecond)).toFixed(this.renewPlaces)
-        .replace('.', '\u200a')
+        //.replace('.', '\u200a')
     },
 
     // Items below are skin/theme-specific
@@ -259,7 +263,7 @@ export default {
     })
 
     // Watch for container size changes and update sizing classes
-    let resizeInterval = 0, tickInterval = 100
+    let resizeInterval = 0, tickInterval = 997
     if (this.$browserDetect.isEdge) { // Slow down for the special browser
       resizeInterval = 250
       tickInterval = 250
@@ -330,7 +334,16 @@ ccw-fixed { // For "fixed" prop ;not yet used
   box-shadow: 0 20px 30px rgba(black, 50%);
 }
 
-$constant: 7rem; // 16 * 7 = 112
+ccw-div {
+  display: block;
+}
+ccw-span {
+  display: inline-block;
+}
+
+// An arbitrary measure which nevertheless gets used a lot (16 * 7 = 112)
+$cubit: 7rem; 
+
 ccw-wrapper {
   cursor: pointer;
   user-select: none;
@@ -342,11 +355,11 @@ ccw-wrapper {
   justify-content: space-between;
   font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
   font-weight: normal;
-  font-size: 22px;
+  font-size: 18px;
   position: relative;
   width: 100%;
   white-space: nowrap;
-  height: $constant;
+  height: $cubit;
 
   *, *:before, *:after {
     box-sizing: border-box;
@@ -356,19 +369,19 @@ ccw-wrapper {
   }
   &[size="lg"] {
     font-size: 19px;
-    height: $constant - 1rem;
+    height: $cubit - 1rem;
   }
   &[size="md"]{
     font-size: 18px;
-    height: 2 * ($constant - 1rem);
+    height: 2 * ($cubit - 1rem);
   }
   &[size="sm"] {
     font-size: 13px;
-    height: ($constant - 3rem) * 2;
+    height: ($cubit - 3rem) * 2;
   }
   &[size="xs"] {
     font-size: 9px;
-    height: ($constant - 4rem) * 2;
+    height: ($cubit - 4rem) * 2;
   }
   &[size="md"], &[size="sm"], &[size="xs"] {
     flex-direction: row; 
@@ -379,47 +392,50 @@ ccw-flexwrap {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: stretch;
+  //align-items: stretch;
+  position: relative; // nested <ccw-ticker> needs this, yeah?
   width: 100%;
-  height: $constant;
+  height: $cubit;
 
   flex: 10 0 0;
   ccw-wrapper[size="lg"] & {
-    height: $constant - 1rem;
+    height: $cubit - 1rem;
   }
   ccw-wrapper[size="md"] & {
-    height: ($constant - 1rem) * 2;
+    height: ($cubit - 1rem) * 2;
     flex-direction: column;
   }
   ccw-wrapper[size="sm"] & {
-    height: ($constant - 3rem) * 2;
+    height: ($cubit - 3rem) * 2;
     flex-direction: column;
   }
   ccw-wrapper[size="xs"] & {
-    height: ($constant - 4rem) * 2;
+    height: ($cubit - 4rem) * 2;
     flex-direction: column;
   }
 }
 
-ccw-div {
-  display: block;
-}
-ccw-span {
-  display: inline-block;
-}
+// Used in deadline/lifeline headings and ticker
+$txtPad: 5px;
+
 ccw-panel {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: $constant - 1rem;
+  height: $cubit - 1.5rem;
   text-transform: uppercase;
   color: black;
 
-  flex: 1 0 45%;
+  flex: 1 0 49%; // 50% causes wrapping!
   ccw-span {
-    padding: 5px;
+    padding: $txtPad $txtPad * 2;
+  }
+  >ccw-div >ccw-span:nth-of-type(2) {
+    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+    font-weight: bold;
   }
   &[deadline] {
+    //flex: 1 0 55%;
     background: $accent;
     ccw-div {
       background: black;
@@ -439,6 +455,7 @@ ccw-panel {
     }
   }
   &[lifeline] {
+    //flex: 1 0 45%;
     background: $secondary;
     ccw-div {
       background: black;
@@ -460,13 +477,14 @@ ccw-panel {
 }
 
 $ccwFont: 70px;
-ccw-display {
+ccw-readout {
   flex: 2 0 0;
-  font-size: 70px;
+  font-size: 59px;
   line-height: 1.1;
   text-align: left;
   margin: 0rem .75rem;
   position: relative;
+  overflow: hidden;
   ccw-wrapper[size="lg"] & {
     line-height: 1.2;
     font-size: 54px;
@@ -481,19 +499,14 @@ ccw-display {
     line-height: 1.2;
     font-size: 27px;
   }
-  &[decimal]::after {
-    content: "";
-    position: absolute;
-    left: $ccwFont + 6px;
-    bottom: 14px;
-    width: 10px;
-    height: 10px;
-    background-color: $secondary;
-  }
   ccw-span { // Smaller labels
     line-height: 1;
     margin-bottom: -6px;
-    font-size: 35px;
+    margin-right: 2px;
+    font-size: 27px;
+    padding: 0;
+    background: transparent;
+
     ccw-wrapper[size="lg"] & {
       font-size: 30px;
       margin-bottom: -4px;
@@ -512,29 +525,130 @@ ccw-display {
     }
   }
 }
-ccw-wrapper[size="lg"] ccw-display[decimal]::after {
+/* hopefully all this GOES!
+ccw-readout[decimal]::after {
+  content: "";
+  position: absolute;
+  left: $ccwFont + 6px;
+  bottom: 14px;
+  width: 10px;
+  height: 10px;
+  background: black;
+}
+ccw-wrapper[dark] ccw-readout[decimal]::after {
+  background: $secondary;
+}
+ccw-wrapper[size="lg"] ccw-readout[decimal]::after {
   left: $ccwFont - 12px;
   width: 8px;
   height: 8px;
 }
-ccw-wrapper[size="md"] ccw-display[decimal]::after {
+ccw-wrapper[size="md"] ccw-readout[decimal]::after {
   left: $ccwFont - 8px;
   width: 8px;
   height: 8px;
 }
-ccw-wrapper[size="sm"] ccw-display[decimal]::after {
+ccw-wrapper[size="sm"] ccw-readout[decimal]::after {
   left: $ccwFont - 27px;
   width: 6px;
   height: 6px;
   bottom: 7px;
 }
-ccw-wrapper[size="xs"] ccw-display[decimal]::after {
+ccw-wrapper[size="xs"] ccw-readout[decimal]::after {
   left: $ccwFont - 40px;
   width: 4px;
   height: 4px;
   bottom: 6px;
 }
-ccw-cta {
+*/
+ccw-ticker {
+  position: relative;
+  line-height: 1;
+  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: left;
+    overflow: hidden;
+    background: black;
+    color: $secondary;
+  flex: 2 0 100%;
+  height: 1.5rem; // TODO:
+
+  ccw-div {
+    position: absolute;
+    top: 1px;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    padding: .15rem .5rem;
+    &[one] { animation-name: widget-feed-one; }
+    &[two] { animation-name: widget-feed-two; }
+  }
+  @keyframes widget-feed-one {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+  }
+  @keyframes widget-feed-two {
+    0% { transform: translate(100%, 0); }
+    100% { transform: translate(0%, 0); }
+  }
+}
+
+ccw-brand {
+  font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
+  line-height: .85;
+  width: 8rem;
+  background: black;
+  color: $secondary;
+
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
+
+  font-size: 10px;
+
+  ccw-wrapper[size="lg"] & {
+    width: $cubit;
+  }
+  ccw-wrapper[size="md"] & {
+    width: $cubit - 1rem;
+    flex-direction: column;
+  }
+  ccw-wrapper[size="sm"] &, ccw-wrapper[size="xs"] & {
+    display: none;
+  }
+  svg {
+    outline: none;
+    display: block;
+  }
+  svg[logo] {
+    max-height: 45%;
+    max-width: 80%;
+    padding-top: .5rem;
+  }
+  svg[science] {
+    margin-right: .5rem;
+  }
+  > ccw-div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    font-size: .75rem;
+  }
+}
+////////////////////////////////////////////////////////////
+ccw-life-and-death { // now a mere span
+  margin: .3rem .5rem;
+  ccw-wrapper[size="sm"] & {
+    margin: .2rem .3rem;
+  }
+  ccw-wrapper[size="xs"] & {
+    margin: .1rem .2rem;
+  }
+}
+ccw-cta { // now a mere "span"
   position: relative;
   text-align: left;
   flex: 2 0 0;
@@ -555,91 +669,8 @@ ccw-cta {
     padding-top: 1px;
   }
 }
-$tickerPadding: .15rem;
-ccw-ticker-wrap {
-  position: relative;
-  line-height: 1;
-  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
-  font-weight: bold;
-  text-transform: uppercase;
-  text-align: left;
-  background: pink;
+////////////////////////////////////////////////////////////
 
-  flex: 2 0 100%;
-  height: 1rem; // TODO:
-}
-ccw-ticker {
-  position: absolute;
-  background: black;
-  color: $secondary;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  padding: $tickerPadding .5rem;
-  &[one] { animation-name: widget-feed-one; }
-  &[two] { animation-name: widget-feed-two; }
-}
-@keyframes feed-fade {
-  0% { opacity: 1; }
-  25% { opacity: 1; }
-  30% { opacity: 0; }
-  95% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-ccw-life-and-death {
-  margin: .3rem .5rem;
-  ccw-wrapper[size="sm"] & {
-    margin: .2rem .3rem;
-  }
-  ccw-wrapper[size="xs"] & {
-    margin: .1rem .2rem;
-  }
-}
-ccw-brand {
-  font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
-  line-height: .85;
-  width: 8rem;
-  background: black;
-  color: $secondary;
-
-  display: flex;
-  justify-content: space-around;
-  flex-direction: column;
-  align-items: center;
-
-  font-size: 10px;
-
-  ccw-wrapper[size="lg"] & {
-    width: $constant;
-  }
-  ccw-wrapper[size="md"] & {
-    width: $constant - 1rem;
-    flex-direction: column;
-  }
-  ccw-wrapper[size="sm"] &, ccw-wrapper[size="xs"] & {
-    display: none;
-  }
-  svg {
-    outline: none;
-    display: block;
-  }
-  svg[logo] {
-    max-height: 35%;
-    max-width: 80%;
-    padding-top: .5rem;
-  }
-  svg[science] {
-    margin-right: .5rem;
-  }
-  > ccw-div {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: center;
-    align-items: flex-start;
-    font-size: .75rem;
-  }
-}
 @import "slider";
 #ccw-chart-wrapper { // Use id to increase specificity over cleanslate
   //@import "node_modules/vue-slider-component/lib/styles/dot.scss";
@@ -749,16 +780,8 @@ ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[si
 }
 
 
-@keyframes widget-feed-one {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(-100%, 0); }
-}
-@keyframes widget-feed-two {
-  0% { transform: translate(100%, 0); }
-  100% { transform: translate(0%, 0); }
-}
 
-// Mockup
+// Mockup page (this junk goes in index.html)
 div.mockup-control-panel {
   background-color: #fff6cd;
   display: block;
