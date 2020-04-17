@@ -13,7 +13,7 @@
           <ccw-div>
             <img science svg-inline src="./seethescience.svg">
             <ccw-div>
-              FLATTEN THE<br>CURVES<ccw-span>(open)</ccw-span> 
+              FLATTEN THE<br>CURVES
             </ccw-div>
           </ccw-div>
         </ccw-brand>
@@ -30,13 +30,13 @@
           <ccw-panel lifeline>
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
-              <ccw-span>% of world energy now renewable:</ccw-span>
+              <ccw-span>% of world's energy now renewable:</ccw-span>
             </ccw-div>
             <ccw-readout decimal>{{ renewablePercent }}%</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
-            <ccw-div one :style="animationDuration">{{ feedText }}&nbsp;</ccw-div>
-            <ccw-div two :style="animationDuration">{{ feedText }}&nbsp;</ccw-div>
+            <ccw-div one :style="animationDuration">{{ feedText }}</ccw-div>
+            <ccw-div two :style="animationDuration">{{ feedText }}</ccw-div>
           </ccw-ticker>
         </ccw-flexwrap>
       </ccw-wrapper>
@@ -359,31 +359,28 @@ ccw-wrapper {
   position: relative;
   width: 100%;
   white-space: nowrap;
-  height: $cubit;
 
   *, *:before, *:after {
     box-sizing: border-box;
-    //display: inline-block; // why is this madness here? copypaste?
-    //overflow: scroll;
-    //text-align: center;
   }
+
+  height: $cubit;
   &[size="lg"] {
-    font-size: 19px;
-    height: $cubit - 1rem;
+    font-size: 14.5px;
   }
   &[size="md"]{
     font-size: 18px;
     height: 2 * ($cubit - 1rem);
+    flex-direction: row; 
   }
   &[size="sm"] {
     font-size: 13px;
     height: ($cubit - 3rem) * 2;
+    flex-direction: row; 
   }
   &[size="xs"] {
     font-size: 9px;
     height: ($cubit - 4rem) * 2;
-  }
-  &[size="md"], &[size="sm"], &[size="xs"] {
     flex-direction: row; 
   }
 }
@@ -395,22 +392,22 @@ ccw-flexwrap {
   //align-items: stretch;
   position: relative; // nested <ccw-ticker> needs this, yeah?
   width: 100%;
-  height: $cubit;
+  //height: $cubit;
 
   flex: 10 0 0;
   ccw-wrapper[size="lg"] & {
-    height: $cubit - 1rem;
+    //height: $cubit - 1rem;
   }
   ccw-wrapper[size="md"] & {
-    height: ($cubit - 1rem) * 2;
+    //height: ($cubit - 1rem) * 2;
     flex-direction: column;
   }
   ccw-wrapper[size="sm"] & {
-    height: ($cubit - 3rem) * 2;
+    //height: ($cubit - 3rem) * 2;
     flex-direction: column;
   }
   ccw-wrapper[size="xs"] & {
-    height: ($cubit - 4rem) * 2;
+    //height: ($cubit - 4rem) * 2;
     flex-direction: column;
   }
 }
@@ -422,11 +419,27 @@ ccw-panel {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: $cubit - 1.5rem;
   text-transform: uppercase;
   color: black;
 
   flex: 1 0 49%; // 50% causes wrapping!
+  overflow: hidden;
+
+  height: $cubit - 1.5rem;
+  ccw-wrapper[size="lg"] & {
+    ccw-span {
+      padding: $txtPad $txtPad * 2 - 2px;
+    }
+  }
+  ccw-wrapper[size="md"] & {
+    height: $cubit - 1.5rem;
+  }
+  ccw-wrapper[size="sm"] & {
+    height: $cubit - 1.5rem;
+  }
+  ccw-wrapper[size="xs"] & {
+    height: $cubit - 1.5rem;
+  }
   ccw-span {
     padding: $txtPad $txtPad * 2;
   }
@@ -435,7 +448,6 @@ ccw-panel {
     font-weight: bold;
   }
   &[deadline] {
-    //flex: 1 0 55%;
     background: $accent;
     ccw-div {
       background: black;
@@ -452,6 +464,9 @@ ccw-panel {
         background: $accentDark;
         color: $accent;
       }
+    }
+    ccw-wrapper[size="lg"] & {
+      flex: 1 0 53%;
     }
   }
   &[lifeline] {
@@ -473,6 +488,9 @@ ccw-panel {
         color: $secondary;
       }
     }
+    ccw-wrapper[size="lg"] & {
+      flex: 1 0 45%;
+    }
   }
 }
 
@@ -486,8 +504,8 @@ ccw-readout {
   position: relative;
   overflow: hidden;
   ccw-wrapper[size="lg"] & {
-    line-height: 1.2;
-    font-size: 54px;
+    line-height: 1.3;
+    font-size: 52px;
   }
   ccw-wrapper[size="md"] & {
     font-size: 57px;
@@ -508,75 +526,45 @@ ccw-readout {
     background: transparent;
 
     ccw-wrapper[size="lg"] & {
-      font-size: 30px;
+      font-size: 20px;
       margin-bottom: -4px;
+      padding: 0;
     }
     ccw-wrapper[size="md"] & {
       font-size: 30px;
       margin-bottom: -5px;
+      padding: 0;
     }
     ccw-wrapper[size="sm"] & {
       font-size: 24px;
       margin-bottom: -3px;
+      padding: 0;
     }
     ccw-wrapper[size="xs"] & {
       font-size: 15px;
       margin-bottom: -3px;
+      padding: 0;
     }
   }
 }
-/* hopefully all this GOES!
-ccw-readout[decimal]::after {
-  content: "";
-  position: absolute;
-  left: $ccwFont + 6px;
-  bottom: 14px;
-  width: 10px;
-  height: 10px;
-  background: black;
-}
-ccw-wrapper[dark] ccw-readout[decimal]::after {
-  background: $secondary;
-}
-ccw-wrapper[size="lg"] ccw-readout[decimal]::after {
-  left: $ccwFont - 12px;
-  width: 8px;
-  height: 8px;
-}
-ccw-wrapper[size="md"] ccw-readout[decimal]::after {
-  left: $ccwFont - 8px;
-  width: 8px;
-  height: 8px;
-}
-ccw-wrapper[size="sm"] ccw-readout[decimal]::after {
-  left: $ccwFont - 27px;
-  width: 6px;
-  height: 6px;
-  bottom: 7px;
-}
-ccw-wrapper[size="xs"] ccw-readout[decimal]::after {
-  left: $ccwFont - 40px;
-  width: 4px;
-  height: 4px;
-  bottom: 6px;
-}
-*/
 ccw-ticker {
   position: relative;
-  line-height: 1;
+  height: 1.5rem;
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   font-weight: bold;
   text-transform: uppercase;
   text-align: left;
-    overflow: hidden;
-    background: black;
-    color: $secondary;
+  overflow: hidden;
+  background: black;
+  color: $secondary;
   flex: 2 0 100%;
-  height: 1.5rem; // TODO:
 
   ccw-div {
     position: absolute;
     top: 1px;
+    ccw-wrapper[size="lg"] & {
+      top: 2px;
+    }
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     padding: .15rem .5rem;
