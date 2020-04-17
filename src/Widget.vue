@@ -3,18 +3,12 @@
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)">
     <!-- Main Widget -->
     <div class="cleanslate">
-      <ccw-wrapper 
-        :id="`ccw-container-${_uid}`" 
-        :size="size" 
-        :dark="dark" 
-        @click="showChart = !showChart">
+      <ccw-w :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
         <ccw-brand>
           <img logo svg-inline src="./climateclockurl.svg">
           <ccw-div>
             <img science svg-inline src="./seethescience.svg">
-            <ccw-div>
-              FLATTEN THE<br>CURVES
-            </ccw-div>
+            <ccw-div>FLATTEN THE<br>CURVES</ccw-div>
           </ccw-div>
         </ccw-brand>
         <ccw-flexwrap>
@@ -39,7 +33,7 @@
             <ccw-div two :style="animationDuration">{{ feedText }}</ccw-div>
           </ccw-ticker>
         </ccw-flexwrap>
-      </ccw-wrapper>
+      </ccw-w>
     </div>
 
     <!-- Chart portion (component is lazy loaded) -->
@@ -325,7 +319,7 @@ $secondaryDark: #008040;
                 .5px -.5px .1em $color;
 }
 
-// <ccw-wrapper>
+// <ccw-w>
 ccw-fixed { // For "fixed" prop ;not yet used
   position: fixed;
   bottom: 0; 
@@ -344,7 +338,7 @@ ccw-span {
 // An arbitrary measure which nevertheless gets used a lot (16 * 7 = 112)
 $cubit: 7rem; 
 
-ccw-wrapper {
+ccw-w {
   cursor: pointer;
   user-select: none;
   -moz-osx-font-smoothing: grayscale;
@@ -359,6 +353,7 @@ ccw-wrapper {
   position: relative;
   width: 100%;
   white-space: nowrap;
+  overflow: hidden;
 
   *, *:before, *:after {
     box-sizing: border-box;
@@ -369,18 +364,18 @@ ccw-wrapper {
     font-size: 14.5px;
   }
   &[size="md"]{
-    font-size: 18px;
-    height: 2 * ($cubit - 1rem);
+    font-size: 14.25px;
+    height: 2 * ($cubit - 1.5rem);
     flex-direction: row; 
   }
   &[size="sm"] {
-    font-size: 13px;
-    height: ($cubit - 3rem) * 2;
+    font-size: 12px;
+    height: 2 * ($cubit - 2.25rem);
     flex-direction: row; 
   }
   &[size="xs"] {
-    font-size: 9px;
-    height: ($cubit - 4rem) * 2;
+    font-size: 7px;
+    height: 2 * ($cubit - 3.5rem);
     flex-direction: row; 
   }
 }
@@ -389,27 +384,10 @@ ccw-flexwrap {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  //align-items: stretch;
-  position: relative; // nested <ccw-ticker> needs this, yeah?
+  position: relative; // <ccw-ticker> needs this, yeah?
   width: 100%;
-  //height: $cubit;
 
   flex: 10 0 0;
-  ccw-wrapper[size="lg"] & {
-    //height: $cubit - 1rem;
-  }
-  ccw-wrapper[size="md"] & {
-    //height: ($cubit - 1rem) * 2;
-    flex-direction: column;
-  }
-  ccw-wrapper[size="sm"] & {
-    //height: ($cubit - 3rem) * 2;
-    flex-direction: column;
-  }
-  ccw-wrapper[size="xs"] & {
-    //height: ($cubit - 4rem) * 2;
-    flex-direction: column;
-  }
 }
 
 // Used in deadline/lifeline headings and ticker
@@ -426,19 +404,37 @@ ccw-panel {
   overflow: hidden;
 
   height: $cubit - 1.5rem;
-  ccw-wrapper[size="lg"] & {
+  ccw-w[size="lg"] & {
+    ccw-span {
+      padding: $txtPad $txtPad * 2 - 2px;
+    }
+    >ccw-div >ccw-span:nth-of-type(1) {
+      font-size: 16px;
+    }
+  }
+  ccw-w[size="md"] & {
+    height: $cubit - 2.25rem;
+    flex: 1 0 100%; // also ccw-ticker
+    >ccw-div >ccw-span:nth-of-type(1) {
+      font-size: 16px;
+    }
+  }
+  ccw-w[size="sm"] & {
+    height: $cubit - 3rem;
+    flex: 1 0 100%; // also ccw-ticker
     ccw-span {
       padding: $txtPad $txtPad * 2 - 2px;
     }
   }
-  ccw-wrapper[size="md"] & {
-    height: $cubit - 1.5rem;
-  }
-  ccw-wrapper[size="sm"] & {
-    height: $cubit - 1.5rem;
-  }
-  ccw-wrapper[size="xs"] & {
-    height: $cubit - 1.5rem;
+  ccw-w[size="xs"] & {
+    height: $cubit - 4.25rem;
+    flex: 1 0 100%; // also ccw-ticker
+    ccw-span {
+      padding: $txtPad $txtPad;
+    }
+    >ccw-div >ccw-span:nth-of-type(1) {
+      font-size: 9px;
+    }
   }
   ccw-span {
     padding: $txtPad $txtPad * 2;
@@ -457,7 +453,7 @@ ccw-panel {
       background: $accent;
       color: black;
     }
-    ccw-wrapper[dark] & {
+    ccw-w[dark] & {
       color: $accent;
       background: $accentDark;
       ccw-span:first-of-type {
@@ -465,12 +461,11 @@ ccw-panel {
         color: $accent;
       }
     }
-    ccw-wrapper[size="lg"] & {
+    ccw-w[size="lg"] & {
       flex: 1 0 53%;
     }
   }
   &[lifeline] {
-    //flex: 1 0 45%;
     background: $secondary;
     ccw-div {
       background: black;
@@ -480,7 +475,7 @@ ccw-panel {
       background: $secondary;
       color: black;
     }
-    ccw-wrapper[dark] & {
+    ccw-w[dark] & {
       color: $secondary;
       background: $secondaryDark;
       ccw-span:first-of-type {
@@ -488,7 +483,7 @@ ccw-panel {
         color: $secondary;
       }
     }
-    ccw-wrapper[size="lg"] & {
+    ccw-w[size="lg"] & {
       flex: 1 0 45%;
     }
   }
@@ -503,19 +498,19 @@ ccw-readout {
   margin: 0rem .75rem;
   position: relative;
   overflow: hidden;
-  ccw-wrapper[size="lg"] & {
+  ccw-w[size="lg"] & {
     line-height: 1.3;
     font-size: 52px;
   }
-  ccw-wrapper[size="md"] & {
-    font-size: 57px;
+  ccw-w[size="md"] & {
+    font-size: 50px;
   }
-  ccw-wrapper[size="sm"] & {
-    font-size: 40px;
+  ccw-w[size="sm"] & {
+    font-size: 35px;
+    line-height: 1.3;
   }
-  ccw-wrapper[size="xs"] & {
-    line-height: 1.2;
-    font-size: 27px;
+  ccw-w[size="xs"] & {
+    font-size: 23px;
   }
   ccw-span { // Smaller labels
     line-height: 1;
@@ -525,23 +520,23 @@ ccw-readout {
     padding: 0;
     background: transparent;
 
-    ccw-wrapper[size="lg"] & {
+    ccw-w[size="lg"] & {
       font-size: 20px;
       margin-bottom: -4px;
       padding: 0;
     }
-    ccw-wrapper[size="md"] & {
-      font-size: 30px;
+    ccw-w[size="md"] & {
+      font-size: 20px;
       margin-bottom: -5px;
       padding: 0;
     }
-    ccw-wrapper[size="sm"] & {
-      font-size: 24px;
+    ccw-w[size="sm"] & {
+      font-size: 14px;
       margin-bottom: -3px;
       padding: 0;
     }
-    ccw-wrapper[size="xs"] & {
-      font-size: 15px;
+    ccw-w[size="xs"] & {
+      font-size: 9px;
       margin-bottom: -3px;
       padding: 0;
     }
@@ -559,11 +554,29 @@ ccw-ticker {
   color: $secondary;
   flex: 2 0 100%;
 
+  ccw-w[size="md"] & {
+    flex: 1 0 100%; // also ccw-panel
+  }
+  ccw-w[size="sm"] & {
+    flex: 1 0 100%; // also ccw-panel
+  }
+  ccw-w[size="xs"] & {
+    flex: 1 0 100%; // also ccw-panel
+  }
   ccw-div {
     position: absolute;
     top: 1px;
-    ccw-wrapper[size="lg"] & {
+    ccw-w[size="lg"] & {
       top: 2px;
+    }
+    ccw-w[size="md"] & {
+      top: 2px;
+    }
+    ccw-w[size="sm"] & {
+      top: 4px;
+    }
+    ccw-w[size="xs"] & {
+      top: 7px;
     }
     animation-timing-function: linear;
     animation-iteration-count: infinite;
@@ -587,22 +600,21 @@ ccw-brand {
   width: 8rem;
   background: black;
   color: $secondary;
+  font-size: 10px;
 
   display: flex;
   justify-content: space-around;
   flex-direction: column;
   align-items: center;
 
-  font-size: 10px;
-
-  ccw-wrapper[size="lg"] & {
+  ccw-w[size="lg"] & {
     width: $cubit;
   }
-  ccw-wrapper[size="md"] & {
+  ccw-w[size="md"] & {
     width: $cubit - 1rem;
     flex-direction: column;
   }
-  ccw-wrapper[size="sm"] &, ccw-wrapper[size="xs"] & {
+  ccw-w[size="sm"] &, ccw-w[size="xs"] & {
     display: none;
   }
   svg {
@@ -626,38 +638,6 @@ ccw-brand {
     font-size: .75rem;
   }
 }
-////////////////////////////////////////////////////////////
-ccw-life-and-death { // now a mere span
-  margin: .3rem .5rem;
-  ccw-wrapper[size="sm"] & {
-    margin: .2rem .3rem;
-  }
-  ccw-wrapper[size="xs"] & {
-    margin: .1rem .2rem;
-  }
-}
-ccw-cta { // now a mere "span"
-  position: relative;
-  text-align: left;
-  flex: 2 0 0;
-  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
-  font-weight: bold;
-  text-transform: uppercase;
-  line-height: 1;
-  background: black;
-  padding-top: 6px;
-
-  ccw-wrapper[size="lg"] & {
-    font-size: 17px;
-  }
-  ccw-wrapper[size="sm"] & {
-    padding-top: 2px;
-  }
-  ccw-wrapper[size="xs"] & {
-    padding-top: 1px;
-  }
-}
-////////////////////////////////////////////////////////////
 
 @import "slider";
 #ccw-chart-wrapper { // Use id to increase specificity over cleanslate
