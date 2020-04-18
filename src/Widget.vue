@@ -5,11 +5,8 @@
     <div class="cleanslate">
       <ccw-w :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
         <ccw-brand>
-          <img logo svg-inline src="./climateclockurl.svg">
-          <ccw-div>
-            <img science svg-inline src="./seethescience.svg">
-            <ccw-div>FLATTEN THE<br>CURVES</ccw-div>
-          </ccw-div>
+          <img logo svg-inline src="./climateclocktrio.svg">
+          <img science svg-inline src="./how.svg">
         </ccw-brand>
         <ccw-flexwrap>
           <ccw-panel deadline>
@@ -40,33 +37,31 @@
     <transition name="slide">
       <ccw-chart-wrapper v-if="kiosk || showChart" id="ccw-chart-wrapper" :size="size">
         <ccw-div>
-          <h2>1.5°C Global Temperature Rise</h2>
           <ccw-chart 
-            :height="400" 
-            :factorA="factorA" :factorB="speeds[factorB]"
+            :height="550" 
+            :factorA="investment[factorA]" :factorB="action[factorB]"
             :weightA="weightA" :weightB="weightB"
             ></ccw-chart>
         </ccw-div>
         <ccw-control-panel id="ccw-slider">
-          Investment
+          <ccw-div>INVESTMENT</ccw-div>
           <vue-slider
             v-model="factorA"
             :marks="true"
-            :interval="10"
+            :data="Object.keys(investment)"
             :adsorb="true"
-            v-bind:class="{good: factorA >= 90}"
+            v-bind:class="{good: investment[factorA] == 100}"
             ></vue-slider>
-          Speed of action
+          <ccw-div>CLIMATE ACTION</ccw-div>
           <vue-slider 
             v-model="factorB"
             :marks="true"
-            :data="Object.keys(speeds)"
-            :included="true"
+            :data="Object.keys(action)"
             :adsorb="true"
-            v-bind:class="{good: speeds[factorB] >= 90}"
+            v-bind:class="{good: action[factorB] == 100}"
             ></vue-slider>
-          <p>This is a mockup, the data is still missing.</p>
-          <p>Here's a blurb explaining what this chart means and some dynamically changing text. Currently "investment" is {{ factorA }} and "speed" is {{ speeds[factorB] }}. This paragraph will show implications of these values.</p>
+          <ccw-span>With the level of climate action you chose (<ccw-span>{{ factorA }}</ccw-span> investment; with <ccw-span>{{ factorB }}</ccw-span> urgency), the model suggests that {{ getScenario() }}. If we shift our priorities now, we can change the future.</ccw-span>
+          <ccw-span>Model derived from peer-reviewed science, in particular: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
         </ccw-control-panel>
       </ccw-chart-wrapper>
     </transition>
@@ -78,6 +73,7 @@
 //import VueRangeSlider from 'vue-range-slider'
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
+import 'vue-slider-component/theme/default.css';
 
 // Import defaults from json file to keep them in sync
 import clock from './clock.json'
@@ -120,10 +116,16 @@ export default {
     renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
     
     // Chart 
-    factorA: 0, factorB: 0,
+    factorA: 'zero', factorB: 'small',
+    action: {'zero':0, 'small':25, 'medium':50, 'high':75, 'maximum':100},
+    investment: {'zero':0, 'low':25, 'medium':50, 'serious':75, 'maximum':100},
     showChart: false,
-    speeds: {'Slow':0, ' ':20, '  ':40, '   ':60, '    ':80, 'Fast':100},
     weightA: .4, weightB: .6,
+    scenarios: {
+      best: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
+      middle: "average global surface temperature would likely reach ~2°C by 2100 with devastating (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, 100s of millions of climate refugees, and millions dead. Crossing 1.5°C, we also risk triggering a series of catastrophic feedback loops that could spiral beyond our ability to ever remedy.",
+      worst: "average global surface temperature would likely reach 3-4°C by 2100 with catastrophic (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, permanently uninhabitable regions, billions of climate refugees, and 100s of millions dead. Civilization as we know it will no longer be possible.",
+    },
 
     // To become a prop when the mockup is done
     dark: false,
@@ -200,6 +202,10 @@ export default {
     openHomepage() {
       window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
     },
+    getScenario() {
+      let q = this.investment[this.factorA] * this.weightA + this.action[this.factorB] * this.weightB
+      return q > 95 ? this.scenarios.best : (q > 30 ? this.scenarios.middle : this.scenarios.worst)
+    },
   },
   created() {
     // Data is fetched from the network because browsers may cache this script
@@ -258,7 +264,6 @@ export default {
 }
 
 @import 'cleanslate';
-//@import '../node_modules/vue-range-slider/dist/vue-range-slider.css';
 @import 'matthewha';
 
 $accent: #ff0000;
@@ -577,12 +582,14 @@ ccw-brand {
     display: block;
   }
   svg[logo] {
-    max-height: 45%;
-    max-width: 80%;
+    max-height: 60%;
+    max-width: 90%;
     padding-top: .5rem;
   }
   svg[science] {
-    margin-right: .5rem;
+    max-width: 80%;
+    max-height: 25%;
+    margin-bottom: 4px;
   }
   > ccw-div {
     display: flex;
@@ -594,15 +601,8 @@ ccw-brand {
   }
 }
 
-@import "slider";
 #ccw-chart-wrapper { // Use id to increase specificity over cleanslate
-  //@import "node_modules/vue-slider-component/lib/styles/dot.scss";
-  //@import "node_modules/vue-slider-component/lib/styles/mark.scss";
-  //@import "node_modules/vue-slider-component/lib/styles/slider.scss";
-  //@import "node_modules/vue-slider-component/lib/theme/material.scss";
-
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
-  font-size: 23px;
 
   border-bottom: 1rem solid black;
   box-shadow: 0 10px 80px rgba(black, .1) inset;
@@ -621,31 +621,40 @@ ccw-brand {
     background: rgba(0,0,0,0);
     position: relative;
   }
-  h2 { // TODO: no h2-type elements!
-    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
-    font-weight: normal;
-    right: 7rem;
-    position: absolute;
-    opacity: 1;
-    font-size: 14px;
-    margin-top: 17rem;
-    text-transform: uppercase;
-    z-index: 1;
+  a:link, a:visited, a:hover {
+    color: $accent;
+    font-weight: bold;
+    text-decoration: none;
   }
   ccw-div {
-    flex: 3 0 0;
+    flex: 2 0 0;
     position: relative;
   }
   ccw-control-panel {
     flex: 1 0 0;
     font-weight: normal;
     display: block;
-    padding: 2rem 3rem 2rem 0;
-    p { // TODO: no p-type elements
-      font-size: 14px; // just match the sliders
+    padding: 1rem 3rem 2rem 0;
+    ccw-span {
+      font-size: 14px;
+      margin-bottom: 1rem;
+      ccw-span {
+        font-weight: bold;
+        font-size: 16px;
+        margin: 0;
+      }
+    }
+    ccw-div {
+      font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+      font-size: 22px;
+      text-align: center;
     }
     .vue-slider {
       margin-bottom: 2rem;
+    }
+    .vue-slider-dot {
+      width: 20px;
+      height: 20px;
     }
     .vue-slider-dot-handle, 
     .vue-slider-dot-handle::after,

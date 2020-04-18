@@ -53,12 +53,12 @@ export default {
             return context.dataIndex == 9
           },
           formatter: (value, context) => {
-            return [null, 'EMISSIONS', '', 'TEMPERATURE'][context.dataset.order]
+            return [null, 'EMISSIONS', 'TEMPERATURE'][context.dataset.order]
           },
         },
       },
       annotation: { // Documentation shows this nested under plugins. THAT'S WRONG.
-        drawTime: 'beforeDatasetsDraw',
+        drawTime: 'afterDatasetsDraw',
         annotations: [{
           id: 'crossover',
           type: 'line',
@@ -69,9 +69,27 @@ export default {
           label: {
             backgroundColor: 'transparent',
             fontColor: '#666',
+            fontFamily: 'katwijk_monolight',
             enabled: true,
             position: 'top',
             xAdjust: -35,
+          }
+        }, {
+          id: 'temperature',
+          type: 'line',
+          mode: 'horizontal',
+          scaleID: 'y-axis',
+          borderColor: 'black',
+          borderWidth: 1,
+          value: 34,
+          label: {
+            content: '1.5°C Global Temperature Rise',
+            backgroundColor: 'transparent',
+            fontColor: '#666',
+            fontFamily: 'katwijk_monolight',
+            enabled: true,
+            position: 'top',
+            yAdjust: 10,
           }
         }],
       },
@@ -136,9 +154,19 @@ export default {
         mode: 'nearest', // Show a tooltip no matter what you're pointing at
         intersect: false,
         // Exclude 1.5°C line from tooltip
-        filter: tooltip => tooltip.datasetIndex != 0,
+        //filter: tooltip => tooltip.datasetIndex != 0,
+        callbacks: {
+          label: (item, data) => {
+            if (item.datasetIndex == 1) {
+              return `${(item.yLabel / 22.222).toString().slice(0,4)}°C`
+            }
+            return item.yLabel
+          },
+        },
       },
     },
+    action: {0:'zero', 25:'small', 50:'medium', 75:'high', 100:'maximum'},
+    investment: {0:'zero', 25:'low', 50:'medium', 75:'serious', 100:'maximum'},
   }),
   props: {
     factorA: {type: Number, default: 0},
@@ -154,7 +182,6 @@ export default {
     nirvana(newVal) {
       if (this.nirvanaTimeout !== null) clearTimeout(this.nirvanaTimeout)
       this.nirvanaTimeout = setTimeout(() => {
-        console.log('nirvana changed')
         clearTimeout(this.nirvanaTimeout)
         this.$data._chart.annotation.elements['crossover'].options.value = parseFloat(newVal)
         this.$data._chart.annotation.elements['crossover'].options.label.content = `${newVal * 10} years`
@@ -165,8 +192,8 @@ export default {
   methods: {
     color(k, bold = true) {
       if (bold)
-        return k > 90 ? this.green : (k > 40 ? this.brown : this.red)
-      return k > 90 ? this.ltGreen : (k > 40 ? this.ltBrown : this.ltRed)
+        return k > 50 ? this.red : (k > 20 ? this.brown : this.green)
+      return k > 50 ? this.ltRed : (k > 20 ? this.ltBrown : this.ltGreen)
     },
     getAlignmentOptions() {
       // Configuration junk: { axisSide, paddingRight, paddingLeft }
@@ -181,21 +208,10 @@ export default {
       let wA = this.weightA
       let wB = this.weightB
       let k = 100 - Math.max((this.factorA * wA + this.factorB * wB), 1)
-      console.log(k, Math.round(k/10), Math.floor(k/10), Math.ceil(k/10))
-      console.log(E[k])
 
       this.chartData = {
         xLabels: this.xLabels,
         datasets: [
-          {
-            label: '1.5°C ceiling',
-            data: [17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17],
-            fill: false,
-            borderColor: this.ltRed,
-            borderWidth: 2,
-            pointStyle: 'dash',
-            order: 2,
-          },
           {
             label: 'Emissions',
             borderWidth: 6,
@@ -220,15 +236,17 @@ export default {
             fill: false,
             clip: 0,
             data: T[k],
-            order: 3,
+            order: 2,
           },
         ]
       }
 
       // Kludge the point of no return line
+      /*
       this.$nextTick(() => {
         this.nirvana = Math.min((100 - k) / 5, 20) 
       })
+      */
     },
   },
   mounted() {
