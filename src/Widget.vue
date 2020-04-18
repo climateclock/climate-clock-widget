@@ -15,7 +15,7 @@
           <ccw-panel deadline>
             <ccw-div>
               <ccw-span>DEADLINE</ccw-span>
-              <ccw-span>We must achieve net zero emissions in:</ccw-span>
+              <ccw-span>We must achieve zero emissions in:</ccw-span>
             </ccw-div>
             <ccw-readout>
               {{ remaining.years }}<ccw-span>YRS</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>DAYS</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
@@ -38,7 +38,7 @@
 
     <!-- Chart portion (component is lazy loaded) -->
     <transition name="slide">
-      <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper" :size="size">
+      <ccw-chart-wrapper v-if="kiosk || showChart" id="ccw-chart-wrapper" :size="size">
         <ccw-div>
           <h2>1.5°C Global Temperature Rise</h2>
           <ccw-chart 
@@ -70,33 +70,6 @@
         </ccw-control-panel>
       </ccw-chart-wrapper>
     </transition>
-
-
-    <div class="mockup-control-panel">
-      <h1>NON-WORKING PARTIAL DEMO</h1>
-      <p>Resize your browser until the widget appears properly, it's in the middle of being redesigned and won't work properly almost anywhere.</p>
-
-      <h2>Experimental features</h2>
-      <p>You are looking at an experimental, non-functioning CLIMATECLOCK widget. It is designed for testing the program code and does not depict accurate information.</p>
-      <hr>
-      <input type="checkbox" v-model="dark"><label>Dark</label><br>
-      <!--
-      <h3>* Investment Weighting</h3>
-      <vue-slider 
-        v-model="weightA"
-        :min="0"
-        :max="1"
-        :interval=".1"
-        ></vue-slider>
-      <h3>* Speed Weighting</h3>
-      <vue-slider 
-        v-model="weightB"
-        :min="0"
-        :max="1"
-        :interval=".1"
-        ></vue-slider>
-      -->
-    </div>
   </div>
 </template>
 
@@ -116,6 +89,7 @@ export default {
   props: {
     bottom: {type: Boolean, default: false},
     lifeline: {type: String, default: null},
+    kiosk: {type: Boolean, default: false},
   },
   components: {
     // Lazy-load this component
@@ -124,6 +98,7 @@ export default {
   },
   data: () => ({
     // Component loading
+    // Github currently limits to 60req/hr so can we poll this every 90 seconds? What's reasonable?
     githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
     ready: false,
     usingNetworkData: false,
@@ -184,7 +159,6 @@ export default {
     renewablePercent() {
       let tElapsed = this.now - this.renewStartDate.getTime()
       return (this.renewStartPct + (tElapsed / 1000 * this.renewIncPerSecond)).toFixed(this.renewPlaces)
-        //.replace('.', '\u200a')
     },
 
     // Items below are skin/theme-specific
@@ -194,22 +168,6 @@ export default {
     feedText() {
       return (this.lifeline ? `${this.lifeline} | ` : '') + this.feed
     },
-    /*
-    budgetLabelText() {
-      return 'CARBON BUDGET' 
-        + (/xs|lg|xl/.test(this.size) ? ' REMAINING' : '') 
-        + (/xs|sm|md/.test(this.size) ? ' (TONS)' : '')
-    },
-    budgetText() {
-      return `${Math.floor(this.CO2Budget).toLocaleString()}${/xs|sm|md/.test(this.size) ? '' : ' TONS'}`
-    },
-    clockText() {
-      let r = this.remaining, p = this.pad, pl = this.plural
-      return /xs|sm|md/.test(this.size)
-        ? `${r.years}Y ${r.days}D ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
-        : `${pl(r.years, 'YEAR', 'S')} ${pl(r.days, 'DAY', 'S')} ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
-    },
-    */
   },
   methods: {
     setSize() {
@@ -265,8 +223,6 @@ export default {
     window.addEventListener('load', this.setSize)
     window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
-  },
-  mounted() {
   },
   watch: {
     ready() {
@@ -593,7 +549,6 @@ ccw-ticker {
     100% { transform: translate(0%, 0); }
   }
 }
-
 ccw-brand {
   font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
   line-height: .85;
@@ -745,32 +700,5 @@ ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[si
    overflow: hidden;
    max-height: 0;
    opacity: 0;
-}
-
-
-
-// Mockup page (this junk goes in index.html)
-div.mockup-control-panel {
-  background-color: #fff6cd;
-  display: block;
-  padding: 2rem;
-  font-family: Helvetica, Arial, sans-serif;
-  h2, h3 { 
-    margin: .25rem 0; 
-  }
-  h3 {
-    margin-top: 1rem;
-  }
-  hr {
-    border-top: 5px dashed orange;
-    margin: 2rem 0;
-  }
-  .vue-slider {
-    max-width: 30rem;
-  }
-  textarea {
-    width: 30rem;
-    height: 5rem;
-  }
 }
 </style>
