@@ -3,7 +3,7 @@
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)">
     <!-- Main Widget -->
     <div class="cleanslate">
-      <ccw-w :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
+      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
         <ccw-brand>
           <img logo svg-inline src="./climateclocktrio.svg">
           <img science svg-inline src="./how.svg">
@@ -35,56 +35,78 @@
 
     <!-- Chart portion (component is lazy loaded) -->
     <transition name="slide">
-      <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper" :size="size">
-        <ccw-div>
-          <ccw-chart :height="600" 
-            @newK="k = $event"
-            :factorA="parseInt(A)" 
-            :factorB="parseInt(B)"
-            ></ccw-chart>
-        </ccw-div>
-        <ccw-control-panel id="ccw-slider">
-          <ccw-div>SIZE OF INVESTMENT</ccw-div>
-          <ccw-slider>
-            <input type="range" v-model="A" min="1" max="5">
-            <ccw-div>
-              <ccw-span v-for="(v, k) in action" :key="k">{{ v }}</ccw-span>
-            </ccw-div>
-          </ccw-slider>
-          <ccw-div>SPEED OF ACTION</ccw-div>
-          <ccw-slider>
-            <input type="range" v-model="B" min="1" max="5">
-            <ccw-div>
-              <ccw-span v-for="(v, k) in investment" :key="k">{{ v }}</ccw-span>
-            </ccw-div>
-          </ccw-slider>
-          <ccw-hr>Scenario</ccw-hr>
-          <ccw-scenario>
-            <ccw-div>
-              <ccw-radio @click="setPreset('bad')">
-                <img svg-inline v-if="preset == 'bad'" src="./checked.svg">
-                <img svg-inline v-else src="./unchecked.svg">
-                <ccw-span class="ccw-bad" @click="setPreset('bad')">BUSINESS AS USUAL</ccw-span>
-              </ccw-radio>
-              <ccw-radio @click="setPreset('middle')">
-                <img svg-inline v-if="preset == 'middle'" src="./checked.svg">
-                <img svg-inline v-else src="./unchecked.svg">
-                <ccw-span class="ccw-middle" @click="setPreset('middle')">"MIDDLE GROUND"</ccw-span>
-              </ccw-radio>
-              <ccw-radio @click="setPreset('good')">
-                <img svg-inline v-if="preset == 'good'" src="./checked.svg">
-                <img svg-inline v-else src="./unchecked.svg">
-                <ccw-span class="ccw-good" @click="setPreset('good')">GREEN NEW DEAL</ccw-span>
-              </ccw-radio>
-            </ccw-div>
+      <ccw-div v-if="showChart">
+        <ccw-flatten-header v-if="flatten">
+          <div>
+          #FlattenThe<span>Climate</span>Curve
+          <img svg-inline src="./flatten_logo.svg">
+          </div>
+          <div>
+            <span>A project of</span>
+            <a href="https://climateclock.world" target="_blank">
+              <img svg-inline src="./climateclock_logo.svg">
+            </a>
+          </div>
+        </ccw-flatten-header>
 
-            <ccw-div class="ccw-text">
-              <ccw-span>With the level of climate action you chose (<ccw-span>{{ action[A] }}</ccw-span> investment; with <ccw-span>{{ investment[B] }}</ccw-span> speed of action), the model suggests that {{ scenarios[preset] }}. If we shift our priorities now, we can change the future.</ccw-span>
-              <ccw-span>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
-            </ccw-div>
-          </ccw-scenario>
-        </ccw-control-panel>
-      </ccw-chart-wrapper>
+        <ccw-chart-wrapper :class="{flatten: flatten}" id="ccw-chart-wrapper" :size="size">
+          <ccw-div>
+            <ccw-chart :height="650" 
+              @newK="k = $event"
+              :factorA="parseInt(A)" 
+              :factorB="parseInt(B)"
+              ></ccw-chart>
+          </ccw-div>
+          <ccw-control-panel id="ccw-slider">
+            <ccw-div>SIZE OF INVESTMENT</ccw-div>
+            <ccw-slider>
+              <input type="range" v-model="A" min="1" max="5">
+              <ccw-div>
+                <ccw-span v-for="(v, k) in action" :key="k">{{ v }}</ccw-span>
+              </ccw-div>
+            </ccw-slider>
+            <ccw-div>SPEED OF ACTION</ccw-div>
+            <ccw-slider>
+              <input type="range" v-model="B" min="1" max="5">
+              <ccw-div>
+                <ccw-span v-for="(v, k) in investment" :key="k">{{ v }}</ccw-span>
+              </ccw-div>
+            </ccw-slider>
+            <ccw-hr>Scenario</ccw-hr>
+            <ccw-scenario>
+              <ccw-div>
+                <ccw-radio @click="setPreset('bad')">
+                  <img svg-inline v-if="preset == 'bad'" src="./checked.svg">
+                  <img svg-inline v-else src="./unchecked.svg">
+                  <ccw-span class="ccw-bad" @click="setPreset('bad')">BUSINESS AS USUAL</ccw-span>
+                </ccw-radio>
+                <ccw-radio @click="setPreset('middle')">
+                  <img svg-inline v-if="preset == 'middle'" src="./checked.svg">
+                  <img svg-inline v-else src="./unchecked.svg">
+                  <ccw-span class="ccw-middle" @click="setPreset('middle')">"MIDDLE GROUND"</ccw-span>
+                </ccw-radio>
+                <ccw-radio @click="setPreset('good')">
+                  <img svg-inline v-if="preset == 'good'" src="./checked.svg">
+                  <img svg-inline v-else src="./unchecked.svg">
+                  <ccw-span class="ccw-good" @click="setPreset('good')">GREEN NEW DEAL</ccw-span>
+                </ccw-radio>
+              </ccw-div>
+
+              <ccw-div class="ccw-text">
+                <ccw-span>With the level of climate action you chose (<ccw-span>{{ action[A] }}</ccw-span> investment; with <ccw-span>{{ investment[B] }}</ccw-span> speed of action), the model suggests that {{ scenarios[preset] }}. If we shift our priorities now, we can change the future.</ccw-span>
+                <ccw-span v-if="!flatten">Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
+              </ccw-div>
+            </ccw-scenario>
+          </ccw-control-panel>
+        </ccw-chart-wrapper>
+
+        <ccw-flatten-footer v-if="flatten">
+          <p>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</p>
+          <p>This is a beta version of #FlattenTheClimateCurve ©2020. Tool designed by Gan Golan and Andrew Boyd, Programming by Adrian Carpentər. Science advising by Omar Gowayyed, Bill Becker, Richard Heinberg and others.</p>
+          <p>This tool is free and available to the public under a creative commons license.</p>
+          <iframe src="https://drive.google.com/file/d/1rZnBR1jNj6E737-ZoQHHQy_LYodJhgkD/preview" width="400" height="225"></iframe>
+        </ccw-flatten-footer>
+      </ccw-div>
     </transition>
   </div>
 </template>
@@ -105,7 +127,7 @@ export default {
   props: {
     bottom: {type: Boolean, default: false},
     lifeline: {type: String, default: null},
-    kiosk: {type: Boolean, default: false},
+    flatten: {type: Boolean, default: false},
   },
   components: {
     // Lazy-load this component
@@ -349,6 +371,15 @@ ccw-w {
   white-space: nowrap;
   overflow: hidden;
 
+  &.flatten, 
+  &[size="xl"].flatten, 
+  &[size="lg"].flatten, 
+  &[size="md"].flatten, 
+  &[size="sm"].flatten, 
+  &[size="xs"].flatten {
+    height: 1px;
+    opacity: 0;
+  }
   *, *:before, *:after {
     box-sizing: border-box;
   }
@@ -639,6 +670,7 @@ ccw-brand {
 
 #ccw-chart-wrapper { // Use id to increase specificity over cleanslate
   box-sizing: border-box;
+  overflow: hidden;
 
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   font-weight: bold;
@@ -652,6 +684,9 @@ ccw-brand {
   flex-direction: row;
   justify-content: flex-end;
 
+  &.flatten {
+    border: none;
+  }
   &[size="md"], &[size="sm"], &[size="xs"] {
     flex-direction: column; 
   }
@@ -776,11 +811,9 @@ ccw-brand {
     }
   }
 }
-
 .ccw-good { color: $secondary; }
 .ccw-middle { color: #bd8760; }
 .ccw-bad { color: $accent; }
-
 .slide-enter-active {
    transition-duration: .2s;
 }
@@ -788,13 +821,13 @@ ccw-brand {
    transition-duration: .2s;
 }
 .slide-enter-to, .slide-leave {
-   max-height: 400px;
+   max-height: 778px;
    overflow: hidden;
    opacity: 1;
 }
 ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[size="md"] {
   &.slide-enter-to, &.slide-leave {
-     max-height: 724px; // slide height
+     max-height: 1600px; // slide height
      overflow: hidden;
      opacity: 1;
   }
@@ -803,5 +836,46 @@ ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[si
    overflow: hidden;
    max-height: 0;
    opacity: 0;
+}
+
+@import 'klima.css';
+ccw-flatten-header {
+  padding-top: 2rem;
+  font-family: 'klimabold';
+  display: flex;
+  justify-content: space-between;
+  div:first-of-type {
+    font-size: 60px;
+    color: #666;
+    span {
+      color: $secondary;
+    }
+    svg {
+      margin-left: 1rem;
+    }
+  }
+  div:nth-of-type(2) {
+    svg {
+      max-height: 6rem;
+      max-width: 6rem;
+      margin-left: 1rem;
+    }
+  }
+  div {
+    display: flex;
+    align-items: center;
+  }
+  svg {
+    max-height: 3rem;
+    max-width: 3rem;
+  }
+}
+ccw-flatten-footer {
+  display: block;
+  max-width: 800px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  padding: 1rem 0 10rem 0;
 }
 </style>

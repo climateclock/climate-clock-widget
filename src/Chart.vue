@@ -123,10 +123,11 @@ export default {
             display: true,
             labelString: 'RISKS',
             fontFamily: 'katwijk_monoblack',
-            fontSize: 14,
+            fontSize: 16,
             fontColor: 'black',
           },
           ticks: {
+            display: false,
             fontFamily: 'katwijk_monolight',
             fontSize: 14,
             fontColor: 'black',
@@ -138,7 +139,7 @@ export default {
           },
           gridLines: {
             lineWidth: 1,
-            zeroLineWidth: 1,
+            zeroLineWidth: 4,
             drawBorder: false,
           },
         }],
@@ -148,7 +149,11 @@ export default {
           //type: 'category',
           position: 'bottom',
           scaleLabel: {
-            display: false,
+            display: true,
+            labelString: 'TIME',
+            fontFamily: 'katwijk_monoblack',
+            fontSize: 16,
+            fontColor: 'black',
           },
           ticks: {
             fontFamily: 'katwijk_monolight',
@@ -157,7 +162,7 @@ export default {
           },
           gridLines: {
             lineWidth: 1,
-            zeroLineWidth: 1,
+            zeroLineWidth: 4,
             drawBorder: false,
           },
         }],
@@ -176,7 +181,8 @@ export default {
         // Exclude 1.5°C line from tooltip
         filter: tooltip => tooltip.datasetIndex != 0,
         callbacks: {
-          label: (item, data) => {
+          //label: (item, data) => {
+          label: item => {
             if (item.datasetIndex == 1) {
               return `+${(item.yLabel / 22.222).toString().slice(0,4)}°C`
             }

@@ -13,7 +13,7 @@ module.exports = {
     output: {
       // Don't place chunks in a js folder
       chunkFilename: '[name].js?id=[hash]',
-      filename: 'widget-v2jw.js?id=[hash]'
+      filename: 'widget-v2.js?id=[hash]'
     }
   },
   css: {
