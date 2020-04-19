@@ -36,7 +36,7 @@
 
     <!-- Chart portion (component is lazy loaded) -->
     <transition name="slide">
-      <ccw-div v-if="showChart || flatten">
+      <ccw-div v-if="showChart">
         <ccw-flatten-header :size="size" v-if="flatten">
           <div>
           #FlattenThe<span>Climate</span>Curve
@@ -282,6 +282,10 @@ export default {
     window.addEventListener('load', this.setSize)
     window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
+
+    if (this.flatten) {
+      this.showChart = true
+    }
   },
   watch: {
     k(newK) {
