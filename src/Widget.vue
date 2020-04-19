@@ -36,14 +36,14 @@
 
     <!-- Chart portion (component is lazy loaded) -->
     <transition name="slide">
-      <ccw-div v-if="showChart">
-        <ccw-flatten-header v-if="flatten">
+      <ccw-div v-if="showChart || flatten">
+        <ccw-flatten-header :size="size" v-if="flatten">
           <div>
           #FlattenThe<span>Climate</span>Curve
-          <img svg-inline src="./flatten_logo.svg">
+          <img v-if="/xl|lg/.test(size)" svg-inline src="./flatten_logo.svg">
           </div>
           <div>
-            <span>A project of</span>
+            <span v-if="/xl|lg/.test(size)">A project of</span>
             <a href="https://climateclock.world" target="_blank">
               <img svg-inline src="./climateclock_logo.svg">
             </a>
@@ -843,10 +843,14 @@ ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[si
 }
 
 @import 'klima.css';
+ccw-flatten-header[size="lg"] div:first-of-type { font-size: 50px; }
+ccw-flatten-header[size="md"] div:first-of-type { font-size: 35px; }
+ccw-flatten-header[size="sm"] div:first-of-type { font-size: 20px; }
 ccw-flatten-header {
   padding-top: 2rem;
   font-family: 'klimabold';
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   div:first-of-type {
     font-size: 60px;
