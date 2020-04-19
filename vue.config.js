@@ -2,9 +2,19 @@ module.exports = {
   chainWebpack: config => {
     // Don't split vendor and app js
     config.optimization.splitChunks(false)
+    // Inline SVGs
+    config.module
+      .rule('vue')
+      .use('vue-svg-inline-loader')
+        .loader('vue-svg-inline-loader')
+        .options({})
   },
   configureWebpack: {
-    output: {filename: 'widget-v1.js'}
+    output: {
+      // Don't place chunks in a js folder
+      chunkFilename: '[name].js?id=[hash]',
+      filename: 'widget-v2.js?id=[hash]'
+    }
   },
   css: {
     // Don't produce a separate css file
@@ -17,5 +27,5 @@ module.exports = {
   // Don't produce a sourcemap
   productionSourceMap: false,
   // Use one static name
-  filenameHashing: false
+  //filenameHashing: false
 }

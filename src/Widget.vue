@@ -1,34 +1,119 @@
 <template>
-  <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)" class="cleanslate">
-    <ccw-container
-      @click="openHomepage"
-      :id="`ccw-container-${_uid}`"
-      :size="size"
-      :glow="glow"
-      :bottom="bottom">
-      <ccw-row header>
-        <ccw-label brand >CLIMATECLOCK.WORLD</ccw-label>
-        <ccw-label budget>{{ budgetLabelText }}</ccw-label>
-        <ccw-label time>TIME TO ACT</ccw-label>
-      </ccw-row>
-      <ccw-row deadline>
-        <ccw-clock deadline>DEADLINE</ccw-clock>
-        <ccw-clock budget>{{ budgetText }}</ccw-clock>
-        <ccw-clock time>{{ clockText }}</ccw-clock>
-      </ccw-row>
-      <ccw-row lifeline>
-        <ccw-clock lifeline>LIFELINE</ccw-clock>
-        <ccw-clock feed>
-          <ccw-feed one :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
-          <ccw-feed two :style="animationDuration">{{ feedText }}&nbsp;</ccw-feed>
-        </ccw-clock>
-      </ccw-row>
-    </ccw-container>
+  <!-- Reject IE9 entirely (better to display nothing than something broken) -->
+  <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)">
+    <!-- Main Widget -->
+    <div class="cleanslate">
+      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
+        <ccw-brand>
+          <img logo svg-inline src="./climateclocktrio.svg">
+          <img science svg-inline src="./how.svg">
+        </ccw-brand>
+        <ccw-flexwrap>
+          <ccw-panel deadline>
+            <ccw-div>
+              <ccw-span>DEADLINE</ccw-span>
+              <ccw-span>We must achieve zero emissions in:</ccw-span>
+            </ccw-div>
+            <ccw-readout>
+              {{ remaining.years }}<ccw-span>YRS</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>DAYS</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
+            </ccw-readout>
+          </ccw-panel>
+          <ccw-panel lifeline>
+            <ccw-div>
+              <ccw-span>LIFELINE</ccw-span>
+              <ccw-span>% of world's energy from renewables:</ccw-span>
+            </ccw-div>
+            <ccw-readout decimal>{{ renewablePercent }}%</ccw-readout>
+          </ccw-panel>
+          <ccw-ticker>
+            <ccw-div one :style="animationDuration">{{ feedText }}</ccw-div>
+            <ccw-div two :style="animationDuration">{{ feedText }}</ccw-div>
+          </ccw-ticker>
+        </ccw-flexwrap>
+      </ccw-w>
+    </div>
+
+    <!-- Chart portion (component is lazy loaded) -->
+    <transition name="slide">
+      <ccw-div v-if="showChart">
+        <ccw-flatten-header v-if="flatten">
+          <div>
+          #FlattenThe<span>Climate</span>Curve
+          <img svg-inline src="./flatten_logo.svg">
+          </div>
+          <div>
+            <span>A project of</span>
+            <a href="https://climateclock.world" target="_blank">
+              <img svg-inline src="./climateclock_logo.svg">
+            </a>
+          </div>
+        </ccw-flatten-header>
+
+        <ccw-chart-wrapper :class="{flatten: flatten}" id="ccw-chart-wrapper" :size="size">
+          <ccw-div>
+            <ccw-chart :height="650" 
+              @newK="k = $event"
+              :factorA="parseInt(A)" 
+              :factorB="parseInt(B)"
+              ></ccw-chart>
+          </ccw-div>
+          <ccw-control-panel id="ccw-slider">
+            <ccw-div>SIZE OF INVESTMENT</ccw-div>
+            <ccw-slider>
+              <input type="range" v-model="A" min="1" max="5">
+              <ccw-div>
+                <ccw-span v-for="(v, k) in action" :key="k">{{ v }}</ccw-span>
+              </ccw-div>
+            </ccw-slider>
+            <ccw-div>SPEED OF ACTION</ccw-div>
+            <ccw-slider>
+              <input type="range" v-model="B" min="1" max="5">
+              <ccw-div>
+                <ccw-span v-for="(v, k) in investment" :key="k">{{ v }}</ccw-span>
+              </ccw-div>
+            </ccw-slider>
+            <ccw-hr>Scenario</ccw-hr>
+            <ccw-scenario>
+              <ccw-div>
+                <ccw-radio @click="setPreset('bad')">
+                  <img svg-inline v-if="preset == 'bad'" src="./checked.svg">
+                  <img svg-inline v-else src="./unchecked.svg">
+                  <ccw-span class="ccw-bad" @click="setPreset('bad')">BUSINESS AS USUAL</ccw-span>
+                </ccw-radio>
+                <ccw-radio @click="setPreset('middle')">
+                  <img svg-inline v-if="preset == 'middle'" src="./checked.svg">
+                  <img svg-inline v-else src="./unchecked.svg">
+                  <ccw-span class="ccw-middle" @click="setPreset('middle')">"MIDDLE GROUND"</ccw-span>
+                </ccw-radio>
+                <ccw-radio @click="setPreset('good')">
+                  <img svg-inline v-if="preset == 'good'" src="./checked.svg">
+                  <img svg-inline v-else src="./unchecked.svg">
+                  <ccw-span class="ccw-good" @click="setPreset('good')">GREEN NEW DEAL</ccw-span>
+                </ccw-radio>
+              </ccw-div>
+
+              <ccw-div class="ccw-text">
+                <ccw-span>With the level of climate action you chose (<ccw-span>{{ action[A] }}</ccw-span> investment; with <ccw-span>{{ investment[B] }}</ccw-span> speed of action), the model suggests that {{ scenarios[preset] }}. If we shift our priorities now, we can change the future.</ccw-span>
+                <ccw-span v-if="!flatten">Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
+              </ccw-div>
+            </ccw-scenario>
+          </ccw-control-panel>
+        </ccw-chart-wrapper>
+
+        <ccw-flatten-footer v-if="flatten">
+          <p>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</p>
+          <p>This is a beta version of #FlattenTheClimateCurve ©2020. Tool designed by Gan Golan and Andrew Boyd, Programming by Adrian Carpentər. Science advising by Omar Gowayyed, Bill Becker, Richard Heinberg and others.</p>
+          <p>This tool is free and available to the public under a creative commons license.</p>
+          <iframe src="https://drive.google.com/file/d/1rZnBR1jNj6E737-ZoQHHQy_LYodJhgkD/preview" width="400" height="225"></iframe>
+        </ccw-flatten-footer>
+      </ccw-div>
+    </transition>
   </div>
 </template>
 
 
 <script>
+//import VueRangeSlider from 'vue-range-slider'
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
@@ -40,28 +125,59 @@ const SECONDS_PER_YEAR = 365.25 * 24 * 3600
 
 export default {
   props: {
-    glow: {type: Boolean, default: false},
     bottom: {type: Boolean, default: false},
     lifeline: {type: String, default: null},
+    flatten: {type: Boolean, default: false},
+  },
+  components: {
+    // Lazy-load this component
+    'ccw-chart': () => import(/* webpackChunkName: "flatten" */ './Chart.vue'),
   },
   data: () => ({
+    // Component loading
+    // Github currently limits to 60req/hr so can we poll this every 90 seconds? What's reasonable?
     githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
-    now: null,
     ready: false,
     usingNetworkData: false,
 
+    // All clock action is invoked by changing this.now in an interval function
+    now: null,
+
+    // Deadline
     annualGrowth: clock.annualGrowth,
     feed: clock.feed,
     startDateUTC: clock.startDateUTC,
     startDateCO2Budget: clock.startDateCO2Budget,
     tonsPerSecond: clock.tonsPerSecond,
+    
+    // Lifeline
+    renewPlaces: 7,
+    renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
+    renewStartPct: 26.2,
+    renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
+    
+    // Chart 
+    A: 2, B: 2, k: 0, preset: 'bad',
+    action: {1: 'zero', 2: 'low', 3: 'medium', 4: 'serious', 5: 'maximum'},
+    investment: {1: 'zero', 2: 'small', 3: 'medium', 4: 'high', 5: 'maximum'},
+    showChart: true,
+    scenarios: {
+      good: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
+      middle: "average global surface temperature would likely reach ~2°C by 2100 with devastating (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, 100s of millions of climate refugees, and millions dead. Crossing 1.5°C, we also risk triggering a series of catastrophic feedback loops that could spiral beyond our ability to ever remedy.",
+      bad: "average global surface temperature would likely reach 3-4°C by 2100 with catastrophic (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, permanently uninhabitable regions, billions of climate refugees, and 100s of millions dead. Civilization as we know it will no longer be possible.",
+    },
+
+    // To become a prop when the mockup is done
+    dark: false,
 
     // Items below are skin/theme-specific (TODO: settle on defaults for all skins/themes)
     // Ascending sizes work like breakpoints, adding an html attribute to the container
     size: 'hide',
     sizes: [[0, 'hide'], [224, 'xs'], [320, 'sm'], [540, 'md'], [960, 'lg'], [1200, 'xl']], 
+    lastSize: 0,
   }),
   computed: {
+    // Deadline calculation
     CO2Budget() {
       let tElapsed = this.now - this.startDate.getTime()
       return this.startDateCO2Budget - tElapsed / 1000 * this.tonsPerSecond
@@ -77,30 +193,40 @@ export default {
       return countdown(this.deadline, this.now,
         countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
     },
+    
+    // Lifeline calculation
+    renewIncPerSecond() {
+      return this.renewIncPerYear / SECONDS_PER_YEAR
+    },
+    renewablePercent() {
+      let tElapsed = this.now - this.renewStartDate.getTime()
+      return (this.renewStartPct + (tElapsed / 1000 * this.renewIncPerSecond)).toFixed(this.renewPlaces)
+    },
+
     // Items below are skin/theme-specific
     animationDuration() {
       return {animationDuration: .15 * this.feedText.length + 's'}
     },
-    budgetLabelText() {
-      return 'CARBON BUDGET' 
-        + (/xs|lg|xl/.test(this.size) ? ' REMAINING' : '') 
-        + (/xs|sm|md/.test(this.size) ? ' (TONS)' : '')
-    },
-    budgetText() {
-      return `${Math.floor(this.CO2Budget).toLocaleString()}${/xs|sm|md/.test(this.size) ? '' : ' TONS'}`
-    },
-    clockText() {
-      let r = this.remaining, p = this.pad, pl = this.plural
-      return /xs|sm|md/.test(this.size)
-        ? `${r.years}Y ${r.days}D ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
-        : `${pl(r.years, 'YEAR', 'S')} ${pl(r.days, 'DAY', 'S')} ${p(r.hours)}:${p(r.minutes)}:${p(r.seconds)}`
-    },
     feedText() {
       return (this.lifeline ? `${this.lifeline} | ` : '') + this.feed
     },
+
+    // Chart thing
+    scenarioText() {
+      return this.scenarios[this.preset]
+    }, 
   },
   methods: {
     setSize() {
+      // Toggle this to force-re-render (hack: https://michaelnthiessen.com/force-re-render/)
+      let chartShouldBeShown = this.showChart
+      let currentViewportSize = window.innerWidth
+      // Don't force-re-render before the first view, or when size hasn't changed
+      if (this.ready && this.lastSize != currentViewportSize) { 
+        this.showChart = false
+      }
+      this.lastSize = currentViewportSize
+
       this.$nextTick(() => {
         let width = document.getElementById(`ccw-container-${this._uid}`).clientWidth
         for (let sz of this.sizes) {
@@ -108,6 +234,7 @@ export default {
           this.size = sz[1]
         }
         this.ready = true
+        this.showChart = chartShouldBeShown
       })
     },
     // Items below are skin/theme-specific
@@ -120,6 +247,17 @@ export default {
     openHomepage() {
       window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
     },
+    updatePreset(preset) {
+      this.preset = preset
+    },
+    setPreset(preset) {
+      switch(preset) {
+        case 'bad':     this.A = 2; this.B = 2; break
+        case 'middle':  this.A = 3; this.B = 3; break
+        case 'good':    this.A = 5; this.B = 5; break
+      }
+      this.preset = preset
+    }
   },
   created() {
     // Data is fetched from the network because browsers may cache this script
@@ -135,17 +273,19 @@ export default {
     })
 
     // Watch for container size changes and update sizing classes
-    let resizeInterval = 0, tickInterval = 100
+    let resizeInterval = 0, tickInterval = 997
     if (this.$browserDetect.isEdge) { // Slow down for the special browser
       resizeInterval = 250
       tickInterval = 250
     }
     window.addEventListener('load', this.setSize)
-    window.addEventListener('resize', 
-      this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
+    window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
   },
   watch: {
+    k(newK) {
+      this.preset = newK < 20 ? 'good' : (newK < 60 ? 'middle' : 'bad')
+    },
     ready() {
       if (!this.bottom || window.climateClockWidgetPaddingAdded) return
       window.climateClockWidgetPaddingAdded = true
@@ -165,7 +305,7 @@ export default {
   &:after {
     content: $text;
     position: absolute;
-    bottom: 0; right: 0;
+    bottom: 0; left: 0;
     background-color: $color;
     padding: .25rem;
   }
@@ -179,15 +319,12 @@ export default {
 }
 
 @import 'cleanslate';
-@import 'scoreboard';
+@import 'matthewha';
 
-$accent: #f51a25;
-$secondary: #b0d155;
-$dark: #231f20;
-$light: #8c8d91;
-
-$narrow: 6;
-$wide: 14;
+$accent: #ff0000;
+$accentDark: #940000;
+$secondary: #00dd72;
+$secondaryDark: #008040;
 
 @mixin glow($color) {
   font-weight: 400;
@@ -198,217 +335,547 @@ $wide: 14;
                 .5px -.5px .1em $color;
 }
 
-// <ccw-container> is a column of 3 flex rows
-ccw-container {
+// <ccw-w>
+ccw-fixed { // For "fixed" prop ;not yet used
+  position: fixed;
+  bottom: 0; 
+  left: 0; right: 0;
+  z-index: 1000;
+  box-shadow: 0 20px 30px rgba(black, 50%);
+}
+
+ccw-div {
+  display: block;
+}
+ccw-span {
+  display: inline-block;
+}
+
+// An arbitrary measure which nevertheless gets used a lot (16 * 7 = 112)
+$cubit: 7rem; 
+
+ccw-w {
+  cursor: pointer;
+  user-select: none;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
-  cursor: pointer;
   display: flex;
-  flex-direction: column; 
-  font-family: 'Scoreboard', 'Lucida Console', Monaco, monospace;
-  font-size: 37px;
-  font-weight: 600;
+  flex-direction: row-reverse; 
+  justify-content: space-between;
+  font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+  font-weight: normal;
+  font-size: 18px;
   position: relative;
   width: 100%;
   white-space: nowrap;
+  overflow: hidden;
 
-  *, *:before, *:after {
-    box-sizing: inherit;
-    display: inline-block;
-    overflow: hidden;
-    text-align: center;
+  &.flatten, 
+  &[size="xl"].flatten, 
+  &[size="lg"].flatten, 
+  &[size="md"].flatten, 
+  &[size="sm"].flatten, 
+  &[size="xs"].flatten {
+    height: 1px;
+    opacity: 0;
   }
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+
+  height: $cubit;
   &[size="lg"] {
-    font-size: 32px;
+    font-size: 13.75px;
   }
   &[size="md"]{
-    font-size: 25px;
+    font-size: 14.25px;
+    height: 2 * ($cubit - 1.5rem);
+    flex-direction: row; 
   }
   &[size="sm"] {
-    font-size: 20px;
-    &:before {
-      content: "CLIMATECLOCK.WORLD";
-      font-family: Helvetica, Arial, sans-serif;
-      position: absolute;
-      color: rgba(0, 0, 0, .3);
-      font-size: 50%;
-      font-weight: 800;
-      letter-spacing: .04em;
-      bottom: -1.25em;
-    }
+    font-size: 11px;
+    height: 2 * ($cubit - 2.25rem);
+    flex-direction: row; 
   }
   &[size="xs"] {
-    font-size: 25px;
-    /*
-    &:before {
-      content: "CLIMATECLOCK.WORLD";
-      font-family: Helvetica, Arial, sans-serif;
-      position: absolute;
-      color: rgba(0, 0, 0, .3);
-      font-size: 50%;
-      font-weight: 800;
-      letter-spacing: .04em;
-      bottom: -1.25em;
-    }
-    */
-  }
-  &[bottom] {
-    background-color: $light;
-    box-shadow: 0 20px 30px rgba(black, 50%);
-    bottom: 0;
-    left: 0; right: 0;
-    max-width: 100vw;
-    position: fixed;
-    z-index: 10000;
+    font-size: 7px;
+    height: 2 * ($cubit - 3.5rem);
+    flex-direction: row; 
   }
 }
 
-// <ccw-row>s are rows of 3 columns
-ccw-row {
-  background-color: $dark;
+ccw-flexwrap {
   display: flex;
   flex-direction: row;
-  &[header] {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 35%;
-    font-weight: 800;
-    background-color: $light;
-    ccw-label[brand] {
-      background-color: white;
+  flex-wrap: wrap;
+  position: relative; // <ccw-ticker> needs this, yeah?
+  width: 100%;
+
+  flex: 10 0 0;
+}
+
+// Used in deadline/lifeline headings and ticker
+$txtPad: 5px;
+
+ccw-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-transform: uppercase;
+  color: black;
+
+  flex: 1 0 49%; // 50% causes wrapping!
+  overflow: hidden;
+
+  height: $cubit - 1.5rem;
+  ccw-w[size="lg"] & {
+    ccw-span {
+      padding: $txtPad $txtPad * 2 - 4px;
     }
-    ccw-container[size="sm"] & {
-      font-size: 50%;
-    }
-    ccw-label {
-      padding-top: .2em;
+    >ccw-div >ccw-span:nth-of-type(1) {
+      font-size: 16px;
     }
   }
-  &[deadline] {
-    color: $accent;
-    margin-bottom: 1px;
-    ccw-container[glow] & {
-      @include glow($accent)
+  ccw-w[size="md"] & {
+    height: $cubit - 2.25rem;
+    flex: 1 0 100%; // also ccw-ticker
+    >ccw-div >ccw-span:nth-of-type(1) {
+      font-size: 16px;
     }
-    // This rule also needs the rule on ccw-label[budget]
-    ccw-container[size="xs"] & {
-      flex-direction: column;
-      flex-wrap: wrap;
-      height: 2em;
+  }
+  ccw-w[size="sm"] & {
+    height: $cubit - 3rem;
+    flex: 1 0 100%; // also ccw-ticker
+    ccw-span {
+      padding: $txtPad $txtPad * 2 - 4px;
+    }
+    >ccw-div >ccw-span:nth-of-type(1) {
+      font-size: 13.5px;
+    }
+  }
+  ccw-w[size="xs"] & {
+    height: $cubit - 4.25rem;
+    flex: 1 0 100%; // also ccw-ticker
+    ccw-span {
+      padding: $txtPad $txtPad;
+    }
+    >ccw-div >ccw-span:nth-of-type(1) {
+      font-size: 9px;
+    }
+  }
+  ccw-span {
+    padding: $txtPad $txtPad * 2;
+  }
+  >ccw-div >ccw-span:nth-of-type(2) {
+    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+    font-weight: bold;
+  }
+  &[deadline] {
+    background: $accent;
+    ccw-div {
+      background: black;
+      color: $accent;
+    }
+    ccw-span:first-of-type {
+      background: $accent;
+      color: black;
+    }
+    ccw-w[dark] & {
+      color: $accent;
+      background: $accentDark;
+      ccw-span:first-of-type {
+        background: $accentDark;
+        color: $accent;
+      }
+    }
+    ccw-w[size="lg"] & {
+      flex: 1 0 52%;
     }
   }
   &[lifeline] {
-    color: $secondary;
-    ccw-container[glow] & {
-      @include glow($secondary)
+    background: $secondary;
+    ccw-div {
+      background: black;
+      color: $secondary;
+    }
+    ccw-span:first-of-type {
+      background: $secondary;
+      color: black;
+    }
+    ccw-w[dark] & {
+      color: $secondary;
+      background: $secondaryDark;
+      ccw-span:first-of-type {
+        background: $secondaryDark;
+        color: $secondary;
+      }
+    }
+    ccw-w[size="lg"] & {
+      flex: 1 0 45%;
     }
   }
-  // Leave the container
-  ccw-container[size="hide"] & {
+}
+
+$ccwFont: 70px;
+ccw-readout {
+  flex: 2 0 0;
+  font-size: 59px;
+  line-height: 1.1;
+  text-align: left;
+  margin: 0rem .75rem;
+  position: relative;
+  overflow: hidden;
+  ccw-w[size="lg"] & {
+    line-height: 1.3;
+    font-size: 50px;
+  }
+  ccw-w[size="md"] & {
+    font-size: 50px;
+  }
+  ccw-w[size="sm"] & {
+    font-size: 35px;
+    line-height: 1.3;
+  }
+  ccw-w[size="xs"] & {
+    font-size: 23px;
+  }
+  ccw-span { // Smaller labels
+    line-height: 1;
+    margin-bottom: -6px;
+    margin-right: 2px;
+    font-size: 27px;
+    padding: 0;
+    background: transparent;
+
+    ccw-w[size="lg"] & {
+      font-size: 21px;
+      margin-bottom: -4px;
+      padding: 0;
+    }
+    ccw-w[size="md"] & {
+      font-size: 20px;
+      margin-bottom: -5px;
+      padding: 0;
+    }
+    ccw-w[size="sm"] & {
+      font-size: 14px;
+      margin-bottom: -3px;
+      padding: 0;
+    }
+    ccw-w[size="xs"] & {
+      font-size: 9px;
+      margin-bottom: -3px;
+      padding: 0;
+    }
+  }
+}
+ccw-ticker {
+  position: relative;
+  height: 1.5rem;
+  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: left;
+  overflow: hidden;
+  background: black;
+  color: $secondary;
+  flex: 2 0 100%;
+
+  ccw-w[size="md"] & {
+    flex: 1 0 100%; // also ccw-panel
+  }
+  ccw-w[size="sm"] & {
+    flex: 1 0 100%; // also ccw-panel
+  }
+  ccw-w[size="xs"] & {
+    flex: 1 0 100%; // also ccw-panel
+  }
+  ccw-div {
+    position: absolute;
+    top: 1px;
+    ccw-w[size="lg"] & {
+      top: 3px;
+    }
+    ccw-w[size="md"] & {
+      top: 2px;
+    }
+    ccw-w[size="sm"] & {
+      top: 4px;
+    }
+    ccw-w[size="xs"] & {
+      top: 7px;
+    }
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    padding: .15rem .5rem;
+    &[one] { animation-name: widget-feed-one; }
+    &[two] { animation-name: widget-feed-two; }
+  }
+  @keyframes widget-feed-one {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+  }
+  @keyframes widget-feed-two {
+    0% { transform: translate(100%, 0); }
+    100% { transform: translate(0%, 0); }
+  }
+}
+ccw-brand {
+  font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
+  line-height: .85;
+  width: 8rem;
+  background: black;
+  color: $secondary;
+  font-size: 10px;
+
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
+
+  ccw-w[size="lg"] & {
+    width: $cubit;
+  }
+  ccw-w[size="md"] & {
+    width: $cubit - 1rem;
+    flex-direction: column;
+  }
+  ccw-w[size="sm"] &, ccw-w[size="xs"] & {
     display: none;
   }
+  svg {
+    outline: none;
+    display: block;
+  }
+  svg[logo] {
+    max-height: 60%;
+    max-width: 90%;
+    padding-top: .5rem;
+  }
+  svg[science] {
+    max-width: 80%;
+    max-height: 25%;
+    margin-bottom: 4px;
+  }
+  > ccw-div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    font-size: .75rem;
+  }
 }
 
-// I'm reluctant to overuse * selectors, but this is "ccw-row > *:first-child"
-ccw-label[brand], ccw-clock[deadline], ccw-clock[lifeline] {
-  flex: $narrow 0 0;
-  ccw-container[size="lg"] & {
-    flex: $narrow - 1 0 0;
+#ccw-chart-wrapper { // Use id to increase specificity over cleanslate
+  box-sizing: border-box;
+  overflow: hidden;
+
+  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-weight: bold;
+
+  border-bottom: 1rem solid black;
+  box-shadow: 0 10px 80px rgba(black, .1) inset;
+  background: white;
+  position: relative;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+
+  &.flatten {
+    border: none;
   }
-  ccw-container[size="md"] & {
-    flex: $narrow + 1 0 0;
+  &[size="md"], &[size="sm"], &[size="xs"] {
+    flex-direction: column; 
   }
-  ccw-container[size="sm"] &, ccw-container[size="xs"] & {
-    flex: 0 0 0;
-    //display: none;
-  }
-}
-ccw-label, ccw-clock {
-  &[budget] { 
-    flex: $wide - 1 0 0;
-    ccw-container[size="lg"] & {
-      flex: $wide - 2 0 0;
-    }
-    ccw-container[size="sm"] & {
-      flex: $wide 0 0;
-    }
-  }
-  &[time] { 
-    flex: $wide + 1 0 0; 
-    ccw-container[size="lg"] & {
-      flex: $wide + 1 0 0;
-    }
-    ccw-container[size="md"] & {
-      flex: $wide 0 0;
-    }
-    ccw-container[size="sm"] & {
-      flex: $wide 0 0;
-    }
-  }
-}
-ccw-label[time] {
-  ccw-container[size="xs"] & {
-    flex: 0 0 0;
-  }
-}
-ccw-clock {
-  font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums;
-  letter-spacing: .02em;
-  &[feed] {
-    flex: $wide * 2 0 0;
+  canvas {
+    // Allows the text to go behind the graph
+    background: rgba(0,0,0,0);
     position: relative;
-    text-align: left;
-    ccw-feed {
-      position: absolute;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-      &[one] { animation-name: widget-feed-one; }
-      &[two] { animation-name: widget-feed-two; }
+  }
+  a:link, a:visited, a:hover {
+    color: #009dff;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  > ccw-div {
+    flex: 4 0 0;
+    position: relative;
+  }
+  ccw-control-panel {
+    flex: 3 0 0;
+    display: block;
+    padding: 1rem 3rem 2rem 0;
+    > ccw-div {
+      font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+      font-weight: normal;
+      font-size: 22px;
+      text-align: center;
     }
-    ccw-container[size="lg"] & {
-      flex: $wide * 2 - 1 0 0;
-    }
-    ccw-container[size="md"] & {
-      flex: $wide * 2 - 1 0 0;
+    ccw-slider {
+      margin-bottom: 1rem;
+      display: block;
+      input[type="range"] {
+        appearance: none;
+        width: 100%;
+        height: 1rem;
+        outline: none;
+        margin: 1rem 0;
+        cursor: pointer;
+        background: #bd8760;
+        background: linear-gradient(90deg, rgba(241,101,33,1) 4%, rgba(255,255,255,0) 4.1%, rgba(255,255,255,0) 4.9%, rgba(255,0,0,1) 5%, rgba(255,0,0,1) 36%, rgba(255,255,255,0) 36.1%, rgba(255,255,255,0) 36.9%, rgba(189,135,96,1) 37%, rgba(189,135,96,1) 68%, rgba(255,255,255,0) 68.1%, rgba(255,255,255,0) 68.9%, rgba(0,221,114,1) 69%);
+        &::-webkit-slider-thumb {
+          appearance: none;
+          width: 1.5rem;
+          height: 3rem;
+          background: white;
+          border: 2px solid black;
+          cursor: pointer;
+        }
+        &::-moz-range-thumb {
+          border-radius: 0;
+          width: 1.5rem;
+          height: 3rem;
+          background: white;
+          border: 2px solid black;
+          cursor: pointer;
+        }
+      }
+      ccw-div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: center;
+        margin: 0 -10%;
+        font-size: 14px;
+        ccw-span {
+          width: 20%;
+        }
+      }
     }
   }
-  &[deadline] {
-    ccw-container[glow] & {
-      animation: widget-flicker 3s linear infinite;
+  ccw-scenario {
+    display: flex;
+    flex-direction: row;
+
+    ccw-div:first-of-type {
+      padding: 0 2rem 0 0;
+      flex: 1 0 auto;
+    }
+    ccw-div {
+      display: block;
+    }
+    .ccw-text ccw-span {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: normal;
+      font-size: 14px;
+      margin-bottom: 1rem;
+      ccw-span {
+        font-weight: bold;
+        font-size: 16px;
+        margin: 0;
+      }
     }
   }
-  &[deadline], &[lifeline] {
-    color: lighten($light, 20%);
-    ccw-container[glow] & {
-      @include glow(white)
+  ccw-radio {
+    cursor: pointer;
+    font-size: 20px;
+    display: block;
+    margin: .5rem 0;
+    svg {
+      max-width: 1.25rem;
+      max-height: 1.25rem;
+      margin-right: .5rem;
     }
   }
-  &[budget], &[time], &[feed] {
-    border-left: 1px solid $light;
-  }
-  &[budget], &[time] {
-    ccw-container[size="xs"] & {
-      flex: 1 0 50%; // basis is 50% of height (flex column)
+  ccw-hr {
+    text-transform: uppercase;
+    font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+    font-weight: normal;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    margin: 2rem 0 1rem 0;
+    &::after {
+      content: "";
+      flex: 1 0 0;
+      margin-left: 1rem;
+      border-bottom: 1px solid #666;
     }
   }
-  ccw-container[size="sm"] & {
-    letter-spacing: -.02em;
+  &[size="md"], &[size="sm"], &[size="xs"] {
+    ccw-control-panel {
+      padding: 2rem 3rem;
+    }
   }
+}
+.ccw-good { color: $secondary; }
+.ccw-middle { color: #bd8760; }
+.ccw-bad { color: $accent; }
+.slide-enter-active {
+   transition-duration: .2s;
+}
+.slide-leave-active {
+   transition-duration: .2s;
+}
+.slide-enter-to, .slide-leave {
+   max-height: 778px;
+   overflow: hidden;
+   opacity: 1;
+}
+ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[size="md"] {
+  &.slide-enter-to, &.slide-leave {
+     max-height: 1600px; // slide height
+     overflow: hidden;
+     opacity: 1;
+  }
+}
+.slide-enter, .slide-leave-to {
+   overflow: hidden;
+   max-height: 0;
+   opacity: 0;
 }
 
-@keyframes widget-feed-one {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(-100%, 0); }
+@import 'klima.css';
+ccw-flatten-header {
+  padding-top: 2rem;
+  font-family: 'klimabold';
+  display: flex;
+  justify-content: space-between;
+  div:first-of-type {
+    font-size: 60px;
+    color: #666;
+    span {
+      color: $secondary;
+    }
+    svg {
+      margin-left: 1rem;
+    }
+  }
+  div:nth-of-type(2) {
+    svg {
+      max-height: 6rem;
+      max-width: 6rem;
+      margin-left: 1rem;
+    }
+  }
+  div {
+    display: flex;
+    align-items: center;
+  }
+  svg {
+    max-height: 3rem;
+    max-width: 3rem;
+  }
 }
-@keyframes widget-feed-two {
-  0% { transform: translate(100%, 0); }
-  100% { transform: translate(0%, 0); }
-}
-@keyframes widget-flicker {
-  0%, 8% { opacity:0.1; }
-  2%, 9%, 20%, 30% { opacity:1; }
-  25%, 72% { opacity:0.8; }
-  77%, 100% { opacity:.9; }
+ccw-flatten-footer {
+  display: block;
+  max-width: 800px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  padding: 1rem 0 10rem 0;
 }
 </style>

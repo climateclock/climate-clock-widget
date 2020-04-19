@@ -8,6 +8,7 @@ import VueCustomElement from 'vue-custom-element'
 import browserDetect from 'vue-browser-detect-plugin'
 import axios from 'axios'
 
+
 Vue.prototype.$http = axios
 Vue.config.ignoredElements = [/^ccw-/]
 
