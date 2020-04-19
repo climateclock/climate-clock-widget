@@ -21,7 +21,7 @@
           <ccw-panel lifeline>
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
-              <ccw-span>% of world's energy now renewable:</ccw-span>
+              <ccw-span>% of world's energy from renewables:</ccw-span>
             </ccw-div>
             <ccw-readout decimal>{{ renewablePercent }}%</ccw-readout>
           </ccw-panel>
@@ -35,7 +35,7 @@
 
     <!-- Chart portion (component is lazy loaded) -->
     <transition name="slide">
-      <ccw-chart-wrapper v-if="kiosk || showChart" id="ccw-chart-wrapper" :size="size">
+      <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper" :size="size">
         <ccw-div>
           <ccw-chart 
             :height="550" 
@@ -44,7 +44,7 @@
             ></ccw-chart>
         </ccw-div>
         <ccw-control-panel id="ccw-slider">
-          <ccw-div>INVESTMENT</ccw-div>
+          <ccw-div>SIZE OF INVESTMENT</ccw-div>
           <vue-slider
             v-model="factorA"
             :marks="true"
@@ -52,7 +52,7 @@
             :adsorb="true"
             v-bind:class="{good: investment[factorA] == 100}"
             ></vue-slider>
-          <ccw-div>CLIMATE ACTION</ccw-div>
+          <ccw-div>SPEED OF ACTION</ccw-div>
           <vue-slider 
             v-model="factorB"
             :marks="true"
@@ -61,7 +61,30 @@
             v-bind:class="{good: action[factorB] == 100}"
             ></vue-slider>
           <ccw-span>With the level of climate action you chose (<ccw-span>{{ factorA }}</ccw-span> investment; with <ccw-span>{{ factorB }}</ccw-span> urgency), the model suggests that {{ getScenario() }}. If we shift our priorities now, we can change the future.</ccw-span>
-          <ccw-span>Model derived from peer-reviewed science, in particular: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
+          <ccw-span>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
+
+          <ccw-sliders>
+            <input type="range" v-model="A" min="1" max="5">
+            <ccw-div>
+              <ccw-span>zero</ccw-span>
+              <ccw-span>low</ccw-span>
+              <ccw-span>medium</ccw-span>
+              <ccw-span>serious</ccw-span>
+              <ccw-span>maximum</ccw-span>
+            </ccw-div>
+            <input type="range" v-model="B" min="1" max="5">
+            <ccw-div>
+              <ccw-span>zero</ccw-span>
+              <ccw-span>small</ccw-span>
+              <ccw-span>medium</ccw-span>
+              <ccw-span>high</ccw-span>
+              <ccw-span>maximum</ccw-span>
+            </ccw-div>
+          </ccw-sliders>
+            <p>
+            A: {{ A }}; B: {{ B }}
+            <input type="button" value="foo" @click="A = 2; B = 1">
+            </p>
         </ccw-control-panel>
       </ccw-chart-wrapper>
     </transition>
@@ -73,7 +96,6 @@
 //import VueRangeSlider from 'vue-range-slider'
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
-import 'vue-slider-component/theme/default.css';
 
 // Import defaults from json file to keep them in sync
 import clock from './clock.json'
@@ -90,7 +112,6 @@ export default {
   components: {
     // Lazy-load this component
     'ccw-chart': () => import(/* webpackChunkName: "flatten" */ './Chart.vue'),
-    //'range-slider': VueRangeSlider,
   },
   data: () => ({
     // Component loading
@@ -117,9 +138,10 @@ export default {
     
     // Chart 
     factorA: 'zero', factorB: 'small',
+    A: 1, B: 2,
     action: {'zero':0, 'small':25, 'medium':50, 'high':75, 'maximum':100},
     investment: {'zero':0, 'low':25, 'medium':50, 'serious':75, 'maximum':100},
-    showChart: false,
+    showChart: true,
     weightA: .4, weightB: .6,
     scenarios: {
       best: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
@@ -322,7 +344,7 @@ ccw-w {
 
   height: $cubit;
   &[size="lg"] {
-    font-size: 14.5px;
+    font-size: 13.75px;
   }
   &[size="md"]{
     font-size: 14.25px;
@@ -330,7 +352,7 @@ ccw-w {
     flex-direction: row; 
   }
   &[size="sm"] {
-    font-size: 12px;
+    font-size: 11px;
     height: 2 * ($cubit - 2.25rem);
     flex-direction: row; 
   }
@@ -367,7 +389,7 @@ ccw-panel {
   height: $cubit - 1.5rem;
   ccw-w[size="lg"] & {
     ccw-span {
-      padding: $txtPad $txtPad * 2 - 2px;
+      padding: $txtPad $txtPad * 2 - 4px;
     }
     >ccw-div >ccw-span:nth-of-type(1) {
       font-size: 16px;
@@ -384,7 +406,10 @@ ccw-panel {
     height: $cubit - 3rem;
     flex: 1 0 100%; // also ccw-ticker
     ccw-span {
-      padding: $txtPad $txtPad * 2 - 2px;
+      padding: $txtPad $txtPad * 2 - 4px;
+    }
+    >ccw-div >ccw-span:nth-of-type(1) {
+      font-size: 13.5px;
     }
   }
   ccw-w[size="xs"] & {
@@ -423,7 +448,7 @@ ccw-panel {
       }
     }
     ccw-w[size="lg"] & {
-      flex: 1 0 53%;
+      flex: 1 0 52%;
     }
   }
   &[lifeline] {
@@ -461,7 +486,7 @@ ccw-readout {
   overflow: hidden;
   ccw-w[size="lg"] & {
     line-height: 1.3;
-    font-size: 52px;
+    font-size: 50px;
   }
   ccw-w[size="md"] & {
     font-size: 50px;
@@ -482,7 +507,7 @@ ccw-readout {
     background: transparent;
 
     ccw-w[size="lg"] & {
-      font-size: 20px;
+      font-size: 21px;
       margin-bottom: -4px;
       padding: 0;
     }
@@ -528,7 +553,7 @@ ccw-ticker {
     position: absolute;
     top: 1px;
     ccw-w[size="lg"] & {
-      top: 2px;
+      top: 3px;
     }
     ccw-w[size="md"] & {
       top: 2px;
@@ -602,11 +627,13 @@ ccw-brand {
 }
 
 #ccw-chart-wrapper { // Use id to increase specificity over cleanslate
+  box-sizing: border-box;
+
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
 
   border-bottom: 1rem solid black;
   box-shadow: 0 10px 80px rgba(black, .1) inset;
-  background: #e3e4e5;
+  background: white;
   position: relative;
 
   display: flex;
@@ -622,20 +649,21 @@ ccw-brand {
     position: relative;
   }
   a:link, a:visited, a:hover {
-    color: $accent;
+    color: #009dff;
     font-weight: bold;
     text-decoration: none;
   }
   ccw-div {
-    flex: 2 0 0;
+    flex: 4 0 0;
     position: relative;
   }
   ccw-control-panel {
-    flex: 1 0 0;
-    font-weight: normal;
+    flex: 3 0 0;
+    font-weight: bold;
     display: block;
     padding: 1rem 3rem 2rem 0;
-    ccw-span {
+    > ccw-span {
+      font-family: Arial, Helvetica, sans-serif;
       font-size: 14px;
       margin-bottom: 1rem;
       ccw-span {
@@ -645,39 +673,44 @@ ccw-brand {
       }
     }
     ccw-div {
-      font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
-      font-size: 22px;
       text-align: center;
     }
-    .vue-slider {
-      margin-bottom: 2rem;
-    }
-    .vue-slider-dot {
-      width: 20px;
-      height: 20px;
-    }
-    .vue-slider-dot-handle, 
-    .vue-slider-dot-handle::after,
-    .vue-slider-dot-tooltip-inner,
-    .vue-slider-mark-step,
-    .vue-slider-process {
-      background-color: $accent;
-    }
-    .vue-slider-dot-handle::after,
-    .vue-slider-rail {
-      background-color: rgba(lighten($accent, 35%), .5);
-    }
-    .good {
-      .vue-slider-dot-handle, 
-      .vue-slider-dot-handle::after,
-      .vue-slider-dot-tooltip-inner,
-      .vue-slider-mark-step,
-      .vue-slider-process {
-        background-color: $secondary;
+    ccw-sliders {
+      input[type="range"] {
+        appearance: none;
+        width: 100%;
+        height: 1rem;
+        background: #bd8760;
+        background: linear-gradient(90deg, rgba(241,101,33,1) 4%, rgba(255,255,255,0) 4.1%, rgba(255,255,255,0) 4.9%, rgba(255,0,0,1) 5%, rgba(255,0,0,1) 36%, rgba(255,255,255,0) 36.1%, rgba(255,255,255,0) 36.9%, rgba(189,135,96,1) 37%, rgba(189,135,96,1) 68%, rgba(255,255,255,0) 68.1%, rgba(255,255,255,0) 68.9%, rgba(0,221,114,1) 69%);
+        outline: none;
+        margin: 1rem 0;
+        cursor: pointer;
+        &::-webkit-slider-thumb {
+          appearance: none;
+          width: 1.5rem;
+          height: 3rem;
+          background: white;
+          border: 2px solid black;
+          cursor: pointer;
+        }
+        &::-moz-range-thumb {
+          border-radius: 0;
+          width: 1.5rem;
+          height: 3rem;
+          background: white;
+          border: 2px solid black;
+          cursor: pointer;
+        }
       }
-      .vue-slider-dot-handle::after,
-      .vue-slider-rail {
-        background-color: rgba(lighten($secondary, 35%), .5);
+      ccw-div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 0 -10%;
+        font-size: 14px;
+        ccw-span {
+          width: 20%;
+        }
       }
     }
   }

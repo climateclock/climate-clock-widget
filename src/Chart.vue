@@ -18,12 +18,12 @@ export default {
   ],
   data: () => ({
     green: '#00dd72',
-    ltGreen: '#80edbb',
+    ltGreen: '#b1f7d7',
     red: '#ff0000',
-    ltRed: '#ff7f80',
+    ltRed: '#ffb9b9',
     brown: '#bd8760',
     //brown: '#a16b4b',
-    ltBrown: '#ceb5a4',
+    ltBrown: '#f0d7c7',
 
     nirvana: 50,
     nirvanaTimeout: null,
@@ -60,7 +60,7 @@ export default {
       annotation: { // Documentation shows this nested under plugins. THAT'S WRONG.
         drawTime: 'afterDatasetsDraw',
         annotations: [{
-          id: 'crossover',
+          id: 'zero',
           type: 'line',
           mode: 'vertical',
           scaleID: 'x-axis',
@@ -81,15 +81,35 @@ export default {
           scaleID: 'y-axis',
           borderColor: 'black',
           borderWidth: 1,
+          borderDash: [6, 6],
           value: 34,
           label: {
-            content: '1.5°C Global Temperature Rise',
+            content: 'Global Temperature Rise',
             backgroundColor: 'transparent',
             fontColor: '#666',
             fontFamily: 'katwijk_monolight',
             enabled: true,
-            position: 'top',
+            position: 'right',
             yAdjust: 10,
+          }
+        }, {
+          id: 'temperature_label',
+          type: 'line',
+          mode: 'horizontal',
+          scaleID: 'y-axis',
+          borderColor: 'transparent',
+          borderWidth: 0,
+          value: 34,
+          label: {
+            content: '1.5°C',
+            backgroundColor: 'transparent',
+            fontColor: 'black',
+            fontSize: 21,
+            fontStyle: 'normal',
+            fontFamily: 'katwijk_monoblack',
+            enabled: true,
+            position: 'right',
+            yAdjust: -12,
           }
         }],
       },
@@ -102,7 +122,7 @@ export default {
           position: 'left',
           scaleLabel: {
             display: true,
-            labelString: 'CONSEQUENCES',
+            labelString: 'IMPACTS',
             fontFamily: 'katwijk_monoblack',
             fontSize: 14,
             fontColor: 'black',
@@ -114,7 +134,8 @@ export default {
             min: 0,
             max: 100,
             maxTicksLimit: 2,
-            callback: (value, index) => (['Worse', 'Better'][index]),
+            //callback: (value, index) => (['Worse', 'Better'][index]),
+            callback: (value, index) => (['', ''][index]),
           },
           gridLines: {
             lineWidth: 1,
@@ -154,13 +175,12 @@ export default {
         mode: 'nearest', // Show a tooltip no matter what you're pointing at
         intersect: false,
         // Exclude 1.5°C line from tooltip
-        //filter: tooltip => tooltip.datasetIndex != 0,
+        filter: tooltip => tooltip.datasetIndex != 0,
         callbacks: {
           label: (item, data) => {
             if (item.datasetIndex == 1) {
-              return `${(item.yLabel / 22.222).toString().slice(0,4)}°C`
+              return `+${(item.yLabel / 22.222).toString().slice(0,4)}°C`
             }
-            return item.yLabel
           },
         },
       },
@@ -183,8 +203,8 @@ export default {
       if (this.nirvanaTimeout !== null) clearTimeout(this.nirvanaTimeout)
       this.nirvanaTimeout = setTimeout(() => {
         clearTimeout(this.nirvanaTimeout)
-        this.$data._chart.annotation.elements['crossover'].options.value = parseFloat(newVal)
-        this.$data._chart.annotation.elements['crossover'].options.label.content = `${newVal * 10} years`
+        this.$data._chart.annotation.elements['zero'].options.value = parseFloat(newVal)
+        this.$data._chart.annotation.elements['zero'].options.label.content = `${newVal * 10} years`
         this.$data._chart.update() 
       }, 500)
     },
@@ -209,12 +229,18 @@ export default {
       let wB = this.weightB
       let k = 100 - Math.max((this.factorA * wA + this.factorB * wB), 1)
 
+      /*
+      for (let value, i of E[k]) {
+        console.log(value, i)
+      }
+      */
+
       this.chartData = {
         xLabels: this.xLabels,
         datasets: [
           {
             label: 'Emissions',
-            borderWidth: 6,
+            borderWidth: 14,
             borderCapStyle: 'round',
             borderColor: this.color(k),
             backgroundColor: this.color(k),
@@ -227,7 +253,7 @@ export default {
           },
           {
             label: 'Temperature',
-            borderWidth: 14,
+            borderWidth: 32,
             borderCapStyle: 'round',
             borderColor: this.color(k, false),
             backgroundColor: this.color(k, false),
@@ -241,10 +267,10 @@ export default {
         ]
       }
 
-      // Kludge the point of no return line
+      // Kludge the no emissions line
       /*
       this.$nextTick(() => {
-        this.nirvana = Math.min((100 - k) / 5, 20) 
+        this.nirvana = k < 10 ? 7.5 : 50
       })
       */
     },
