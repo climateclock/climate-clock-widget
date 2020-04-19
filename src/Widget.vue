@@ -160,7 +160,7 @@ export default {
     A: 2, B: 2, k: 0, preset: 'bad',
     action: {1: 'zero', 2: 'low', 3: 'medium', 4: 'serious', 5: 'maximum'},
     investment: {1: 'zero', 2: 'small', 3: 'medium', 4: 'high', 5: 'maximum'},
-    showChart: true,
+    showChart: false,
     scenarios: {
       good: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
       middle: "average global surface temperature would likely reach ~2°C by 2100 with devastating (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, 100s of millions of climate refugees, and millions dead. Crossing 1.5°C, we also risk triggering a series of catastrophic feedback loops that could spiral beyond our ability to ever remedy.",
