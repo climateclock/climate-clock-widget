@@ -672,10 +672,9 @@ ccw-brand {
 #ccw-chart-wrapper { // Use id to increase specificity over cleanslate
   box-sizing: border-box;
   overflow: hidden;
-
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   font-weight: bold;
-
+  text-align: left;
   border-bottom: 1rem solid black;
   box-shadow: 0 10px 80px rgba(black, .1) inset;
   background: white;
