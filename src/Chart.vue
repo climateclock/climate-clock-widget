@@ -190,14 +190,10 @@ export default {
   props: {
     factorA: {type: Number, default: 0},
     factorB: {type: Number, default: 0},
-    weightA: {type: Number, default: 0},
-    weightB: {type: Number, default: 0},
   },
   watch: {
     factorA() { this.updateData() },
     factorB() { this.updateData() },
-    weightA() { this.updateData() },
-    weightB() { this.updateData() },
     nirvana(newVal) {
       if (this.nirvanaTimeout !== null) clearTimeout(this.nirvanaTimeout)
       this.nirvanaTimeout = setTimeout(() => {
@@ -224,11 +220,12 @@ export default {
     },
     updateData() {
       // Apply weights to the factors
-      let wA = this.weightA
-      let wB = this.weightB
+      let wA = .4
+      let wB = .6
       let A = {1: 0, 2: 25, 3: 50, 4: 75, 5: 100}[this.factorA]
       let B = {1: 0, 2: 25, 3: 50, 4: 75, 5: 100}[this.factorB]
       let k = 100 - Math.max((A * wA + B * wB), 1)
+      this.$emit('newK', k)
 
       /*
       for (let value, i of E[k]) {

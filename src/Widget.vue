@@ -37,76 +37,52 @@
     <transition name="slide">
       <ccw-chart-wrapper v-if="showChart" id="ccw-chart-wrapper" :size="size">
         <ccw-div>
-          <ccw-chart 
-            :height="550" 
-            :factorA="A" :factorB="B"
-            :weightA="weightA" :weightB="weightB"
+          <ccw-chart :height="600" 
+            @newK="k = $event"
+            :factorA="parseInt(A)" 
+            :factorB="parseInt(B)"
             ></ccw-chart>
         </ccw-div>
         <ccw-control-panel id="ccw-slider">
-          <vue-slider
-            v-model="factorA"
-            :marks="true"
-            :data="Object.keys(investment)"
-            :adsorb="true"
-            v-bind:class="{good: investment[factorA] == 100}"
-            ></vue-slider>
-          <vue-slider 
-            v-model="factorB"
-            :marks="true"
-            :data="Object.keys(action)"
-            :adsorb="true"
-            v-bind:class="{good: action[factorB] == 100}"
-            ></vue-slider>
           <ccw-div>SIZE OF INVESTMENT</ccw-div>
           <ccw-slider>
             <input type="range" v-model="A" min="1" max="5">
             <ccw-div>
-              <ccw-span>zero</ccw-span>
-              <ccw-span>low</ccw-span>
-              <ccw-span>medium</ccw-span>
-              <ccw-span>serious</ccw-span>
-              <ccw-span>maximum</ccw-span>
+              <ccw-span v-for="(v, k) in action" :key="k">{{ v }}</ccw-span>
             </ccw-div>
           </ccw-slider>
           <ccw-div>SPEED OF ACTION</ccw-div>
           <ccw-slider>
             <input type="range" v-model="B" min="1" max="5">
             <ccw-div>
-              <ccw-span>zero</ccw-span>
-              <ccw-span>small</ccw-span>
-              <ccw-span>medium</ccw-span>
-              <ccw-span>high</ccw-span>
-              <ccw-span>maximum</ccw-span>
+              <ccw-span v-for="(v, k) in investment" :key="k">{{ v }}</ccw-span>
             </ccw-div>
           </ccw-slider>
-          <ccw-hr>Scenario</ccw-hr>
+          <ccw-hr>{{ k }} {{ preset }} Scenario</ccw-hr>
           <ccw-scenario>
             <ccw-div>
-              <ccw-radio>
-                <input type="radio" v-model="scenario" value="bad">
-                <ccw-span class="ccw-bad" @click="scenario = 'bad'">BUSINESS AS USUAL</ccw-span>
+              <ccw-radio @click="setPreset('bad')">
+                <img svg-inline v-if="preset == 'bad'" src="./checked.svg">
+                <img svg-inline v-else src="./unchecked.svg">
+                <ccw-span class="ccw-bad" @click="setPreset('bad')">BUSINESS AS USUAL</ccw-span>
               </ccw-radio>
-              <ccw-radio>
-                <input type="radio" v-model="scenario" value="middle">
-                <ccw-span class="ccw-middle" @click="scenario = 'middle'">"MIDDLE GROUND"</ccw-span>
+              <ccw-radio @click="setPreset('middle')">
+                <img svg-inline v-if="preset == 'middle'" src="./checked.svg">
+                <img svg-inline v-else src="./unchecked.svg">
+                <ccw-span class="ccw-middle" @click="setPreset('middle')">"MIDDLE GROUND"</ccw-span>
               </ccw-radio>
-              <ccw-radio>
-                <input type="radio" v-model="scenario" value="good">
-                <ccw-span class="ccw-good" @click="scenario = 'good'">GREEN NEW DEAL</ccw-span>
+              <ccw-radio @click="setPreset('good')">
+                <img svg-inline v-if="preset == 'good'" src="./checked.svg">
+                <img svg-inline v-else src="./unchecked.svg">
+                <ccw-span class="ccw-good" @click="setPreset('good')">GREEN NEW DEAL</ccw-span>
               </ccw-radio>
             </ccw-div>
 
             <ccw-div class="ccw-text">
-              <ccw-span>With the level of climate action you chose (<ccw-span>{{ factorA }}</ccw-span> investment; with <ccw-span>{{ factorB }}</ccw-span> urgency), the model suggests that {{ getScenario() }}. If we shift our priorities now, we can change the future.</ccw-span>
+              <ccw-span>With the level of climate action you chose (<ccw-span>{{ action[A] }}</ccw-span> investment; with <ccw-span>{{ investment[B] }}</ccw-span> speed of action), the model suggests that {{ scenarioText }}. If we shift our priorities now, we can change the future.</ccw-span>
               <ccw-span>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
             </ccw-div>
           </ccw-scenario>
-
-            <p>
-            A: {{ A }}; B: {{ B }}
-            <input type="button" value="foo" @click="A = 2; B = 1; scenario = 'bad'">
-            </p>
         </ccw-control-panel>
       </ccw-chart-wrapper>
     </transition>
@@ -159,13 +135,10 @@ export default {
     renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
     
     // Chart 
-    factorA: 'zero', factorB: 'small',
-    A: 1, B: 2,
-    scenario: 'bad',
-    action: {'zero':0, 'small':25, 'medium':50, 'high':75, 'maximum':100},
-    investment: {'zero':0, 'low':25, 'medium':50, 'serious':75, 'maximum':100},
+    A: 2, B: 2, k: 0, preset: 'bad',
+    action: {1: 'zero', 2: 'low', 3: 'medium', 4: 'serious', 5: 'maximum'},
+    investment: {1: 'zero', 2: 'small', 3: 'medium', 4: 'high', 5: 'maximum'},
     showChart: true,
-    weightA: .4, weightB: .6,
     scenarios: {
       good: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
       middle: "average global surface temperature would likely reach ~2°C by 2100 with devastating (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, 100s of millions of climate refugees, and millions dead. Crossing 1.5°C, we also risk triggering a series of catastrophic feedback loops that could spiral beyond our ability to ever remedy.",
@@ -215,6 +188,11 @@ export default {
     feedText() {
       return (this.lifeline ? `${this.lifeline} | ` : '') + this.feed
     },
+
+    // Chart thing
+    scenarioText() {
+      return this.k < 5 ? this.scenarios.good : (this.k < 40 ? this.scenarios.middle : this.scenarios.bad)
+    }, 
   },
   methods: {
     setSize() {
@@ -247,10 +225,17 @@ export default {
     openHomepage() {
       window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
     },
-    getScenario() {
-      let q = this.investment[this.factorA] * this.weightA + this.action[this.factorB] * this.weightB
-      return q > 95 ? this.scenarios.good : (q > 30 ? this.scenarios.middle : this.scenarios.bad)
+    updatePreset(preset) {
+      this.preset = preset
     },
+    setPreset(preset) {
+      switch(preset) {
+        case 'bad':     this.A = 2; this.B = 2; break
+        case 'middle':  this.A = 3; this.B = 3; break
+        case 'good':    this.A = 5; this.B = 5; break
+      }
+      this.preset = preset
+    }
   },
   created() {
     // Data is fetched from the network because browsers may cache this script
@@ -276,6 +261,9 @@ export default {
     setInterval(() => { this.now = new Date() }, tickInterval)
   },
   watch: {
+    k(newK) {
+      this.preset = newK < 5 ? 'good' : (newK < 60 ? 'middle' : 'bad')
+    },
     ready() {
       if (!this.bottom || window.climateClockWidgetPaddingAdded) return
       window.climateClockWidgetPaddingAdded = true
@@ -761,6 +749,11 @@ ccw-brand {
     font-size: 20px;
     display: block;
     margin: .5rem 0;
+    svg {
+      max-width: 1.25rem;
+      max-height: 1.25rem;
+      margin-right: .5rem;
+    }
   }
   ccw-hr {
     text-transform: uppercase;
