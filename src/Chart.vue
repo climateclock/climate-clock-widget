@@ -22,7 +22,6 @@ export default {
     red: '#ff0000',
     ltRed: '#ffb9b9',
     brown: '#bd8760',
-    //brown: '#a16b4b',
     ltBrown: '#f0d7c7',
 
     nirvana: 50,
@@ -122,7 +121,7 @@ export default {
           position: 'left',
           scaleLabel: {
             display: true,
-            labelString: 'IMPACTS',
+            labelString: 'RISKS',
             fontFamily: 'katwijk_monoblack',
             fontSize: 14,
             fontColor: 'black',
@@ -227,7 +226,9 @@ export default {
       // Apply weights to the factors
       let wA = this.weightA
       let wB = this.weightB
-      let k = 100 - Math.max((this.factorA * wA + this.factorB * wB), 1)
+      let A = {1: 0, 2: 25, 3: 50, 4: 75, 5: 100}[this.factorA]
+      let B = {1: 0, 2: 25, 3: 50, 4: 75, 5: 100}[this.factorB]
+      let k = 100 - Math.max((A * wA + B * wB), 1)
 
       /*
       for (let value, i of E[k]) {

@@ -39,12 +39,11 @@
         <ccw-div>
           <ccw-chart 
             :height="550" 
-            :factorA="investment[factorA]" :factorB="action[factorB]"
+            :factorA="A" :factorB="B"
             :weightA="weightA" :weightB="weightB"
             ></ccw-chart>
         </ccw-div>
         <ccw-control-panel id="ccw-slider">
-          <ccw-div>SIZE OF INVESTMENT</ccw-div>
           <vue-slider
             v-model="factorA"
             :marks="true"
@@ -52,7 +51,6 @@
             :adsorb="true"
             v-bind:class="{good: investment[factorA] == 100}"
             ></vue-slider>
-          <ccw-div>SPEED OF ACTION</ccw-div>
           <vue-slider 
             v-model="factorB"
             :marks="true"
@@ -60,10 +58,8 @@
             :adsorb="true"
             v-bind:class="{good: action[factorB] == 100}"
             ></vue-slider>
-          <ccw-span>With the level of climate action you chose (<ccw-span>{{ factorA }}</ccw-span> investment; with <ccw-span>{{ factorB }}</ccw-span> urgency), the model suggests that {{ getScenario() }}. If we shift our priorities now, we can change the future.</ccw-span>
-          <ccw-span>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
-
-          <ccw-sliders>
+          <ccw-div>SIZE OF INVESTMENT</ccw-div>
+          <ccw-slider>
             <input type="range" v-model="A" min="1" max="5">
             <ccw-div>
               <ccw-span>zero</ccw-span>
@@ -72,6 +68,9 @@
               <ccw-span>serious</ccw-span>
               <ccw-span>maximum</ccw-span>
             </ccw-div>
+          </ccw-slider>
+          <ccw-div>SPEED OF ACTION</ccw-div>
+          <ccw-slider>
             <input type="range" v-model="B" min="1" max="5">
             <ccw-div>
               <ccw-span>zero</ccw-span>
@@ -80,10 +79,33 @@
               <ccw-span>high</ccw-span>
               <ccw-span>maximum</ccw-span>
             </ccw-div>
-          </ccw-sliders>
+          </ccw-slider>
+          <ccw-hr>Scenario</ccw-hr>
+          <ccw-scenario>
+            <ccw-div>
+              <ccw-radio>
+                <input type="radio" v-model="scenario" value="bad">
+                <ccw-span class="ccw-bad" @click="scenario = 'bad'">BUSINESS AS USUAL</ccw-span>
+              </ccw-radio>
+              <ccw-radio>
+                <input type="radio" v-model="scenario" value="middle">
+                <ccw-span class="ccw-middle" @click="scenario = 'middle'">"MIDDLE GROUND"</ccw-span>
+              </ccw-radio>
+              <ccw-radio>
+                <input type="radio" v-model="scenario" value="good">
+                <ccw-span class="ccw-good" @click="scenario = 'good'">GREEN NEW DEAL</ccw-span>
+              </ccw-radio>
+            </ccw-div>
+
+            <ccw-div class="ccw-text">
+              <ccw-span>With the level of climate action you chose (<ccw-span>{{ factorA }}</ccw-span> investment; with <ccw-span>{{ factorB }}</ccw-span> urgency), the model suggests that {{ getScenario() }}. If we shift our priorities now, we can change the future.</ccw-span>
+              <ccw-span>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
+            </ccw-div>
+          </ccw-scenario>
+
             <p>
             A: {{ A }}; B: {{ B }}
-            <input type="button" value="foo" @click="A = 2; B = 1">
+            <input type="button" value="foo" @click="A = 2; B = 1; scenario = 'bad'">
             </p>
         </ccw-control-panel>
       </ccw-chart-wrapper>
@@ -139,14 +161,15 @@ export default {
     // Chart 
     factorA: 'zero', factorB: 'small',
     A: 1, B: 2,
+    scenario: 'bad',
     action: {'zero':0, 'small':25, 'medium':50, 'high':75, 'maximum':100},
     investment: {'zero':0, 'low':25, 'medium':50, 'serious':75, 'maximum':100},
     showChart: true,
     weightA: .4, weightB: .6,
     scenarios: {
-      best: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
+      good: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
       middle: "average global surface temperature would likely reach ~2°C by 2100 with devastating (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, 100s of millions of climate refugees, and millions dead. Crossing 1.5°C, we also risk triggering a series of catastrophic feedback loops that could spiral beyond our ability to ever remedy.",
-      worst: "average global surface temperature would likely reach 3-4°C by 2100 with catastrophic (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, permanently uninhabitable regions, billions of climate refugees, and 100s of millions dead. Civilization as we know it will no longer be possible.",
+      bad: "average global surface temperature would likely reach 3-4°C by 2100 with catastrophic (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, permanently uninhabitable regions, billions of climate refugees, and 100s of millions dead. Civilization as we know it will no longer be possible.",
     },
 
     // To become a prop when the mockup is done
@@ -226,7 +249,7 @@ export default {
     },
     getScenario() {
       let q = this.investment[this.factorA] * this.weightA + this.action[this.factorB] * this.weightB
-      return q > 95 ? this.scenarios.best : (q > 30 ? this.scenarios.middle : this.scenarios.worst)
+      return q > 95 ? this.scenarios.good : (q > 30 ? this.scenarios.middle : this.scenarios.bad)
     },
   },
   created() {
@@ -630,6 +653,7 @@ ccw-brand {
   box-sizing: border-box;
 
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-weight: bold;
 
   border-bottom: 1rem solid black;
   box-shadow: 0 10px 80px rgba(black, .1) inset;
@@ -653,38 +677,32 @@ ccw-brand {
     font-weight: bold;
     text-decoration: none;
   }
-  ccw-div {
+  > ccw-div {
     flex: 4 0 0;
     position: relative;
   }
   ccw-control-panel {
     flex: 3 0 0;
-    font-weight: bold;
     display: block;
     padding: 1rem 3rem 2rem 0;
-    > ccw-span {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
-      margin-bottom: 1rem;
-      ccw-span {
-        font-weight: bold;
-        font-size: 16px;
-        margin: 0;
-      }
-    }
-    ccw-div {
+    > ccw-div {
+      font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+      font-weight: normal;
+      font-size: 22px;
       text-align: center;
     }
-    ccw-sliders {
+    ccw-slider {
+      margin-bottom: 1rem;
+      display: block;
       input[type="range"] {
         appearance: none;
         width: 100%;
         height: 1rem;
-        background: #bd8760;
-        background: linear-gradient(90deg, rgba(241,101,33,1) 4%, rgba(255,255,255,0) 4.1%, rgba(255,255,255,0) 4.9%, rgba(255,0,0,1) 5%, rgba(255,0,0,1) 36%, rgba(255,255,255,0) 36.1%, rgba(255,255,255,0) 36.9%, rgba(189,135,96,1) 37%, rgba(189,135,96,1) 68%, rgba(255,255,255,0) 68.1%, rgba(255,255,255,0) 68.9%, rgba(0,221,114,1) 69%);
         outline: none;
         margin: 1rem 0;
         cursor: pointer;
+        background: #bd8760;
+        background: linear-gradient(90deg, rgba(241,101,33,1) 4%, rgba(255,255,255,0) 4.1%, rgba(255,255,255,0) 4.9%, rgba(255,0,0,1) 5%, rgba(255,0,0,1) 36%, rgba(255,255,255,0) 36.1%, rgba(255,255,255,0) 36.9%, rgba(189,135,96,1) 37%, rgba(189,135,96,1) 68%, rgba(255,255,255,0) 68.1%, rgba(255,255,255,0) 68.9%, rgba(0,221,114,1) 69%);
         &::-webkit-slider-thumb {
           appearance: none;
           width: 1.5rem;
@@ -706,6 +724,7 @@ ccw-brand {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        text-align: center;
         margin: 0 -10%;
         font-size: 14px;
         ccw-span {
@@ -714,12 +733,61 @@ ccw-brand {
       }
     }
   }
+  ccw-scenario {
+    display: flex;
+    flex-direction: row;
+
+    ccw-div:first-of-type {
+      padding: 0 2rem 0 0;
+      flex: 1 0 auto;
+    }
+    ccw-div {
+      display: block;
+    }
+    .ccw-text ccw-span {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: normal;
+      font-size: 14px;
+      margin-bottom: 1rem;
+      ccw-span {
+        font-weight: bold;
+        font-size: 16px;
+        margin: 0;
+      }
+    }
+  }
+  ccw-radio {
+    cursor: pointer;
+    font-size: 20px;
+    display: block;
+    margin: .5rem 0;
+  }
+  ccw-hr {
+    text-transform: uppercase;
+    font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
+    font-weight: normal;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    margin: 2rem 0 1rem 0;
+    &::after {
+      content: "";
+      flex: 1 0 0;
+      margin-left: 1rem;
+      border-bottom: 1px solid #666;
+    }
+  }
   &[size="md"], &[size="sm"], &[size="xs"] {
     ccw-control-panel {
       padding: 2rem 3rem;
     }
   }
 }
+
+.ccw-good { color: $secondary; }
+.ccw-middle { color: #bd8760; }
+.ccw-bad { color: $accent; }
+
 .slide-enter-active {
    transition-duration: .2s;
 }
