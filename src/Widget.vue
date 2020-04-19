@@ -846,6 +846,8 @@ ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[si
 ccw-flatten-header[size="lg"] div:first-of-type { font-size: 50px; }
 ccw-flatten-header[size="md"] div:first-of-type { font-size: 35px; }
 ccw-flatten-header[size="sm"] div:first-of-type { font-size: 20px; }
+ccw-flatten-header[size="sm"] div:nth-of-type(2) svg { max-width: 3rem; max-height: 3rem; }
+ccw-flatten-header[size="sm"] { padding-top: 0; }
 ccw-flatten-header {
   padding-top: 2rem;
   font-family: 'klimabold';
