@@ -3,7 +3,8 @@
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)">
     <!-- Main Widget -->
     <div class="cleanslate">
-      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
+      <!-- <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart"> -->
+      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark">
         <ccw-brand>
           <img logo svg-inline src="./climateclocktrio.svg">
           <img science svg-inline src="./how.svg">
