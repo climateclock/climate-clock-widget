@@ -4,7 +4,7 @@
     <!-- Main Widget -->
     <div class="cleanslate">
       <!-- <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart"> -->
-      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark">
+      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
         <ccw-brand>
           <img logo svg-inline src="./climateclocktrio.svg">
           <img science svg-inline src="./how.svg">
@@ -760,10 +760,14 @@ ccw-brand {
   ccw-scenario {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 
-    ccw-div:first-of-type {
-      padding: 0 2rem 0 0;
+    ccw-div:nth-of-type(1) {
+      padding: 0 2rem 1rem 0;
       flex: 1 0 auto;
+    }
+    ccw-div:nth-of-type(2) {
+      flex: 1 0 50%;
     }
     ccw-div {
       display: block;
