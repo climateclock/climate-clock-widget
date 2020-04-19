@@ -81,7 +81,7 @@ export default {
           borderColor: 'black',
           borderWidth: 1,
           borderDash: [6, 6],
-          value: 34,
+          value: 37,
           label: {
             content: 'Global Temperature Rise',
             backgroundColor: 'transparent',
@@ -98,7 +98,7 @@ export default {
           scaleID: 'y-axis',
           borderColor: 'transparent',
           borderWidth: 0,
-          value: 34,
+          value: 37,
           label: {
             content: '1.5°C',
             backgroundColor: 'transparent',

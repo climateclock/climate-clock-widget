@@ -58,7 +58,7 @@
               <ccw-span v-for="(v, k) in investment" :key="k">{{ v }}</ccw-span>
             </ccw-div>
           </ccw-slider>
-          <ccw-hr>{{ k }} {{ preset }} Scenario</ccw-hr>
+          <ccw-hr>Scenario</ccw-hr>
           <ccw-scenario>
             <ccw-div>
               <ccw-radio @click="setPreset('bad')">
@@ -79,7 +79,7 @@
             </ccw-div>
 
             <ccw-div class="ccw-text">
-              <ccw-span>With the level of climate action you chose (<ccw-span>{{ action[A] }}</ccw-span> investment; with <ccw-span>{{ investment[B] }}</ccw-span> speed of action), the model suggests that {{ scenarioText }}. If we shift our priorities now, we can change the future.</ccw-span>
+              <ccw-span>With the level of climate action you chose (<ccw-span>{{ action[A] }}</ccw-span> investment; with <ccw-span>{{ investment[B] }}</ccw-span> speed of action), the model suggests that {{ scenarios[preset] }}. If we shift our priorities now, we can change the future.</ccw-span>
               <ccw-span>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
             </ccw-div>
           </ccw-scenario>
@@ -191,7 +191,7 @@ export default {
 
     // Chart thing
     scenarioText() {
-      return this.k < 5 ? this.scenarios.good : (this.k < 40 ? this.scenarios.middle : this.scenarios.bad)
+      return this.scenarios[this.preset]
     }, 
   },
   methods: {
@@ -262,7 +262,7 @@ export default {
   },
   watch: {
     k(newK) {
-      this.preset = newK < 5 ? 'good' : (newK < 60 ? 'middle' : 'bad')
+      this.preset = newK < 20 ? 'good' : (newK < 60 ? 'middle' : 'bad')
     },
     ready() {
       if (!this.bottom || window.climateClockWidgetPaddingAdded) return
