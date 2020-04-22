@@ -101,10 +101,10 @@
         </ccw-chart-wrapper>
 
         <ccw-flatten-footer v-if="flatten">
-          <p>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</p>
-          <p>This is a beta version of #FlattenTheClimateCurve ©2020. Tool designed by Gan Golan and Andrew Boyd, Programming by Adrian Carpentər. Science advising by Bill Becker, Richard Heinberg and others.</p>
+          <p>Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters. Curves are smoothed to reflect broad trends in available data.</p>
+          <p>This is a beta version of #FlattenTheClimateCurve ©2020. Tool designed by Gan Golan and Andrew Boyd; programming by Adrian Carpentər; science advising by Richard Heinberg (Senior Policy Analyst, Post-Carbon Institute) and Bill Becker (Executive Director, Presidential Climate Action Project); a project of ClimateClock.world.</p>
           <p>This tool is free and available to the public under a creative commons license.</p>
-          <iframe src="https://drive.google.com/file/d/1rZnBR1jNj6E737-ZoQHHQy_LYodJhgkD/preview" width="400" height="225"></iframe>
+          <iframe src="https://drive.google.com/file/d/1uXboC4JZHDLWqNE4zmGmmeGq7AoCbBjF/preview" width="400" height="225"></iframe>
         </ccw-flatten-footer>
       </ccw-div>
     </transition>
