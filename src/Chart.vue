@@ -196,10 +196,26 @@ export default {
   props: {
     factorA: {type: Number, default: 0},
     factorB: {type: Number, default: 0},
+    size: {type: String},
   },
   watch: {
     factorA() { this.updateData() },
     factorB() { this.updateData() },
+    /*
+    size: {
+      handler(newVal, oldVal) {
+        if (newVal != oldVal) {
+          if (/xl|lg/.test(newVal)) {
+            this.$data._chart.options.layout.padding = {left: 16, right: 48, top: 32, bottom: 16}
+          } else {
+            this.$data._chart.options.layout.padding = {left: 4, right: 4, top: 32, bottom: 16}
+          }
+          this.$data._chart.update()
+        }
+      },
+      immediate: true,
+    },
+    */
     nirvana(newVal) {
       if (this.nirvanaTimeout !== null) clearTimeout(this.nirvanaTimeout)
       this.nirvanaTimeout = setTimeout(() => {
