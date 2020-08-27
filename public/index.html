@@ -4,52 +4,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta property="og:title" content="Flatten the Climate Curve">
-    <meta property="og:site_name" content="Flatten the Climate Curve">
-    <meta property="og:description" content="A simple tool illustrating the need to act on climate change.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://flattentheclimatecurve.org">
-    <meta property="og:image" content="https://flattentheclimatecurve.org/flatten_promo.png">
-    <meta property="og:image:width" content="1280">
-    <meta property="og:image:height" content="720">
-    <meta name="twitter:site" content="@theclimateclock">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:image:src" content="https://flattentheclimatecurve.org/flatten_promo.png">
-    <title>Flatten the Climate Curve</title>
+    <title>Climate Clock Widget</title>
     <style>
-      html {
-        overflow-y: scroll;
-      }
       body {
         margin: 0 auto;
         background-color: #fff;
         max-width: 1400px;
       }
-      h3 { 
-        margin: 3em 0 1em 0;
-      }
-      pre {
-        font-size: 1.25em;
-        background-color: #eee;
-        padding: 1em 3em ;
-        overflow: scroll;
-      }
-      .frame {
-          margin: 1em;
-      }
     </style>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148327680-2"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-148327680-2');
-    </script>
   </head>
   <body>
-    <div class="frame">
-        <climate-clock flatten></climate-clock>
-        <!-- https://github.com/beautifultrouble/climate-clock-widget -->
-    </div>
+    <climate-clock dark></climate-clock>
   </body>
 </html>
