@@ -12,10 +12,8 @@
     "cleanslate": "^0.10.1",
     "core-js": "^2.6.5",
     "countdown": "^2.6.0",
-    "document-register-element": "^1.14.3",
     "lodash.debounce": "^4.0.8",
     "vue": "^2.6.10",
-    "vue-browser-detect-plugin": "^0.1.5",
     "vue-svg-inline-loader": "^1.5.0"
   },
   "devDependencies": {

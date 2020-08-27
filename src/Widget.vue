@@ -1,45 +1,38 @@
 <template>
-  <!-- Reject IE9 entirely (better to display nothing than something broken) -->
-  <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)">
-
-    <!-- Main Widget -->
-    <div class="cleanslate">
-      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark">
-        <ccw-brand>
-          <img logo svg-inline src="./climateclocktrio.svg">
-          <img science svg-inline src="./how.svg">
-        </ccw-brand>
-        <ccw-flexwrap>
-          <ccw-panel deadline>
-            <ccw-div>
-              <ccw-span>DEADLINE</ccw-span>
-              <ccw-span>We must achieve zero emissions in:</ccw-span>
-            </ccw-div>
-            <ccw-readout>
-              {{ remaining.years }}<ccw-span>YRS</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>DAYS</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
-            </ccw-readout>
-          </ccw-panel>
-          <ccw-panel lifeline>
-            <ccw-div>
-              <ccw-span>LIFELINE</ccw-span>
-              <ccw-span>% of world's energy from renewables:</ccw-span>
-            </ccw-div>
-            <ccw-readout decimal>{{ renewablePercent }}%</ccw-readout>
-          </ccw-panel>
-          <ccw-ticker>
-            <ccw-div one :style="animationDuration">{{ feedText }}</ccw-div>
-            <ccw-div two :style="animationDuration">{{ feedText }}</ccw-div>
-          </ccw-ticker>
-        </ccw-flexwrap>
-      </ccw-w>
-    </div>
-
+  <div class="cleanslate">
+    <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark">
+      <ccw-brand>
+        <img logo svg-inline src="./climateclocktrio.svg">
+        <img science svg-inline src="./how.svg">
+      </ccw-brand>
+      <ccw-flexwrap>
+        <ccw-panel deadline>
+          <ccw-div>
+            <ccw-span>DEADLINE</ccw-span>
+            <ccw-span>We must achieve zero emissions in:</ccw-span>
+          </ccw-div>
+          <ccw-readout>
+            {{ remaining.years }}<ccw-span>YRS</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>DAYS</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
+          </ccw-readout>
+        </ccw-panel>
+        <ccw-panel lifeline>
+          <ccw-div>
+            <ccw-span>LIFELINE</ccw-span>
+            <ccw-span>% of world's energy from renewables:</ccw-span>
+          </ccw-div>
+          <ccw-readout decimal>{{ renewablePercent }}%</ccw-readout>
+        </ccw-panel>
+        <ccw-ticker>
+          <ccw-div one :style="animationDuration">{{ feedText }}</ccw-div>
+          <ccw-div two :style="animationDuration">{{ feedText }}</ccw-div>
+        </ccw-ticker>
+      </ccw-flexwrap>
+    </ccw-w>
   </div>
 </template>
 
 
 <script>
-//import VueRangeSlider from 'vue-range-slider'
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
@@ -170,10 +163,6 @@ export default {
 
     // Watch for container size changes and update sizing classes
     let resizeInterval = 0, tickInterval = 997
-    if (this.$browserDetect.isEdge) { // Slow down for the special browser
-      resizeInterval = 250
-      tickInterval = 997
-    }
     window.addEventListener('load', this.setSize)
     window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
