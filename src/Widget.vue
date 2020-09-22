@@ -23,7 +23,7 @@
               <ccw-span>LIFELINE</ccw-span>
               <ccw-span>% of world's energy from renewables:</ccw-span>
             </ccw-div>
-            <ccw-readout decimal>{{ renewablePercent }}%</ccw-readout>
+            <ccw-readout>{{ renewablePercent.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewablePercent.split('.')[1]}}%</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
             <ccw-div one :style="animationDuration">{{ feedText }}</ccw-div>
@@ -152,7 +152,7 @@ export default {
     tonsPerSecond: clock.tonsPerSecond,
     
     // Lifeline
-    renewPlaces: 7,
+    renewPlaces: 9,
     renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
     renewStartPct: 26.2,
     renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
@@ -274,7 +274,7 @@ export default {
     })
 
     // Watch for container size changes and update sizing classes
-    let resizeInterval = 0, tickInterval = 997
+    let resizeInterval = 0, tickInterval = 100
     if (this.$browserDetect.isEdge) { // Slow down for the special browser
       resizeInterval = 250
       tickInterval = 250
