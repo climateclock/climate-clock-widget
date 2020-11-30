@@ -5,8 +5,8 @@
     <div class="cleanslate">
       <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
         <ccw-brand>
-          <img logo svg-inline src="./climateclocktrio.svg">
-          <img science svg-inline src="./how.svg">
+          <img logo svg-inline src="./climateclock.svg">
+          <ccw-span>#ActInTime</ccw-span>
         </ccw-brand>
         <ccw-flexwrap>
           <ccw-panel deadline>
@@ -632,7 +632,7 @@ ccw-brand {
   width: 8rem;
   background: black;
   color: $secondary;
-  font-size: 10px;
+  font-size: 14px;
 
   display: flex;
   justify-content: space-around;
@@ -657,19 +657,6 @@ ccw-brand {
     max-height: 60%;
     max-width: 90%;
     padding-top: .5rem;
-  }
-  svg[science] {
-    max-width: 80%;
-    max-height: 25%;
-    margin-bottom: 4px;
-  }
-  > ccw-div {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: center;
-    align-items: flex-start;
-    font-size: .75rem;
   }
 }
 
