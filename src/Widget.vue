@@ -312,7 +312,7 @@ export default {
     position: absolute;
     bottom: 0; left: 0;
     background-color: $color;
-    padding: .25rem;
+    padding: 4px;
   }
 }
 @if $NODE_ENV == 'development' {
@@ -357,7 +357,8 @@ ccw-span {
 }
 
 // An arbitrary measure which nevertheless gets used a lot (16 * 7 = 112)
-$cubit: 7rem; 
+//$cubit: 7rem; 
+$cubit: 112px;
 
 ccw-w {
   cursor: pointer;
@@ -395,17 +396,17 @@ ccw-w {
   }
   &[size="md"]{
     font-size: 14.25px;
-    height: 2 * ($cubit - 1.5rem);
+    height: 2 * ($cubit - 24px);
     flex-direction: row; 
   }
   &[size="sm"] {
     font-size: 11px;
-    height: 2 * ($cubit - 2.25rem);
+    height: 2 * ($cubit - 36px);
     flex-direction: row; 
   }
   &[size="xs"] {
     font-size: 7px;
-    height: 2 * ($cubit - 3.5rem);
+    height: 2 * ($cubit - 56px);
     flex-direction: row; 
   }
 }
@@ -433,7 +434,7 @@ ccw-panel {
   flex: 1 0 49%; // 50% causes wrapping!
   overflow: hidden;
 
-  height: $cubit - 1.5rem;
+  height: $cubit - 24px;
   ccw-w[size="lg"] & {
     ccw-span {
       padding: $txtPad $txtPad * 2 - 4px;
@@ -443,14 +444,14 @@ ccw-panel {
     }
   }
   ccw-w[size="md"] & {
-    height: $cubit - 2.25rem;
+    height: $cubit - 36px;
     flex: 1 0 100%; // also ccw-ticker
     >ccw-div >ccw-span:nth-of-type(1) {
       font-size: 16px;
     }
   }
   ccw-w[size="sm"] & {
-    height: $cubit - 3rem;
+    height: $cubit - 48px;
     flex: 1 0 100%; // also ccw-ticker
     ccw-span {
       padding: $txtPad $txtPad * 2 - 4px;
@@ -460,7 +461,7 @@ ccw-panel {
     }
   }
   ccw-w[size="xs"] & {
-    height: $cubit - 4.25rem;
+    height: $cubit - 68px;
     flex: 1 0 100%; // also ccw-ticker
     ccw-span {
       padding: $txtPad $txtPad;
@@ -528,7 +529,7 @@ ccw-readout {
   font-size: 59px;
   line-height: 1.1;
   text-align: left;
-  margin: 0rem .75rem;
+  margin: 0 12px;
   position: relative;
   overflow: hidden;
   ccw-w[size="lg"] & {
@@ -577,7 +578,7 @@ ccw-readout {
 }
 ccw-ticker {
   position: relative;
-  height: 1.5rem;
+  height: 32px;
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   font-weight: bold;
   text-transform: uppercase;
@@ -613,7 +614,7 @@ ccw-ticker {
     }
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-    padding: .15rem .5rem;
+    padding: 2.4px 8px;
     &[one] { animation-name: widget-feed-one; }
     &[two] { animation-name: widget-feed-two; }
   }
@@ -629,7 +630,7 @@ ccw-ticker {
 ccw-brand {
   font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
   line-height: .85;
-  width: 8rem;
+  width: 128px;
   background: black;
   color: $secondary;
   font-size: 14px;
@@ -643,7 +644,7 @@ ccw-brand {
     width: $cubit;
   }
   ccw-w[size="md"] & {
-    width: $cubit - 1rem;
+    width: $cubit - 16px;
     flex-direction: column;
   }
   ccw-w[size="sm"] &, ccw-w[size="xs"] & {
@@ -656,7 +657,7 @@ ccw-brand {
   svg[logo] {
     max-height: 60%;
     max-width: 90%;
-    padding-top: .5rem;
+    padding-top: 8px;
   }
 }
 
@@ -666,7 +667,7 @@ ccw-brand {
   font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
   font-weight: bold;
   text-align: left;
-  border-bottom: 1rem solid black;
+  border-bottom: 16px solid black;
   box-shadow: 0 10px 80px rgba(black, .1) inset;
   background: white;
   position: relative;
@@ -698,7 +699,7 @@ ccw-brand {
   ccw-control-panel {
     flex: 3 0 0;
     display: block;
-    padding: 1rem 3rem 2rem 0;
+    padding: 16px 48px 32px 0;
     > ccw-div {
       font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
       font-weight: normal;
@@ -706,29 +707,29 @@ ccw-brand {
       text-align: center;
     }
     ccw-slider {
-      margin-bottom: 1rem;
+      margin-bottom: 16px;
       display: block;
       input[type="range"] {
         appearance: none;
         width: 100%;
-        height: 1rem;
+        height: 16px;
         outline: none;
-        margin: 1rem 0;
+        margin: 16px 0;
         cursor: pointer;
         background: #bd8760;
         background: linear-gradient(90deg, rgba(241,101,33,1) 4%, rgba(255,255,255,0) 4.1%, rgba(255,255,255,0) 4.9%, rgba(255,0,0,1) 5%, rgba(255,0,0,1) 36%, rgba(255,255,255,0) 36.1%, rgba(255,255,255,0) 36.9%, rgba(189,135,96,1) 37%, rgba(189,135,96,1) 68%, rgba(255,255,255,0) 68.1%, rgba(255,255,255,0) 68.9%, rgba(0,221,114,1) 69%);
         &::-webkit-slider-thumb {
           appearance: none;
-          width: 1.5rem;
-          height: 3rem;
+          width: 24px;
+          height: 48px;
           background: white;
           border: 2px solid black;
           cursor: pointer;
         }
         &::-moz-range-thumb {
           border-radius: 0;
-          width: 1.5rem;
-          height: 3rem;
+          width: 24px;
+          height: 48px;
           background: white;
           border: 2px solid black;
           cursor: pointer;
@@ -753,7 +754,7 @@ ccw-brand {
     flex-wrap: wrap;
 
     ccw-div:nth-of-type(1) {
-      padding: 0 2rem 1rem 0;
+      padding: 0 32px 16px 0;
       flex: 1 0 auto;
     }
     ccw-div:nth-of-type(2) {
@@ -766,7 +767,7 @@ ccw-brand {
       font-family: Arial, Helvetica, sans-serif;
       font-weight: normal;
       font-size: 14px;
-      margin-bottom: 1rem;
+      margin-bottom: 16px;
       ccw-span {
         font-weight: bold;
         font-size: 16px;
@@ -778,11 +779,11 @@ ccw-brand {
     cursor: pointer;
     font-size: 20px;
     display: block;
-    margin: .5rem 0;
+    margin: 8px 0;
     svg {
-      max-width: 1.25rem;
-      max-height: 1.25rem;
-      margin-right: .5rem;
+      max-width: 20px;
+      max-height: 20px;
+      margin-right: 8px;
     }
   }
   ccw-hr {
@@ -792,17 +793,17 @@ ccw-brand {
     font-size: 20px;
     display: flex;
     align-items: center;
-    margin: 2rem 0 1rem 0;
+    margin: 32px 0 16px 0;
     &::after {
       content: "";
       flex: 1 0 0;
-      margin-left: 1rem;
+      margin-left: 16px;
       border-bottom: 1px solid #666;
     }
   }
   &[size="md"], &[size="sm"], &[size="xs"] {
     ccw-control-panel {
-      padding: 2rem 3rem;
+      padding: 32px 48px;
     }
   }
 }
@@ -837,10 +838,10 @@ ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[si
 ccw-flatten-header[size="lg"] div:first-of-type { font-size: 50px; }
 ccw-flatten-header[size="md"] div:first-of-type { font-size: 35px; }
 ccw-flatten-header[size="sm"] div:first-of-type { font-size: 20px; }
-ccw-flatten-header[size="sm"] div:nth-of-type(2) svg { max-width: 3rem; max-height: 3rem; }
+ccw-flatten-header[size="sm"] div:nth-of-type(2) svg { max-width: 48px; max-height: 48px; }
 ccw-flatten-header[size="sm"] { padding-top: 0; }
 ccw-flatten-header {
-  padding-top: 2rem;
+  padding-top: 32px;
   font-family: 'klimabold';
   display: flex;
   flex-wrap: wrap;
@@ -852,14 +853,14 @@ ccw-flatten-header {
       color: $secondary;
     }
     svg {
-      margin-left: 1rem;
+      margin-left: 16px
     }
   }
   div:nth-of-type(2) {
     svg {
-      max-height: 6rem;
-      max-width: 6rem;
-      margin-left: 1rem;
+      max-height: 96px;
+      max-width: 96px;
+      margin-left: 16px
     }
   }
   div {
@@ -867,8 +868,8 @@ ccw-flatten-header {
     align-items: center;
   }
   svg {
-    max-height: 3rem;
-    max-width: 3rem;
+    max-height: 48px;
+    max-width: 48px;
   }
 }
 ccw-flatten-footer {
@@ -877,6 +878,6 @@ ccw-flatten-footer {
   font-family: Arial, Helvetica, sans-serif;
   font-weight: normal;
   font-size: 14px;
-  padding: 1rem 0 10rem 0;
+  padding: 16px 0 160px 0;
 }
 </style>
