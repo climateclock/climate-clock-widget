@@ -139,17 +139,17 @@ export default {
     // Github currently limits to 60req/hr so can we poll this every 90 seconds? What's reasonable?
     githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
     ready: false,
-    usingNetworkData: false,
+    //usingNetworkData: false,
 
     // All clock action is invoked by changing this.now in an interval function
     now: null,
 
     // Deadline
-    annualGrowth: clock.annualGrowth,
+    //annualGrowth: clock.annualGrowth,
     feed: clock.feed,
-    startDateUTC: clock.startDateUTC,
-    startDateCO2Budget: clock.startDateCO2Budget,
-    tonsPerSecond: clock.tonsPerSecond,
+    //startDateUTC: clock.startDateUTC,
+    //startDateCO2Budget: clock.startDateCO2Budget,
+    //tonsPerSecond: clock.tonsPerSecond,
     
     // Lifeline
     renewPlaces: 9,
@@ -179,6 +179,7 @@ export default {
   }),
   computed: {
     // Deadline calculation
+    /*
     CO2Budget() {
       let tElapsed = this.now - this.startDate.getTime()
       return this.startDateCO2Budget - tElapsed / 1000 * this.tonsPerSecond
@@ -190,6 +191,7 @@ export default {
     startDate() {
       return new Date(Date.UTC(...this.startDateUTC))
     },
+    */
     remaining() {
       return countdown(this.deadline, this.now,
         countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
@@ -261,7 +263,16 @@ export default {
     }
   },
   created() {
+    this.$http.get('https://api.climateclock.world/v1/clock').then(res => {
+      let modules = res.data.data.modules
+      this.deadline = new Date(modules.carbon_1.deadlines['1.5C'].timestamp)
+      this.feed = modules.newsfeed_1.newsfeed.map(n => n.headline).join(' | ') + ' | '
+    }).catch(err => { // eslint-disable-next-line
+      console.log(err)
+    })
+
     // Data is fetched from the network because browsers may cache this script
+    /*
     this.usingNetworkData = false
     this.$http.get(this.githubUrl).then(res => {
       let d = JSON.parse(atob(res.data.content))
@@ -272,6 +283,7 @@ export default {
     }).catch(err => { // eslint-disable-next-line
       console.log(err)
     })
+    */
 
     // Watch for container size changes and update sizing classes
     let resizeInterval = 0, tickInterval = 100
