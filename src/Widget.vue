@@ -265,7 +265,7 @@ export default {
   created() {
     this.$http.get('https://api.climateclock.world/v1/clock').then(res => {
       let modules = res.data.data.modules
-      this.deadline = new Date(modules.carbon_1.deadlines['1.5C'].timestamp)
+      this.deadline = new Date(modules.carbon_deadline_1.deadlines['1.5C'].timestamp)
       this.feed = modules.newsfeed_1.newsfeed.map(n => n.headline).join(' | ') + ' | '
     }).catch(err => { // eslint-disable-next-line
       console.log(err)
