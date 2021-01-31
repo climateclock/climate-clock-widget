@@ -286,10 +286,10 @@ export default {
     */
 
     // Watch for container size changes and update sizing classes
-    let resizeInterval = 0, tickInterval = 100
+    let resizeInterval = 100, tickInterval = 250
     if (this.$browserDetect.isEdge) { // Slow down for the special browser
       resizeInterval = 250
-      tickInterval = 250
+      tickInterval = 997
     }
     window.addEventListener('load', this.setSize)
     window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
