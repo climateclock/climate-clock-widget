@@ -12,7 +12,7 @@
           <ccw-panel deadline>
             <ccw-div>
               <ccw-span>DEADLINE</ccw-span>
-              <ccw-span>We must achieve zero emissions in:</ccw-span>
+              <ccw-span>{{ carbon.label }}</ccw-span>
             </ccw-div>
             <ccw-readout>
               {{ remaining.years }}<ccw-span>YRS</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>DAYS</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
@@ -21,7 +21,7 @@
           <ccw-panel lifeline>
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
-              <ccw-span>% of world's energy from renewables:</ccw-span>
+              <ccw-span>{{ renewables.label }}</ccw-span>
             </ccw-div>
             <ccw-readout>{{ renewablePercent.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewablePercent.split('.')[1]}}%</ccw-readout>
           </ccw-panel>
@@ -118,11 +118,6 @@
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
-// Import defaults from json file to keep them in sync
-import clock from './clock.json'
-
-
-const SECONDS_PER_YEAR = 365.25 * 24 * 3600
 
 export default {
   props: {
@@ -136,26 +131,18 @@ export default {
   },
   data: () => ({
     // Component loading
-    // Github currently limits to 60req/hr so can we poll this every 90 seconds? What's reasonable?
-    githubUrl: 'https://api.github.com/repos/BeautifulTrouble/climate-clock-widget/contents/src/clock.json',
     ready: false,
-    //usingNetworkData: false,
 
     // All clock action is invoked by changing this.now in an interval function
     now: null,
 
-    // Deadline
-    //annualGrowth: clock.annualGrowth,
-    feed: clock.feed,
-    //startDateUTC: clock.startDateUTC,
-    //startDateCO2Budget: clock.startDateCO2Budget,
-    //tonsPerSecond: clock.tonsPerSecond,
-    
-    // Lifeline
-    renewPlaces: 9,
-    renewStartDate: new Date(Date.UTC(2019, 0, 1, 0, 0, 0)),
-    renewStartPct: 26.2,
-    renewIncPerYear: (45 - 26.2)/(2040 - 2019), // Expected rise to 45% by 2040 w/26.2% by 2019
+    // The computed feed
+    feed: '',
+
+    // Modules
+    newsfeed: {},
+    carbon: {},
+    renewables: {},
     
     // Chart 
     A: 2, B: 2, k: 0, preset: 'bad',
@@ -178,32 +165,13 @@ export default {
     lastSize: 0,
   }),
   computed: {
-    // Deadline calculation
-    /*
-    CO2Budget() {
-      let tElapsed = this.now - this.startDate.getTime()
-      return this.startDateCO2Budget - tElapsed / 1000 * this.tonsPerSecond
-    },
-    deadline() {
-      let msRemainingAtStartDate = (this.startDateCO2Budget / this.tonsPerSecond * 1000)
-      return new Date(this.startDate.getTime() + msRemainingAtStartDate)
-    },
-    startDate() {
-      return new Date(Date.UTC(...this.startDateUTC))
-    },
-    */
     remaining() {
       return countdown(this.deadline, this.now,
         countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
     },
-    
-    // Lifeline calculation
-    renewIncPerSecond() {
-      return this.renewIncPerYear / SECONDS_PER_YEAR
-    },
     renewablePercent() {
-      let tElapsed = this.now - this.renewStartDate.getTime()
-      return (this.renewStartPct + (tElapsed / 1000 * this.renewIncPerSecond)).toFixed(this.renewPlaces)
+      let tElapsed = this.now - (new Date(this.renewables.timestamp)).getTime()
+      return (this.renewables.initial + (tElapsed / 1000 * this.renewables.rate)).toFixed(9)
     },
 
     // Items below are skin/theme-specific
@@ -265,25 +233,15 @@ export default {
   created() {
     this.$http.get('https://api.climateclock.world/v1/clock').then(res => {
       let modules = res.data.data.modules
-      this.deadline = new Date(modules.carbon_deadline_1.deadlines['1.5C'].timestamp)
-      this.feed = modules.newsfeed_1.newsfeed.map(n => n.headline).join(' | ') + ' | '
-    }).catch(err => { // eslint-disable-next-line
-      console.log(err)
-    })
+      this.carbon = modules.carbon_deadline_1
+      this.renewables = modules.renewables_1
+      this.newsfeed = modules.newsfeed_1
 
-    // Data is fetched from the network because browsers may cache this script
-    /*
-    this.usingNetworkData = false
-    this.$http.get(this.githubUrl).then(res => {
-      let d = JSON.parse(atob(res.data.content))
-      if (d.annualGrowth && d.feed && d.startDateCO2Budget && d.startDateUTC && d.tonsPerSecond) {
-        Object.assign(this, d)
-        this.usingNetworkData = true
-      }
+      this.deadline = new Date(this.carbon.timestamp)
+      this.feed = this.newsfeed.newsfeed.map(n => n.headline).join(' | ') + ' | '
     }).catch(err => { // eslint-disable-next-line
       console.log(err)
     })
-    */
 
     // Watch for container size changes and update sizing classes
     let resizeInterval = 100, tickInterval = 250
