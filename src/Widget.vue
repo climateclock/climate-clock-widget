@@ -231,7 +231,7 @@ export default {
     }
   },
   created() {
-    this.$http.get('https://api.climateclock.world/v1/clock').then(res => {
+    this.$http.get('https://api.climateclock.world/v1/clock?device=widget').then(res => {
       let modules = res.data.data.modules
       this.carbon = modules.carbon_deadline_1
       this.renewables = modules.renewables_1
