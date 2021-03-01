@@ -343,7 +343,6 @@ ccw-w {
   display: flex;
   flex-direction: row-reverse; 
   justify-content: space-between;
-  font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
   font-weight: normal;
   font-size: 18px;
   position: relative;
@@ -362,6 +361,7 @@ ccw-w {
   }
   *, *:before, *:after {
     box-sizing: border-box;
+    font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
   }
 
   height: $cubit;
@@ -553,8 +553,6 @@ ccw-readout {
 ccw-ticker {
   position: relative;
   height: 32px;
-  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
-  font-weight: bold;
   text-transform: uppercase;
   text-align: left;
   overflow: hidden;
@@ -572,6 +570,8 @@ ccw-ticker {
     flex: 1 0 100%; // also ccw-panel
   }
   ccw-div {
+    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+    font-weight: bold;
     position: absolute;
     top: 1px;
     ccw-w[size="lg"] & {
@@ -602,7 +602,6 @@ ccw-ticker {
   }
 }
 ccw-brand {
-  font-family: 'folsomblack', 'Lucida Console', Monaco, monospace;
   line-height: .85;
   width: 128px;
   background: black;
@@ -614,6 +613,10 @@ ccw-brand {
   flex-direction: column;
   align-items: center;
 
+  ccw-span {
+    font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+    font-weight: bold;
+  }
   ccw-w[size="lg"] & {
     width: $cubit;
   }
@@ -638,7 +641,7 @@ ccw-brand {
 #ccw-chart-wrapper { // Use id to increase specificity over cleanslate
   box-sizing: border-box;
   overflow: hidden;
-  font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
+  font-family: 'katwijk_monobold', 'Lucida Console', Monaco, monospace;
   font-weight: bold;
   text-align: left;
   border-bottom: 16px solid black;
@@ -808,7 +811,6 @@ ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[si
    opacity: 0;
 }
 
-@import 'klima.css';
 ccw-flatten-header[size="lg"] div:first-of-type { font-size: 50px; }
 ccw-flatten-header[size="md"] div:first-of-type { font-size: 35px; }
 ccw-flatten-header[size="sm"] div:first-of-type { font-size: 20px; }
@@ -816,7 +818,8 @@ ccw-flatten-header[size="sm"] div:nth-of-type(2) svg { max-width: 48px; max-heig
 ccw-flatten-header[size="sm"] { padding-top: 0; }
 ccw-flatten-header {
   padding-top: 32px;
-  font-family: 'klimabold';
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 800;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
