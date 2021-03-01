@@ -3,7 +3,7 @@
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)">
     <!-- Main Widget -->
     <div class="cleanslate">
-      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="showChart = !showChart">
+      <ccw-w :class="{flatten: flatten}" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="handleClick">
         <ccw-brand>
           <img logo svg-inline src="./climateclock.svg">
           <ccw-span>#ActInTime</ccw-span>
@@ -215,8 +215,12 @@ export default {
     plural(n, pre, suf) {
       return (n == 0 || n > 1) ? `${n} ${pre + suf}` : `${n} ${pre}`
     },
-    openHomepage() {
-      window.location.hostname != 'climateclock.world' && window.open('https://climateclock.world')
+    handleClick() {
+      if (window.location.hostname != 'climateclock.world') {
+        window.open('https://climateclock.world')
+      } else {
+        this.showChart = !this.showChart
+      }
     },
     updatePreset(preset) {
       this.preset = preset
