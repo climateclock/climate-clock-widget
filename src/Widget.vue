@@ -118,6 +118,12 @@
 import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
+// https://stackoverflow.com/questions/11887934/how-to-check-if-dst-daylight-saving-time-is-in-effect-and-if-so-the-offset
+let isDST = (d) => {
+    let jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset();
+    let jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
+    return Math.max(jan, jul) != d.getTimezoneOffset(); 
+}
 
 export default {
   props: {
@@ -241,7 +247,26 @@ export default {
       this.renewables = modules.renewables_1
       this.newsfeed = modules.newsfeed_1
 
+      // Countdownjs has the annoying feature of introducing daylight savings
+      // time to otherwise "pure" UTC timestamp comparisons, so we'll need to
+      // get rid of that. For simplicity, I'm just "shoring up" the deadline,
+      // making it slightly closer if we're in DST. This is NOT a complete and
+      // proper way to calculate arbitrary timers in the past or future
+      // between disparate states of DST-ness. If this widget is expanded to
+      // cover the full ClimateClock spec including arbitrary timers, all
+      // those cases should be addressed carefully. As it stands, adjusting 
+      // the timestamp is already a little bit wrong. I believe, but have not
+      // tested to prove, that if now is in DST and the timestamp is not, it's
+      // more correct to adjust every "now" than to adjust the timestamp,
+      // however I'm not going to write logic for all those cases when we have
+      // one planet and one IPCC report and one deadline. If you think that's 
+      // unreasonable, open a github issue or make a pull request! :)
       this.deadline = new Date(this.carbon.timestamp)
+      if (isDST(new Date())) {
+        this.deadline = this.deadline.setTime(this.deadline.getTime() + (60*60*1000))
+      }
+
+      // Join all the news items into a convenient string
       this.feed = this.newsfeed.newsfeed.map(n => n.headline).join(' | ') + ' | '
     }).catch(err => { // eslint-disable-next-line
       console.log(err)
