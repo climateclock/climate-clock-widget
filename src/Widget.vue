@@ -12,7 +12,7 @@
           <ccw-panel deadline>
             <ccw-div>
               <ccw-span>DEADLINE</ccw-span>
-              <ccw-span>{{ carbon.labels[0] }}</ccw-span>
+              <ccw-span>{{ carbon.labels && carbon.labels[0] }}</ccw-span>
             </ccw-div>
             <ccw-readout>
               {{ remaining.years }}<ccw-span>YRS</ccw-span>{{ pad(remaining.days, 3) }}<ccw-span>DAYS</ccw-span>{{ pad(remaining.hours, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.minutes, 2) }}<ccw-span>:</ccw-span>{{ pad(remaining.seconds, 2) }}
@@ -21,7 +21,7 @@
           <ccw-panel lifeline>
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
-              <ccw-span>{{ renewables.labels[0] }}</ccw-span>
+              <ccw-span>{{ renewables.labels && renewables.labels[0] }}</ccw-span>
             </ccw-div>
             <ccw-readout>{{ renewablePercent.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewablePercent.split('.')[1]}}%</ccw-readout>
           </ccw-panel>
