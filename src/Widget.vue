@@ -222,7 +222,7 @@ export default {
       return (n == 0 || n > 1) ? `${n} ${pre + suf}` : `${n} ${pre}`
     },
     handleClick() {
-      if (window.location.hostname != 'climateclock.world') {
+      if (window.location.hostname.includes('climateclock.world')) {
         window.open('https://climateclock.world')
       } else {
         this.showChart = !this.showChart
