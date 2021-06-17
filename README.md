@@ -19,7 +19,7 @@ yarn install
 yarn serve
 ```
 
-### Produce dist/widget-v1.js
+### Produce dist/widget-v2.js
 ```
 yarn build
 ```
@@ -27,6 +27,6 @@ yarn build
 Once built, the clock widget can be included on your site using 
 
 ```  
-<script src="https://yourdomain.com/path/to/widget-v1.js" async></script>
-<climate-clock></climate-clock>
+<script src="https://yourdomain.com/path/to/widget-v2.js" async></script>
+<climate-clock />
 ```  
