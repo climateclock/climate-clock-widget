@@ -21,9 +21,11 @@
           <ccw-panel lifeline>
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
-              <ccw-span>{{ renewables.labels && renewables.labels[0] }}</ccw-span>
+              <ccw-span v-if="flipflop">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
+              <ccw-span v-else>{{ gcf.labels && gcf.labels[0] }}</ccw-span>
             </ccw-div>
-            <ccw-readout>{{ renewablePercent.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewablePercent.split('.')[1]}}%</ccw-readout>
+            <ccw-readout v-if="flipflop">{{ renewablePercent.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewablePercent.split('.')[1]}}%</ccw-readout>
+            <ccw-readout v-else>${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
             <ccw-div one :style="animationDuration">{{ feedText }}</ccw-div>
@@ -149,6 +151,7 @@ export default {
     newsfeed: {},
     carbon: {},
     renewables: {},
+    gcf: {},
     
     // Chart 
     A: 2, B: 2, k: 0, preset: 'bad',
@@ -178,6 +181,17 @@ export default {
     renewablePercent() {
       let tElapsed = this.now - (new Date(this.renewables.timestamp)).getTime()
       return (this.renewables.initial + (tElapsed / 1000 * this.renewables.rate)).toFixed(9)
+    },
+    gcfValue() {
+      let tElapsed = this.now - (new Date(this.gcf.timestamp)).getTime()
+      return (this.gcf.initial + (tElapsed / 1000 * this.gcf.rate)).toFixed(2)
+    },
+    flipflop() {
+      if (!this.now) {
+        return false
+      } else {
+        return !(this.now.getSeconds() % 12 >= 6)
+      }
     },
 
     // Items below are skin/theme-specific
@@ -246,6 +260,7 @@ export default {
       this.carbon = modules.carbon_deadline_1
       this.renewables = modules.renewables_1
       this.newsfeed = modules.newsfeed_1
+      this.gcf = modules.green_climate_fund_1
 
       // Countdownjs has the annoying feature of introducing daylight savings
       // time to otherwise "pure" UTC timestamp comparisons, so we'll need to
@@ -278,7 +293,7 @@ export default {
       resizeInterval = 250
       tickInterval = 997
     }
-    window.addEventListener('load', this.setSize)
+    window.addEventListener('DOMContentLoaded', this.setSize)
     window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
 
@@ -495,7 +510,7 @@ ccw-panel {
       }
     }
     ccw-w[size="lg"] & {
-      flex: 1 0 52%;
+      flex: 1 0 50%;
     }
   }
   &[lifeline] {
@@ -533,7 +548,7 @@ ccw-readout {
   overflow: hidden;
   ccw-w[size="lg"] & {
     line-height: 1.3;
-    font-size: 50px;
+    font-size: 50.5px;
   }
   ccw-w[size="md"] & {
     font-size: 50px;
@@ -643,7 +658,7 @@ ccw-brand {
     font-weight: bold;
   }
   ccw-w[size="lg"] & {
-    width: $cubit;
+    width: $cubit - 8px;
   }
   ccw-w[size="md"] & {
     width: $cubit - 16px;
