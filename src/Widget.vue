@@ -293,7 +293,7 @@ export default {
       resizeInterval = 250
       tickInterval = 997
     }
-    window.addEventListener('DOMContentLoaded', this.setSize)
+    window.addEventListener('load', this.setSize)
     window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
 
