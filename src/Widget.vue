@@ -325,10 +325,10 @@ export default {
 @import 'cleanslate';
 @import 'matthewha';
 
-$accent: #ff0000;
+$accent: #eb1c23;
 $accentDark: #940000;
-$secondary: #00dd72;
-$secondaryDark: #008040;
+$secondary: #4aa1cc;
+$secondaryDark: #1362a1;
 
 @mixin glow($color) {
   font-weight: 400;
