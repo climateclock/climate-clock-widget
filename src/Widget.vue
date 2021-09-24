@@ -121,11 +121,13 @@ import countdown from 'countdown'
 import debounce from 'lodash.debounce'
 
 // https://stackoverflow.com/questions/11887934/how-to-check-if-dst-daylight-saving-time-is-in-effect-and-if-so-the-offset
+/*
 let isDST = (d) => {
     let jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset();
     let jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
     return Math.max(jan, jul) != d.getTimezoneOffset(); 
 }
+*/
 
 export default {
   props: {
@@ -277,9 +279,12 @@ export default {
       // one planet and one IPCC report and one deadline. If you think that's 
       // unreasonable, open a github issue or make a pull request! :)
       this.deadline = new Date(this.carbon.timestamp)
+      // UGH. This issue needs revisiting after the IPCC AR6 update.
+      /*
       if (isDST(new Date())) {
         this.deadline = this.deadline.setTime(this.deadline.getTime() + (60*60*1000))
       }
+      */
 
       // Join all the news items into a convenient string
       this.feed = this.newsfeed.newsfeed.map(n => n.headline).join(' | ') + ' | '
