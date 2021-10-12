@@ -21,11 +21,13 @@
           <ccw-panel lifeline>
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
-              <ccw-span v-if="flipflop">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
-              <ccw-span v-else>{{ gcf.labels && gcf.labels[0] }}</ccw-span>
+              <ccw-span v-if="mode == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="mode == 1">{{ gcf.labels && gcf.labels[0] }}</ccw-span>
+              <ccw-span v-else>{{ indie.labels && indie.labels[0] }}</ccw-span>
             </ccw-div>
-            <ccw-readout v-if="flipflop">{{ renewablePercent.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewablePercent.split('.')[1]}}%</ccw-readout>
-            <ccw-readout v-else>${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
+            <ccw-readout v-if="mode == 0">{{ renewablePercent.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewablePercent.split('.')[1]}}%</ccw-readout>
+            <ccw-readout v-else-if="mode == 1">${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
+            <ccw-readout v-else>{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
             <ccw-div one :style="animationDuration">{{ feedText }}</ccw-div>
@@ -188,11 +190,19 @@ export default {
       let tElapsed = this.now - (new Date(this.gcf.timestamp)).getTime()
       return (this.gcf.initial + (tElapsed / 1000 * this.gcf.rate)).toFixed(2)
     },
-    flipflop() {
+    indieValue() {
+      let tElapsed = this.now - (new Date(this.indie.timestamp)).getTime()
+      return ((this.indie.initial + (tElapsed / 1000 * this.indie.rate)) * 1e6).toLocaleString()
+    },
+    mode() {
+      // Flip through 3 lifelines with durations: 7s, 6s, 7s
+      let a = 7, b = 13, c = 20
+
       if (!this.now) {
         return false
       } else {
-        return !(this.now.getSeconds() % 12 >= 6)
+        let x = this.now.getSeconds() % c
+        return x < a ? 0 : x < b ? 1 : 2
       }
     },
 
@@ -263,6 +273,7 @@ export default {
       this.renewables = modules.renewables_1
       this.newsfeed = modules.newsfeed_1
       this.gcf = modules.green_climate_fund_1
+      this.indie = modules.indigenous_land_1
 
       // Countdownjs has the annoying feature of introducing daylight savings
       // time to otherwise "pure" UTC timestamp comparisons, so we'll need to
@@ -553,7 +564,7 @@ ccw-readout {
   overflow: hidden;
   ccw-w[size="lg"] & {
     line-height: 1.3;
-    font-size: 50.5px;
+    font-size: 50px;
   }
   ccw-w[size="md"] & {
     font-size: 50px;
