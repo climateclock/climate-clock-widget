@@ -21,12 +21,14 @@
           <ccw-panel lifeline>
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
-              <ccw-span v-if="mode == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="mode == 1">{{ gcf.labels && gcf.labels[0] }}</ccw-span>
+              <ccw-span v-if="current_module == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="current_module == 1">{{ gcf.labels && gcf.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="current_module == 2">{{ debt.labels && debt.labels[0] }}</ccw-span>
               <ccw-span v-else>{{ indie.labels && indie.labels[0] }}</ccw-span>
             </ccw-div>
-            <ccw-readout v-if="mode == 0">{{ renewablePercent.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewablePercent.split('.')[1]}}%</ccw-readout>
-            <ccw-readout v-else-if="mode == 1">${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
+            <ccw-readout v-if="current_module == 0">{{ renewableValue.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split('.')[1]}}%</ccw-readout>
+            <ccw-readout v-else-if="current_module == 1">${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
+            <ccw-readout v-else-if="current_module == 2">${{ debtValue[0] }}<ccw-span>.</ccw-span>{{ debtValue[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
             <ccw-readout v-else>{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
@@ -136,6 +138,7 @@ export default {
     bottom: {type: Boolean, default: false},
     lifeline: {type: String, default: null},
     flatten: {type: Boolean, default: false},
+    module: {type: Number, default: null},
   },
   components: {
     // Lazy-load this component
@@ -182,7 +185,8 @@ export default {
       return countdown(this.deadline, this.now,
         countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
     },
-    renewablePercent() {
+    // In a less quick-and-dirty version, a single rate calculation function would be called for each module value here
+    renewableValue() {
       let tElapsed = this.now - (new Date(this.renewables.timestamp)).getTime()
       return (this.renewables.initial + (tElapsed / 1000 * this.renewables.rate)).toFixed(9)
     },
@@ -194,16 +198,23 @@ export default {
       let tElapsed = this.now - (new Date(this.indie.timestamp)).getTime()
       return ((this.indie.initial + (tElapsed / 1000 * this.indie.rate)) * 1e6).toLocaleString()
     },
-    mode() {
-      // Flip through 3 lifelines with durations: 7s, 6s, 7s
-      let a = 7, b = 13, c = 20
-
+    debtValue() {
+      let tElapsed = this.now - (new Date(this.debt.timestamp)).getTime()
+      let val = (this.debt.initial + (tElapsed / 1000 * this.debt.rate))
+      return [parseInt(val), (val - parseInt(val)).toFixed(8).slice(2)]
+    },
+    current_module() {
       if (!this.now) {
         return false
-      } else {
-        let x = this.now.getSeconds() % c
-        return x < a ? 0 : x < b ? 1 : 2
       }
+      if (this.module !== null) {
+        return this.module
+      }
+      let x = this.now.getSeconds() % 30
+      return x < 7 ? 0
+           : x < 15 ? 1
+           : x < 21 ? 2
+           : 3
     },
 
     // Items below are skin/theme-specific
@@ -274,6 +285,7 @@ export default {
       this.newsfeed = modules.newsfeed_1
       this.gcf = modules.green_climate_fund_1
       this.indie = modules.indigenous_land_1
+      this.debt = modules.loss_damage_g20_debt
 
       // Countdownjs has the annoying feature of introducing daylight savings
       // time to otherwise "pure" UTC timestamp comparisons, so we'll need to
@@ -460,6 +472,7 @@ ccw-panel {
   justify-content: space-between;
   text-transform: uppercase;
   color: black;
+  letter-spacing: -1px;
 
   flex: 1 0 49%; // 50% causes wrapping!
   overflow: hidden;
@@ -526,7 +539,7 @@ ccw-panel {
       }
     }
     ccw-w[size="lg"] & {
-      flex: 1 0 50%;
+      flex: 0 1 48%;
     }
   }
   &[lifeline] {
@@ -557,6 +570,7 @@ $ccwFont: 70px;
 ccw-readout {
   flex: 2 0 0;
   font-size: 59px;
+  letter-spacing: -2px;
   line-height: 1.1;
   text-align: left;
   margin: 0 12px;
