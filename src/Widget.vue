@@ -23,12 +23,14 @@
               <ccw-span>LIFELINE</ccw-span>
               <ccw-span v-if="current_module == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
               <ccw-span v-else-if="current_module == 1">{{ gcf.labels && gcf.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="current_module == 2">{{ debt.labels && debt.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="current_module == 2">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="current_module == 3">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
               <ccw-span v-else>{{ indie.labels && indie.labels[0] }}</ccw-span>
             </ccw-div>
             <ccw-readout v-if="current_module == 0">{{ renewableValue.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split('.')[1]}}%</ccw-readout>
             <ccw-readout v-else-if="current_module == 1">${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
-            <ccw-readout v-else-if="current_module == 2">${{ debtValue[0] }}<ccw-span>.</ccw-span>{{ debtValue[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-else-if="current_module == 2">${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-else-if="current_module == 3">${{ debt20Value[0] }}<ccw-span>.</ccw-span>{{ debt20Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
             <ccw-readout v-else>{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
@@ -198,9 +200,14 @@ export default {
       let tElapsed = this.now - (new Date(this.indie.timestamp)).getTime()
       return ((this.indie.initial + (tElapsed / 1000 * this.indie.rate)) * 1e6).toLocaleString()
     },
-    debtValue() {
-      let tElapsed = this.now - (new Date(this.debt.timestamp)).getTime()
-      let val = (this.debt.initial + (tElapsed / 1000 * this.debt.rate))
+    debt7Value() {
+      let tElapsed = this.now - (new Date(this.debt7.timestamp)).getTime()
+      let val = (this.debt7.initial + (tElapsed / 1000 * this.debt7.rate))
+      return [parseInt(val), (val - parseInt(val)).toFixed(8).slice(2)]
+    },
+    debt20Value() {
+      let tElapsed = this.now - (new Date(this.debt20.timestamp)).getTime()
+      let val = (this.debt20.initial + (tElapsed / 1000 * this.debt20.rate))
       return [parseInt(val), (val - parseInt(val)).toFixed(8).slice(2)]
     },
     current_module() {
@@ -211,10 +218,7 @@ export default {
         return this.module
       }
       let x = this.now.getSeconds() % 30
-      return x < 7 ? 0
-           : x < 15 ? 1
-           : x < 21 ? 2
-           : 3
+      return Math.floor(x / 5)
     },
 
     // Items below are skin/theme-specific
@@ -285,7 +289,8 @@ export default {
       this.newsfeed = modules.newsfeed_1
       this.gcf = modules.green_climate_fund_1
       this.indie = modules.indigenous_land_1
-      this.debt = modules.loss_damage_g20_debt
+      this.debt7 = modules.loss_damage_g7_debt
+      this.debt20 = modules.loss_damage_g20_debt
 
       // Countdownjs has the annoying feature of introducing daylight savings
       // time to otherwise "pure" UTC timestamp comparisons, so we'll need to
