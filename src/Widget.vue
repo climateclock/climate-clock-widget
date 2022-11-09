@@ -21,16 +21,16 @@
           <ccw-panel lifeline>
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
-              <ccw-span v-if="current_module == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="current_module == 1">{{ gcf.labels && gcf.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="current_module == 2">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="current_module == 3">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
+              <ccw-span v-if="currentModule == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 1">{{ gcf.labels && gcf.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 2">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 3">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
               <ccw-span v-else>{{ indie.labels && indie.labels[0] }}</ccw-span>
             </ccw-div>
-            <ccw-readout v-if="current_module == 0">{{ renewableValue.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split('.')[1]}}%</ccw-readout>
-            <ccw-readout v-else-if="current_module == 1">${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
-            <ccw-readout v-else-if="current_module == 2">${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
-            <ccw-readout v-else-if="current_module == 3">${{ debt20Value[0] }}<ccw-span>.</ccw-span>{{ debt20Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-if="currentModule == 0">{{ renewableValue.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split('.')[1]}}%</ccw-readout>
+            <ccw-readout v-else-if="currentModule == 1">${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
+            <ccw-readout v-else-if="currentModule == 2">${{ debt20Value[0] }}<ccw-span>.</ccw-span>{{ debt20Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-else-if="currentModule == 3">${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
             <ccw-readout v-else>{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
@@ -157,10 +157,13 @@ export default {
     feed: '',
 
     // Modules
+    currentModule: 0,
     newsfeed: {},
     carbon: {},
     renewables: {},
     gcf: {},
+    debt7: {},
+    debt20: {},
     
     // Chart 
     A: 2, B: 2, k: 0, preset: 'bad',
@@ -209,16 +212,6 @@ export default {
       let tElapsed = this.now - (new Date(this.debt20.timestamp)).getTime()
       let val = (this.debt20.initial + (tElapsed / 1000 * this.debt20.rate))
       return [parseInt(val), (val - parseInt(val)).toFixed(8).slice(2)]
-    },
-    current_module() {
-      if (!this.now) {
-        return false
-      }
-      if (this.module !== null) {
-        return this.module
-      }
-      let x = this.now.getSeconds() % 30
-      return Math.floor(x / 5)
     },
 
     // Items below are skin/theme-specific
@@ -329,6 +322,15 @@ export default {
     window.addEventListener('load', this.setSize)
     window.addEventListener('resize', this.resizeInterval ? debounce(this.setSize, resizeInterval) : this.setSize)
     setInterval(() => { this.now = new Date() }, tickInterval)
+
+    // currentModule is selected as an offset from when the widget was opened
+    if (this.module) {
+      this.currentModule = this.module
+    } else {
+      setInterval(() => {
+        this.currentModule = (this.currentModule + 1) % 5
+      }, 5000)
+    }
 
     if (this.flatten) {
       this.showChart = true
