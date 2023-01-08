@@ -122,18 +122,10 @@
 
 
 <script>
-//import VueRangeSlider from 'vue-range-slider'
-import countdown from 'countdown'
+import { DateTime, Settings } from 'luxon'
 import debounce from 'lodash.debounce'
 
-// https://stackoverflow.com/questions/11887934/how-to-check-if-dst-daylight-saving-time-is-in-effect-and-if-so-the-offset
-/*
-let isDST = (d) => {
-    let jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset();
-    let jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
-    return Math.max(jan, jul) != d.getTimezoneOffset(); 
-}
-*/
+Settings.defaultZone = 'utc'
 
 export default {
   props: {
@@ -152,6 +144,7 @@ export default {
 
     // All clock action is invoked by changing this.now in an interval function
     now: null,
+    deadline: null,
 
     // The computed feed
     feed: '',
@@ -187,8 +180,8 @@ export default {
   }),
   computed: {
     remaining() {
-      return countdown(this.deadline, this.now,
-        countdown.YEARS | countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS)
+      if (!this.deadline) return {}
+      return this.deadline.diff(DateTime.fromJSDate(this.now), ['years', 'days', 'hours', 'minutes', 'seconds'])
     },
     // In a less quick-and-dirty version, a single rate calculation function would be called for each module value here
     renewableValue() {
@@ -249,8 +242,8 @@ export default {
       })
     },
     // Items below are skin/theme-specific
-    pad(i, n = 2, c = '0') {
-      return (c.repeat(n) + i).slice(-n)
+    pad(n, length = 2) {
+      return `${"0".repeat(length)}${Math.trunc(n)}`.slice(-length)
     },
     plural(n, pre, suf) {
       return (n == 0 || n > 1) ? `${n} ${pre + suf}` : `${n} ${pre}`
@@ -285,27 +278,7 @@ export default {
       this.debt7 = modules.loss_damage_g7_debt
       this.debt20 = modules.loss_damage_g20_debt
 
-      // Countdownjs has the annoying feature of introducing daylight savings
-      // time to otherwise "pure" UTC timestamp comparisons, so we'll need to
-      // get rid of that. For simplicity, I'm just "shoring up" the deadline,
-      // making it slightly closer if we're in DST. This is NOT a complete and
-      // proper way to calculate arbitrary timers in the past or future
-      // between disparate states of DST-ness. If this widget is expanded to
-      // cover the full ClimateClock spec including arbitrary timers, all
-      // those cases should be addressed carefully. As it stands, adjusting 
-      // the timestamp is already a little bit wrong. I believe, but have not
-      // tested to prove, that if now is in DST and the timestamp is not, it's
-      // more correct to adjust every "now" than to adjust the timestamp,
-      // however I'm not going to write logic for all those cases when we have
-      // one planet and one IPCC report and one deadline. If you think that's 
-      // unreasonable, open a github issue or make a pull request! :)
-      this.deadline = new Date(this.carbon.timestamp)
-      // UGH. This issue needs revisiting after the IPCC AR6 update.
-      /*
-      if (isDST(new Date())) {
-        this.deadline = this.deadline.setTime(this.deadline.getTime() + (60*60*1000))
-      }
-      */
+      this.deadline = DateTime.fromISO(this.carbon.timestamp)
 
       // Join all the news items into a convenient string
       this.feed = this.newsfeed.newsfeed.map(n => n.headline).join(' | ') + ' | '
