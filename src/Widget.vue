@@ -22,15 +22,17 @@
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
               <ccw-span v-if="currentModule == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 1">{{ indie.labels && indie.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 2">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 3">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 1">{{ women.labels && women.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 2">{{ indie.labels && indie.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 3">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 4">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
               <ccw-span v-else>{{ gcf.labels && gcf.labels[0] }}</ccw-span>
             </ccw-div>
             <ccw-readout v-if="currentModule == 0">{{ renewableValue.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split('.')[1]}}%</ccw-readout>
-            <ccw-readout v-else-if="currentModule == 1">{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout>
-            <ccw-readout v-else-if="currentModule == 2">${{ debt20Value[0] }}<ccw-span>.</ccw-span>{{ debt20Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
-            <ccw-readout v-else-if="currentModule == 3">${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-else-if="currentModule == 1">{{ womenValue }}% Women</ccw-readout>
+            <ccw-readout v-else-if="currentModule == 2">{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout>
+            <ccw-readout v-else-if="currentModule == 3">${{ debt20Value[0] }}<ccw-span>.</ccw-span>{{ debt20Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-else-if="currentModule == 4">${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
             <ccw-readout v-else>${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
@@ -196,6 +198,10 @@ export default {
       let tElapsed = this.now - (new Date(this.indie.timestamp)).getTime()
       return ((this.indie.initial + (tElapsed / 1000 * this.indie.rate)) * 1e6).toLocaleString()
     },
+    womenValue() {
+      let tElapsed = this.now - (new Date(this.women.timestamp)).getTime()
+      return (this.women.initial + (tElapsed / 1000 * this.women.rate)).toFixed(1)
+    },
     debt7Value() {
       let tElapsed = this.now - (new Date(this.debt7.timestamp)).getTime()
       let val = (this.debt7.initial + (tElapsed / 1000 * this.debt7.rate))
@@ -275,6 +281,7 @@ export default {
       this.newsfeed = modules.newsfeed_1
       this.gcf = modules.green_climate_fund_1
       this.indie = modules.indigenous_land_1
+      this.women = modules.women_in_parliaments
       this.debt7 = modules.loss_damage_g7_debt
       this.debt20 = modules.loss_damage_g20_debt
 
@@ -301,7 +308,7 @@ export default {
       this.currentModule = this.module
     } else {
       setInterval(() => {
-        this.currentModule = (this.currentModule + 1) % 5
+        this.currentModule = (this.currentModule + 1) % 6
       }, 5000)
     }
 
