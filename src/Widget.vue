@@ -22,17 +22,19 @@
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
               <ccw-span v-if="currentModule == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 1">{{ women.labels && women.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 2">{{ indie.labels && indie.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 3">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 4">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 1">{{ divestment.labels && divestment.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 2">{{ women.labels && women.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 3">{{ indie.labels && indie.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 4">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 5">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
               <ccw-span v-else>{{ gcf.labels && gcf.labels[0] }}</ccw-span>
             </ccw-div>
             <ccw-readout v-if="currentModule == 0">{{ renewableValue.split('.')[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split('.')[1]}}%</ccw-readout>
-            <ccw-readout v-else-if="currentModule == 1">{{ womenValue }}% Women</ccw-readout>
-            <ccw-readout v-else-if="currentModule == 2">{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout>
-            <ccw-readout v-else-if="currentModule == 3">${{ debt20Value[0] }}<ccw-span>.</ccw-span>{{ debt20Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
-            <ccw-readout v-else-if="currentModule == 4">${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-else-if="currentModule == 1">${{ divestmentValue[0] }}<ccw-span>.</ccw-span>{{ divestmentValue[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-else-if="currentModule == 2">{{ womenValue }}% Women</ccw-readout>
+            <ccw-readout v-else-if="currentModule == 3">{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout>
+            <ccw-readout v-else-if="currentModule == 4">${{ debt20Value[0] }}<ccw-span>.</ccw-span>{{ debt20Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
+            <ccw-readout v-else-if="currentModule == 5">${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout>
             <ccw-readout v-else>${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
           </ccw-panel>
           <ccw-ticker>
@@ -153,6 +155,7 @@ export default {
 
     // Modules
     currentModule: 0,
+    currentModuleStart: 2**42,
     newsfeed: {},
     carbon: {},
     renewables: {},
@@ -211,6 +214,21 @@ export default {
       let tElapsed = this.now - (new Date(this.debt20.timestamp)).getTime()
       let val = (this.debt20.initial + (tElapsed / 1000 * this.debt20.rate))
       return [parseInt(val), (val - parseInt(val)).toFixed(8).slice(2)]
+    },
+    divestmentValue() {
+      let elapsed, val
+
+      let countOffset = this.now - this.currentModuleStart
+      if (countOffset < this.divestment.count_up_ms) {
+        // ehhh, it probably works!
+        let targetTime = this.currentModuleStart.getTime() + this.divestment.count_up_ms
+        let targetVal = this.divestment.initial + targetTime / 1000 * this.divestment.rate
+        val = targetVal / this.divestment.count_up_ms * countOffset
+      } else {
+        elapsed = this.now - (new Date(this.divestment.timestamp)).getTime()
+        val = this.divestment.initial + (elapsed / 1000 * this.divestment.rate)
+      }
+      return [parseInt(val), (val - parseInt(val)).toFixed(2).slice(2)]
     },
 
     // Items below are skin/theme-specific
@@ -285,6 +303,9 @@ export default {
       this.debt7 = modules.loss_damage_g7_debt
       this.debt20 = modules.loss_damage_g20_debt
 
+      this.divestment = modules.ff_divestment_stand_dot_earth
+      this.divestment.count_up_ms = this.divestment.count_up_duration * 1000
+
       this.deadline = DateTime.fromISO(this.carbon.timestamp)
 
       // Join all the news items into a convenient string
@@ -308,7 +329,8 @@ export default {
       this.currentModule = this.module
     } else {
       setInterval(() => {
-        this.currentModule = (this.currentModule + 1) % 6
+        this.currentModuleStart = this.now
+        this.currentModule = (this.currentModule + 1) % 7
       }, 5000)
     }
 
