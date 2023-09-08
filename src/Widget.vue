@@ -473,7 +473,7 @@ flatten-brand {
   position: relative;
 
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: flex-end;
 
   &.flatten {
@@ -499,7 +499,7 @@ flatten-brand {
   flatten-control-panel {
     flex: 3 0 0;
     display: block;
-    padding: 16px 48px 32px 48px;
+    padding: 16px 48px 32px 0;
     > flatten-div {
       font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
       font-weight: normal;
