@@ -1,58 +1,58 @@
 <template>
-    <ccw-div v-if="showChart">
-      <ccw-chart-wrapper :class="{flatten: flatten}" id="ccw-chart-wrapper" :size="size">
-        <ccw-div>
-          <ccw-chart :height="650" 
+    <flatten-div v-if="showChart">
+      <flatten-chart-wrapper :class="{flatten: flatten}" id="flatten-chart-wrapper" :size="size">
+        <flatten-div>
+          <flatten-chart :height="650" 
             @newK="k = $event"
             :factorA="parseInt(A)" 
             :factorB="parseInt(B)"
             :size="size"
-            ></ccw-chart>
-        </ccw-div>
-        <ccw-control-panel id="ccw-slider">
-          <ccw-div>SIZE OF INVESTMENT</ccw-div>
-          <ccw-slider>
+            ></flatten-chart>
+        </flatten-div>
+        <flatten-control-panel id="flatten-slider">
+          <flatten-div>SIZE OF INVESTMENT</flatten-div>
+          <flatten-slider>
             <input type="range" v-model="A" min="1" max="5">
-            <ccw-div>
-              <ccw-span v-for="(v, k) in action" :key="k">{{ v }}</ccw-span>
-            </ccw-div>
-          </ccw-slider>
-          <ccw-div>SPEED OF ACTION</ccw-div>
-          <ccw-slider>
+            <flatten-div>
+              <flatten-span v-for="(v, k) in action" :key="k">{{ v }}</flatten-span>
+            </flatten-div>
+          </flatten-slider>
+          <flatten-div>SPEED OF ACTION</flatten-div>
+          <flatten-slider>
             <input type="range" v-model="B" min="1" max="5">
-            <ccw-div>
-              <ccw-span v-for="(v, k) in investment" :key="k">{{ v }}</ccw-span>
-            </ccw-div>
-          </ccw-slider>
-          <ccw-hr>Scenario</ccw-hr>
-          <ccw-scenario>
-            <ccw-div>
-              <ccw-radio @click="setPreset('bad')">
+            <flatten-div>
+              <flatten-span v-for="(v, k) in investment" :key="k">{{ v }}</flatten-span>
+            </flatten-div>
+          </flatten-slider>
+          <flatten-hr>Scenario</flatten-hr>
+          <flatten-scenario>
+            <flatten-div>
+              <flatten-radio @click="setPreset('bad')">
                 <img svg-inline v-if="preset == 'bad'" src="./checked.svg">
                 <img svg-inline v-else src="./unchecked.svg">
-                <ccw-span class="ccw-bad" @click="setPreset('bad')">BUSINESS AS USUAL</ccw-span>
-              </ccw-radio>
-              <ccw-radio @click="setPreset('middle')">
+                <flatten-span class="flatten-bad" @click="setPreset('bad')">BUSINESS AS USUAL</flatten-span>
+              </flatten-radio>
+              <flatten-radio @click="setPreset('middle')">
                 <img svg-inline v-if="preset == 'middle'" src="./checked.svg">
                 <img svg-inline v-else src="./unchecked.svg">
-                <ccw-span class="ccw-middle" @click="setPreset('middle')">"MIDDLE GROUND"</ccw-span>
-              </ccw-radio>
-              <ccw-radio @click="setPreset('good')">
+                <flatten-span class="flatten-middle" @click="setPreset('middle')">"MIDDLE GROUND"</flatten-span>
+              </flatten-radio>
+              <flatten-radio @click="setPreset('good')">
                 <img svg-inline v-if="preset == 'good'" src="./checked.svg">
                 <img svg-inline v-else src="./unchecked.svg">
-                <ccw-span class="ccw-good" @click="setPreset('good')">GREEN NEW DEAL</ccw-span>
-              </ccw-radio>
-            </ccw-div>
+                <flatten-span class="flatten-good" @click="setPreset('good')">GREEN NEW DEAL</flatten-span>
+              </flatten-radio>
+            </flatten-div>
 
-            <ccw-div class="ccw-text">
-              <ccw-span>With the level of climate action you chose (<ccw-span>{{ action[A] }}</ccw-span> investment; with <ccw-span>{{ investment[B] }}</ccw-span> speed of action), the model suggests that {{ scenarios[preset] }}. If we shift our priorities now, we can change the future.</ccw-span>
-              <ccw-span v-if="!flatten">Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</ccw-span>
-            </ccw-div>
-          </ccw-scenario>
-        </ccw-control-panel>
-      </ccw-chart-wrapper>
+            <flatten-div class="flatten-text">
+              <flatten-span>With the level of climate action you chose (<flatten-span>{{ action[A] }}</flatten-span> investment; with <flatten-span>{{ investment[B] }}</flatten-span> speed of action), the model suggests that {{ scenarios[preset] }}. If we shift our priorities now, we can change the future.</flatten-span>
+              <flatten-span v-if="!flatten">Model derived from peer-reviewed science, including: <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC 2018 special report on the impacts of global warming of 1.5 °C</a>; and “Emissions – the ‘business as usual’ story is misleading” in <a href="https://www.nature.com/articles/d41586-020-00177-3" target="_blank"><i>Nature</i>, Issue 577</a>, 618-620 (2020); Zeke Hausfather & Glen P. Peters.</flatten-span>
+            </flatten-div>
+          </flatten-scenario>
+        </flatten-control-panel>
+      </flatten-chart-wrapper>
 
-    </ccw-div>
+    </flatten-div>
 </template>
 
 
@@ -61,7 +61,7 @@ import Chart from './Chart.vue'
 
 export default {
   components: {
-    'ccw-chart': Chart,
+    'flatten-chart': Chart,
   },
   data: () => ({
     now: null,
@@ -135,8 +135,8 @@ $secondaryDark: #1362a1;
                 .5px -.5px .1em $color;
 }
 
-// <ccw-w>
-ccw-fixed { // For "fixed" prop ;not yet used
+// <flatten-w>
+flatten-fixed { // For "fixed" prop ;not yet used
   position: fixed;
   bottom: 0; 
   left: 0; right: 0;
@@ -144,10 +144,10 @@ ccw-fixed { // For "fixed" prop ;not yet used
   box-shadow: 0 20px 30px rgba(black, 50%);
 }
 
-ccw-div {
+flatten-div {
   display: block;
 }
-ccw-span {
+flatten-span {
   display: inline-block;
 }
 
@@ -155,7 +155,7 @@ ccw-span {
 //$cubit: 7rem; 
 $cubit: 112px;
 
-ccw-w {
+flatten-w {
   cursor: pointer;
   user-select: none;
   -moz-osx-font-smoothing: grayscale;
@@ -206,11 +206,11 @@ ccw-w {
   }
 }
 
-ccw-flexwrap {
+flatten-flexwrap {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  position: relative; // <ccw-ticker> needs this, yeah?
+  position: relative; // <flatten-ticker> needs this, yeah?
   width: 100%;
 
   flex: 10 0 0;
@@ -219,7 +219,7 @@ ccw-flexwrap {
 // Used in deadline/lifeline headings and ticker
 $txtPad: 5px;
 
-ccw-panel {
+flatten-panel {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -231,96 +231,96 @@ ccw-panel {
   overflow: hidden;
 
   height: $cubit - 24px;
-  ccw-w[size="lg"] & {
-    ccw-span {
+  flatten-w[size="lg"] & {
+    flatten-span {
       padding: $txtPad $txtPad * 2 - 4px;
     }
-    >ccw-div >ccw-span:nth-of-type(1) {
+    >flatten-div >flatten-span:nth-of-type(1) {
       font-size: 16px;
     }
   }
-  ccw-w[size="md"] & {
+  flatten-w[size="md"] & {
     height: $cubit - 36px;
-    flex: 1 0 100%; // also ccw-ticker
-    >ccw-div >ccw-span:nth-of-type(1) {
+    flex: 1 0 100%; // also flatten-ticker
+    >flatten-div >flatten-span:nth-of-type(1) {
       font-size: 16px;
     }
   }
-  ccw-w[size="sm"] & {
+  flatten-w[size="sm"] & {
     height: $cubit - 48px;
-    flex: 1 0 100%; // also ccw-ticker
-    ccw-span {
+    flex: 1 0 100%; // also flatten-ticker
+    flatten-span {
       padding: $txtPad $txtPad * 2 - 4px;
     }
-    >ccw-div >ccw-span:nth-of-type(1) {
+    >flatten-div >flatten-span:nth-of-type(1) {
       font-size: 13.5px;
     }
   }
-  ccw-w[size="xs"] & {
+  flatten-w[size="xs"] & {
     height: $cubit - 68px;
-    flex: 1 0 100%; // also ccw-ticker
-    ccw-span {
+    flex: 1 0 100%; // also flatten-ticker
+    flatten-span {
       padding: $txtPad $txtPad;
     }
-    >ccw-div >ccw-span:nth-of-type(1) {
+    >flatten-div >flatten-span:nth-of-type(1) {
       font-size: 9px;
     }
   }
-  ccw-span {
+  flatten-span {
     padding: $txtPad $txtPad * 2;
   }
-  >ccw-div >ccw-span:nth-of-type(2) {
+  >flatten-div >flatten-span:nth-of-type(2) {
     font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
     font-weight: bold;
   }
   &[deadline] {
     background: $accent;
-    ccw-div {
+    flatten-div {
       background: black;
       color: $accent;
     }
-    ccw-span:first-of-type {
+    flatten-span:first-of-type {
       background: $accent;
       color: black;
     }
-    ccw-w[dark] & {
+    flatten-w[dark] & {
       color: $accent;
       background: $accentDark;
-      ccw-span:first-of-type {
+      flatten-span:first-of-type {
         background: $accentDark;
         color: $accent;
       }
     }
-    ccw-w[size="lg"] & {
+    flatten-w[size="lg"] & {
       flex: 0 1 48%;
     }
   }
   &[lifeline] {
     background: $secondary;
-    ccw-div {
+    flatten-div {
       background: black;
       color: $secondary;
     }
-    ccw-span:first-of-type {
+    flatten-span:first-of-type {
       background: $secondary;
       color: black;
     }
-    ccw-w[dark] & {
+    flatten-w[dark] & {
       color: $secondary;
       background: $secondaryDark;
-      ccw-span:first-of-type {
+      flatten-span:first-of-type {
         background: $secondaryDark;
         color: $secondary;
       }
     }
-    ccw-w[size="lg"] & {
+    flatten-w[size="lg"] & {
       flex: 1 0 45%;
     }
   }
 }
 
 $ccwFont: 70px;
-ccw-readout {
+flatten-readout {
   flex: 2 0 0;
   font-size: 59px;
   letter-spacing: -2px;
@@ -329,21 +329,21 @@ ccw-readout {
   margin: 0 12px;
   position: relative;
   overflow: hidden;
-  ccw-w[size="lg"] & {
+  flatten-w[size="lg"] & {
     line-height: 1.3;
     font-size: 50px;
   }
-  ccw-w[size="md"] & {
+  flatten-w[size="md"] & {
     font-size: 50px;
   }
-  ccw-w[size="sm"] & {
+  flatten-w[size="sm"] & {
     font-size: 35px;
     line-height: 1.3;
   }
-  ccw-w[size="xs"] & {
+  flatten-w[size="xs"] & {
     font-size: 23px;
   }
-  ccw-span { // Smaller labels
+  flatten-span { // Smaller labels
     line-height: 1;
     margin-bottom: -6px;
     margin-right: 2px;
@@ -351,29 +351,29 @@ ccw-readout {
     padding: 0;
     background: transparent;
 
-    ccw-w[size="lg"] & {
+    flatten-w[size="lg"] & {
       font-size: 21px;
       margin-bottom: -4px;
       padding: 0;
     }
-    ccw-w[size="md"] & {
+    flatten-w[size="md"] & {
       font-size: 20px;
       margin-bottom: -5px;
       padding: 0;
     }
-    ccw-w[size="sm"] & {
+    flatten-w[size="sm"] & {
       font-size: 14px;
       margin-bottom: -3px;
       padding: 0;
     }
-    ccw-w[size="xs"] & {
+    flatten-w[size="xs"] & {
       font-size: 9px;
       margin-bottom: -3px;
       padding: 0;
     }
   }
 }
-ccw-ticker {
+flatten-ticker {
   position: relative;
   height: 32px;
   text-transform: uppercase;
@@ -383,30 +383,30 @@ ccw-ticker {
   color: $secondary;
   flex: 2 0 100%;
 
-  ccw-w[size="md"] & {
-    flex: 1 0 100%; // also ccw-panel
+  flatten-w[size="md"] & {
+    flex: 1 0 100%; // also flatten-panel
   }
-  ccw-w[size="sm"] & {
-    flex: 1 0 100%; // also ccw-panel
+  flatten-w[size="sm"] & {
+    flex: 1 0 100%; // also flatten-panel
   }
-  ccw-w[size="xs"] & {
-    flex: 1 0 100%; // also ccw-panel
+  flatten-w[size="xs"] & {
+    flex: 1 0 100%; // also flatten-panel
   }
-  ccw-div {
+  flatten-div {
     font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
     font-weight: bold;
     position: absolute;
     top: 1px;
-    ccw-w[size="lg"] & {
+    flatten-w[size="lg"] & {
       top: 3px;
     }
-    ccw-w[size="md"] & {
+    flatten-w[size="md"] & {
       top: 2px;
     }
-    ccw-w[size="sm"] & {
+    flatten-w[size="sm"] & {
       top: 4px;
     }
-    ccw-w[size="xs"] & {
+    flatten-w[size="xs"] & {
       top: 7px;
     }
     animation-timing-function: linear;
@@ -424,7 +424,7 @@ ccw-ticker {
     100% { transform: translate(0%, 0); }
   }
 }
-ccw-brand {
+flatten-brand {
   line-height: .85;
   width: 128px;
   background: black;
@@ -436,18 +436,18 @@ ccw-brand {
   flex-direction: column;
   align-items: center;
 
-  ccw-span {
+  flatten-span {
     font-family: 'katwijk_monolight', 'Lucida Console', Monaco, monospace;
     font-weight: bold;
   }
-  ccw-w[size="lg"] & {
+  flatten-w[size="lg"] & {
     width: $cubit - 8px;
   }
-  ccw-w[size="md"] & {
+  flatten-w[size="md"] & {
     width: $cubit - 16px;
     flex-direction: column;
   }
-  ccw-w[size="sm"] &, ccw-w[size="xs"] & {
+  flatten-w[size="sm"] &, flatten-w[size="xs"] & {
     display: none;
   }
   svg {
@@ -461,7 +461,7 @@ ccw-brand {
   }
 }
 
-#ccw-chart-wrapper { // Use id to increase specificity over cleanslate
+#flatten-chart-wrapper { // Use id to increase specificity over cleanslate
   box-sizing: border-box;
   overflow: hidden;
   font-family: 'katwijk_monobold', 'Lucida Console', Monaco, monospace;
@@ -492,21 +492,21 @@ ccw-brand {
     font-weight: bold;
     text-decoration: none;
   }
-  > ccw-div {
+  > flatten-div {
     flex: 4 0 0;
     position: relative;
   }
-  ccw-control-panel {
+  flatten-control-panel {
     flex: 3 0 0;
     display: block;
     padding: 16px 48px 32px 48px;
-    > ccw-div {
+    > flatten-div {
       font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
       font-weight: normal;
       font-size: 22px;
       text-align: center;
     }
-    ccw-slider {
+    flatten-slider {
       margin-bottom: 16px;
       display: block;
       input[type="range"] {
@@ -535,47 +535,47 @@ ccw-brand {
           cursor: pointer;
         }
       }
-      ccw-div {
+      flatten-div {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         text-align: center;
         margin: 0 -10%;
         font-size: 14px;
-        ccw-span {
+        flatten-span {
           width: 20%;
         }
       }
     }
   }
-  ccw-scenario {
+  flatten-scenario {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 
-    ccw-div:nth-of-type(1) {
+    flatten-div:nth-of-type(1) {
       padding: 0 32px 16px 0;
       flex: 1 0 auto;
     }
-    ccw-div:nth-of-type(2) {
+    flatten-div:nth-of-type(2) {
       flex: 1 0 50%;
     }
-    ccw-div {
+    flatten-div {
       display: block;
     }
-    .ccw-text ccw-span {
+    .flatten-text flatten-span {
       font-family: Arial, Helvetica, sans-serif;
       font-weight: normal;
       font-size: 14px;
       margin-bottom: 16px;
-      ccw-span {
+      flatten-span {
         font-weight: bold;
         font-size: 16px;
         margin: 0;
       }
     }
   }
-  ccw-radio {
+  flatten-radio {
     cursor: pointer;
     font-size: 20px;
     display: block;
@@ -586,7 +586,7 @@ ccw-brand {
       margin-right: 8px;
     }
   }
-  ccw-hr {
+  flatten-hr {
     text-transform: uppercase;
     font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
     font-weight: normal;
@@ -602,14 +602,14 @@ ccw-brand {
     }
   }
   &[size="md"], &[size="sm"], &[size="xs"] {
-    ccw-control-panel {
+    flatten-control-panel {
       padding: 32px 48px;
     }
   }
 }
-.ccw-good { color: $secondary; }
-.ccw-middle { color: #bd8760; }
-.ccw-bad { color: $accent; }
+.flatten-good { color: $secondary; }
+.flatten-middle { color: #bd8760; }
+.flatten-bad { color: $accent; }
 .slide-enter-active {
    transition-duration: .2s;
 }
@@ -621,7 +621,7 @@ ccw-brand {
    overflow: hidden;
    opacity: 1;
 }
-ccw-chart-wrapper[size="xs"], ccw-chart-wrapper[size="sm"], ccw-chart-wrapper[size="md"] {
+flatten-chart-wrapper[size="xs"], flatten-chart-wrapper[size="sm"], flatten-chart-wrapper[size="md"] {
   &.slide-enter-to, &.slide-leave {
      max-height: 1600px; // slide height
      overflow: hidden;
