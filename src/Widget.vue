@@ -1,15 +1,15 @@
 <template>
-    <flatten-div v-if="showChart">
+    <flatten-div>
       <flatten-chart-wrapper :class="{flatten: flatten}" id="flatten-chart-wrapper" :size="size">
-        <flatten-div>
-          <flatten-chart :height="650" 
+        <flatten-div @click="opened = true">
+          <flatten-chart :height="400" 
             @newK="k = $event"
             :factorA="parseInt(A)" 
             :factorB="parseInt(B)"
             :size="size"
             ></flatten-chart>
         </flatten-div>
-        <flatten-control-panel id="flatten-slider">
+        <flatten-control-panel id="flatten-slider" v-if="opened">
           <flatten-div>SIZE OF INVESTMENT</flatten-div>
           <flatten-slider>
             <input type="range" v-model="A" min="1" max="5">
@@ -65,13 +65,13 @@ export default {
   },
   data: () => ({
     now: null,
-    flatten: true,
+    flatten: true,  // stupid leftover
+    opened: false,
     
     // Chart 
     A: 2, B: 2, k: 0, preset: 'bad',
     action: {1: 'zero', 2: 'low', 3: 'medium', 4: 'serious', 5: 'maximum'},
     investment: {1: 'zero', 2: 'small', 3: 'medium', 4: 'high', 5: 'maximum'},
-    showChart: false,
     scenarios: {
       good: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
       middle: "average global surface temperature would likely reach ~2°C by 2100 with devastating (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, 100s of millions of climate refugees, and millions dead. Crossing 1.5°C, we also risk triggering a series of catastrophic feedback loops that could spiral beyond our ability to ever remedy.",
@@ -101,11 +101,6 @@ export default {
         case 'good':    this.A = 5; this.B = 5; break
       }
       this.preset = preset
-    }
-  },
-  created() {
-    if (this.flatten) {
-      this.showChart = true
     }
   },
   watch: {
@@ -473,7 +468,7 @@ flatten-brand {
   position: relative;
 
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-end;
 
   &.flatten {
@@ -499,12 +494,12 @@ flatten-brand {
   flatten-control-panel {
     flex: 3 0 0;
     display: block;
-    padding: 16px 48px 32px 0;
+    padding: 0 48px 16px 48px;
     > flatten-div {
       font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
       font-weight: normal;
-      font-size: 22px;
-      text-align: center;
+      font-size: 16px;
+      text-align: left;
     }
     flatten-slider {
       margin-bottom: 16px;
@@ -512,7 +507,7 @@ flatten-brand {
       input[type="range"] {
         appearance: none;
         width: 100%;
-        height: 16px;
+        height: 6px;
         outline: none;
         margin: 16px 0;
         cursor: pointer;
@@ -521,7 +516,7 @@ flatten-brand {
         &::-webkit-slider-thumb {
           appearance: none;
           width: 24px;
-          height: 48px;
+          height: 32px;
           background: white;
           border: 2px solid black;
           cursor: pointer;
@@ -554,7 +549,7 @@ flatten-brand {
     flex-wrap: wrap;
 
     flatten-div:nth-of-type(1) {
-      padding: 0 32px 16px 0;
+      //padding: 0 32px 16px 0;
       flex: 1 0 auto;
     }
     flatten-div:nth-of-type(2) {
@@ -568,6 +563,7 @@ flatten-brand {
       font-weight: normal;
       font-size: 14px;
       margin-bottom: 16px;
+      line-height: 1;
       flatten-span {
         font-weight: bold;
         font-size: 16px;
@@ -591,9 +587,10 @@ flatten-brand {
     font-family: 'katwijk_monoblack', 'Lucida Console', Monaco, monospace;
     font-weight: normal;
     font-size: 20px;
-    display: flex;
+    //display: flex;
+    display: none;
     align-items: center;
-    margin: 32px 0 16px 0;
+    margin: 16px 0 16px 0;
     &::after {
       content: "";
       flex: 1 0 0;

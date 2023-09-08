@@ -149,7 +149,7 @@ export default {
           //type: 'category',
           position: 'bottom',
           scaleLabel: {
-            display: true,
+            display: false,
             labelString: 'TIME',
             fontFamily: 'katwijk_monoblack',
             fontSize: 16,
