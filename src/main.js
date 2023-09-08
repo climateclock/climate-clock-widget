@@ -15,4 +15,4 @@ Vue.config.ignoredElements = [/^ccw-/]
 Vue.use(browserDetect)
 Vue.use(VueCustomElement)
 
-Vue.customElement('climate-clock', Widget)
+Vue.customElement('flatten-widget', Widget)
