@@ -37,7 +37,9 @@
             <ccw-readout v-if="currentModule == 0"
               >{{ renewableValue.split(".")[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split(".")[1] }}%</ccw-readout
             >
-            <ccw-readout v-else-if="currentModule == 1">{{ regenValue }}</ccw-readout>
+            <ccw-readout v-else-if="currentModule == 1"
+              >{{ regenValue }}<ccw-span>{{ regen.unit_labels[0] }}</ccw-span></ccw-readout
+            >
             <ccw-readout v-else-if="currentModule == 2"
               >${{ divestmentValue[0] }}<ccw-span>.</ccw-span>{{ divestmentValue[1]
               }}<ccw-span>Trillion</ccw-span></ccw-readout
@@ -264,7 +266,7 @@ export default {
     */
     indieValue() {
       let tElapsed = this.now - new Date(this.indie.timestamp).getTime()
-      return ((this.indie.initial + (tElapsed / 1000) * this.indie.rate) * 1e6).toLocaleString()
+      return ((this.indie.initial + (tElapsed / 1000) * this.indie.rate) * 1e6).toLocaleString('en-us')
     },
     womenValue() {
       let tElapsed = this.now - new Date(this.women.timestamp).getTime()
@@ -298,8 +300,7 @@ export default {
     regenValue() {
       let tElapsed = this.now - new Date(this.regen.timestamp).getTime()
       let val = this.regen.initial + (tElapsed / 1000) * this.regen.rate
-      if (val) return val + "Hectares"
-      return this.regen.unit_labels[0]
+      return val.toLocaleString('en-us')
     },
 
     // Items below are skin/theme-specific
