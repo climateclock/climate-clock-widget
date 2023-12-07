@@ -3,7 +3,13 @@
   <div v-if="!($browserDetect.isIE && $browserDetect.meta.version < 10)">
     <!-- Main Widget -->
     <div class="cleanslate">
-      <ccw-w :class="{ flatten: flatten }" :id="`ccw-container-${_uid}`" :size="size" :dark="dark" @click="handleClick">
+      <ccw-w
+        :class="{ flatten: flatten, lifeline }"
+        :id="`ccw-container-${_uid}`"
+        :size="size"
+        :dark="dark"
+        @click="handleClick"
+      >
         <ccw-brand>
           <img logo svg-inline src="./climateclock.svg" />
           <ccw-span>#ActInTime</ccw-span>
@@ -30,9 +36,7 @@
               <ccw-span v-else-if="currentModule == 4">{{ indie.labels && indie.labels[0] }}</ccw-span>
               <ccw-span v-else-if="currentModule == 5">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
               <ccw-span v-else-if="currentModule == 6">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
-              <!--
-              <ccw-span v-else>{{ gcf.labels && gcf.labels[0] }}</ccw-span>
-              -->
+              <ccw-span v-else>{{ label }}</ccw-span>
             </ccw-div>
             <ccw-readout v-if="currentModule == 0"
               >{{ renewableValue.split(".")[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split(".")[1] }}%</ccw-readout
@@ -54,9 +58,10 @@
             <ccw-readout v-else-if="currentModule == 6"
               >${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout
             >
-            <!--
-            <ccw-readout v-else>${{ gcfValue }}<ccw-span v-if="size != 'lg'">&nbsp;</ccw-span>Billion</ccw-readout>
-            -->
+            <ccw-readout v-else
+              >{{ value1 }}<ccw-span>{{ units1 }}</ccw-span
+              >{{ value2 }}<ccw-span>{{ units2 }}</ccw-span></ccw-readout
+            >
           </ccw-panel>
           <ccw-ticker>
             <ccw-div one :style="animationDuration">{{ feedText }}</ccw-div>
@@ -186,9 +191,14 @@ Settings.defaultZone = "utc"
 export default {
   props: {
     bottom: { type: Boolean, default: false },
-    lifeline: { type: String, default: null },
+    newsfeed: { type: String, default: null },
     flatten: { type: Boolean, default: false },
-    module: { type: Number, default: null }
+    lifeline: { default: null },
+    label: { type: String, default: null },
+    value1: { type: String, default: null },
+    value2: { type: String, default: null },
+    units1: { type: String, default: null },
+    units2: { type: String, default: null }
   },
   components: {
     // Lazy-load this component
@@ -266,7 +276,7 @@ export default {
     */
     indieValue() {
       let tElapsed = this.now - new Date(this.indie.timestamp).getTime()
-      return ((this.indie.initial + (tElapsed / 1000) * this.indie.rate) * 1e6).toLocaleString('en-us')
+      return ((this.indie.initial + (tElapsed / 1000) * this.indie.rate) * 1e6).toLocaleString("en-us")
     },
     womenValue() {
       let tElapsed = this.now - new Date(this.women.timestamp).getTime()
@@ -300,7 +310,7 @@ export default {
     regenValue() {
       let tElapsed = this.now - new Date(this.regen.timestamp).getTime()
       let val = this.regen.initial + (tElapsed / 1000) * this.regen.rate
-      return val.toLocaleString('en-us')
+      return val.toLocaleString("en-us")
     },
 
     // Items below are skin/theme-specific
@@ -308,7 +318,7 @@ export default {
       return { animationDuration: 0.15 * this.feedText.length + "s" }
     },
     feedText() {
-      return (this.lifeline ? `${this.lifeline} | ` : "") + this.feed
+      return (this.newsfeed ? `${this.newsfeed} | ` : "") + this.feed
     },
 
     // Chart thing
@@ -415,8 +425,8 @@ export default {
     }, tickInterval)
 
     // currentModule is selected as an offset from when the widget was opened
-    if (this.module) {
-      this.currentModule = this.module
+    if (this.lifeline) {
+      this.currentModule = this.lifeline
     } else {
       setInterval(() => {
         this.currentModuleStart = this.now
