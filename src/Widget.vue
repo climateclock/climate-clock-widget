@@ -4,7 +4,7 @@
     <!-- Main Widget -->
     <div class="cleanslate">
       <ccw-w
-        :class="{ flatten: flatten, lifeline }"
+        :class="[flatten ? 'flatten' : '', lifeline]"
         :id="`ccw-container-${_uid}`"
         :size="size"
         :dark="dark"
@@ -571,6 +571,43 @@ ccw-w {
     font-size: 7px;
     height: 2 * ($cubit - 56px);
     flex-direction: row;
+  }
+}
+
+// Custom classes: Clean Creatives
+ccw-w.cleancreatives {
+  $cltext: #d7d7d7;
+  ccw-brand {
+    display: none;
+  }
+  ccw-panel[lifeline] {
+    background-image: url("https://climateclock.world/s/lifeline_cleancreatives.jpg");
+  }
+  ccw-panel[deadline] {
+    background-image: url("https://climateclock.world/s/deadline_cleancreatives.jpg");
+  }
+  ccw-readout {
+    color: $cltext;
+  }
+  ccw-panel[lifeline],
+  ccw-panel[deadline] {
+    background-position: center;
+    background-size: cover;
+    > ccw-div {
+      background: black;
+      color: white;
+      ccw-span:first-of-type {
+        background: black;
+        color: white;
+      }
+    }
+    ccw-span:first-of-type {
+      background: none;
+      color: $cltext;
+    }
+  }
+  ccw-ticker {
+    color: white;
   }
 }
 
