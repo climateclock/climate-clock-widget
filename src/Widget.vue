@@ -59,8 +59,8 @@
               >${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout
             >
             <ccw-readout v-else
-              >{{ value1 }}<ccw-span>{{ units1 }}</ccw-span
-              >{{ value2 }}<ccw-span>{{ units2 }}</ccw-span></ccw-readout
+              >{{ customValues[0] }}<ccw-span>{{ units1 }}</ccw-span
+              >{{ customValues[1] }}<ccw-span>{{ units2 }}</ccw-span></ccw-readout
             >
           </ccw-panel>
           <ccw-ticker>
@@ -310,6 +310,19 @@ export default {
       let val = this.regen.initial + (tElapsed / 1000) * this.regen.rate
       return val.toLocaleString("en-us")
     },
+    // Supplied as props (html attributes value1/units1, value2/units2)
+    customValues() {
+      let count_up_ms = 3000
+
+      let currentRunningDuration = this.now - this.currentModuleStart
+      let val1 = this.value1
+      let val2 = this.value2
+      if (currentRunningDuration < count_up_ms) {
+        val1 = (this.value1 / this.divestment.count_up_ms) * currentRunningDuration
+        val2 = (this.value2 / this.divestment.count_up_ms) * currentRunningDuration
+      }
+      return [parseInt(val1), parseInt(val2)]
+    },
 
     // Items below are skin/theme-specific
     animationDuration() {
@@ -353,6 +366,9 @@ export default {
       return n == 0 || n > 1 ? `${n} ${pre + suf}` : `${n} ${pre}`
     },
     handleClick() {
+      if (this.lifeline == "cleancreatives") {
+        window.open("https://cleancreatives.org")
+      }
       if (!window.location.hostname.includes("climateclock.world")) {
         window.open("https://climateclock.world")
       } else {
@@ -422,10 +438,11 @@ export default {
       this.now = new Date()
     }, tickInterval)
 
-    // currentModule is selected as an offset from when the widget was opened
     if (this.lifeline) {
       this.currentModule = this.lifeline
+      this.currentModuleStart = new Date()
     } else {
+      // currentModule is selected as an offset from when the widget was opened
       setInterval(() => {
         this.currentModuleStart = this.now
         this.currentModule = (this.currentModule + 1) % 7
