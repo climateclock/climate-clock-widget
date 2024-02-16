@@ -368,8 +368,7 @@ export default {
     handleClick() {
       if (this.lifeline == "cleancreatives") {
         window.open("https://cleancreatives.org")
-      }
-      if (!window.location.hostname.includes("climateclock.world")) {
+      } else if (!window.location.hostname.includes("climateclock.world")) {
         window.open("https://climateclock.world")
       } else {
         this.showChart = !this.showChart
