@@ -312,14 +312,14 @@ export default {
     },
     // Supplied as props (html attributes value1/units1, value2/units2)
     customValues() {
-      let count_up_ms = 3000
+      let countUpMs = 5000
 
       let currentRunningDuration = this.now - this.currentModuleStart
       let val1 = this.value1
       let val2 = this.value2
-      if (currentRunningDuration < count_up_ms) {
-        val1 = (this.value1 / this.divestment.count_up_ms) * currentRunningDuration
-        val2 = (this.value2 / this.divestment.count_up_ms) * currentRunningDuration
+      if (currentRunningDuration < countUpMs) {
+        val1 = (this.value1 / countUpMs) * currentRunningDuration
+        val2 = (this.value2 / countUpMs) * currentRunningDuration
       }
       return [parseInt(val1), parseInt(val2)]
     },
