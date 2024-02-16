@@ -198,11 +198,11 @@ export default {
     value1: { type: String, default: null },
     value2: { type: String, default: null },
     units1: { type: String, default: null },
-    units2: { type: String, default: null }
+    units2: { type: String, default: null },
   },
   components: {
     // Lazy-load this component
-    "ccw-chart": () => import(/* webpackChunkName: "flatten" */ "./Chart.vue")
+    "ccw-chart": () => import(/* webpackChunkName: "flatten" */ "./Chart.vue"),
   },
   data: () => ({
     // Component loading
@@ -234,12 +234,10 @@ export default {
     investment: { 1: "zero", 2: "small", 3: "medium", 4: "high", 5: "maximum" },
     showChart: false,
     scenarios: {
-      good:
-        "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
+      good: "average global surface temperature could skirt just under 1.5°C around 2040 and level off for the rest of the century, avoiding the worst climate impacts, and preserving a habitable planet for future generations.",
       middle:
         "average global surface temperature would likely reach ~2°C by 2100 with devastating (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, 100s of millions of climate refugees, and millions dead. Crossing 1.5°C, we also risk triggering a series of catastrophic feedback loops that could spiral beyond our ability to ever remedy.",
-      bad:
-        "average global surface temperature would likely reach 3-4°C by 2100 with catastrophic (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, permanently uninhabitable regions, billions of climate refugees, and 100s of millions dead. Civilization as we know it will no longer be possible."
+      bad: "average global surface temperature would likely reach 3-4°C by 2100 with catastrophic (and permanent) impacts on humanity and the biosphere, including: floods, droughts, mass extinctions, permanently uninhabitable regions, billions of climate refugees, and 100s of millions dead. Civilization as we know it will no longer be possible.",
     },
 
     // To become a prop when the mockup is done
@@ -254,9 +252,9 @@ export default {
       [320, "sm"],
       [540, "md"],
       [960, "lg"],
-      [1200, "xl"]
+      [1200, "xl"],
     ],
-    lastSize: 0
+    lastSize: 0,
   }),
   computed: {
     remaining() {
@@ -324,7 +322,7 @@ export default {
     // Chart thing
     scenarioText() {
       return this.scenarios[this.preset]
-    }
+    },
   },
   methods: {
     setSize() {
@@ -380,12 +378,12 @@ export default {
           break
       }
       this.preset = preset
-    }
+    },
   },
   created() {
     this.$http
       .get("https://api.climateclock.world/v2/widget/clock.json")
-      .then(res => {
+      .then((res) => {
         let modules = res.data.data.modules
         this.carbon = modules.carbon_deadline_1
         this.renewables = modules.renewables_1
@@ -403,9 +401,9 @@ export default {
         this.regen = modules.regen_agriculture
 
         // Join all the news items into a convenient string
-        this.feed = this.newsfeed.newsfeed.map(n => n.headline).join(" | ") + " | "
+        this.feed = this.newsfeed.newsfeed.map((n) => n.headline).join(" | ") + " | "
       })
-      .catch(err => {
+      .catch((err) => {
         // eslint-disable-next-line
         console.log(err)
       })
@@ -450,8 +448,8 @@ export default {
           ch = document.getElementById(`ccw-container-${this._uid}`).clientHeight
         document.body.style.paddingBottom = `calc(${pb} + ${ch}px)`
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
