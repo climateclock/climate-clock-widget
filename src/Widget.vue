@@ -402,7 +402,8 @@ export default {
         let modules = res.data.data.modules
         this.carbon = modules.carbon_deadline_1
         this.renewables = modules.renewables_1
-        this.newsfeed = modules.newsfeed_1
+        // Join all the news items into a convenient string
+        this.feed = modules.newsfeed_1.newsfeed.map((n) => n.headline).join(" | ") + " | "
         this.indie = modules.indigenous_land_1
         this.women = modules.women_in_parliaments
         this.debt7 = modules.loss_damage_g7_debt
@@ -414,9 +415,6 @@ export default {
         this.deadline = DateTime.fromISO(this.carbon.timestamp)
 
         this.regen = modules.regen_agriculture
-
-        // Join all the news items into a convenient string
-        this.feed = this.newsfeed.newsfeed.map((n) => n.headline).join(" | ") + " | "
       })
       .catch((err) => {
         // eslint-disable-next-line
