@@ -446,7 +446,7 @@ export default {
       }, 5000)
     }
 
-    if (this.flatten) {
+    if (this.flatten || new URLSearchParams(window.location.search).has("flatten")) {
       this.showChart = true
     }
   },
