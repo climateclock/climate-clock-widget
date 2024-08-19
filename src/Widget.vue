@@ -34,8 +34,10 @@
               <ccw-span v-else-if="currentModule == 2">{{ divestment.labels && divestment.labels[0] }}</ccw-span>
               <ccw-span v-else-if="currentModule == 3">{{ women.labels && women.labels[0] }}</ccw-span>
               <ccw-span v-else-if="currentModule == 4">{{ indie.labels && indie.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 5">{{ debt20.labels && debt20.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 6">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 5">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 6">{{ actnow.labels && actnow.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 7">{{ subsidies.labels && subsidies.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 8">{{ initiative.labels && initiative.labels[0] }}</ccw-span>
               <ccw-span v-else>{{ label }}</ccw-span>
             </ccw-div>
             <ccw-readout v-if="currentModule == 0"
@@ -53,11 +55,17 @@
               >{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout
             >
             <ccw-readout v-else-if="currentModule == 5"
-              >${{ debt20Value[0] }}<ccw-span>.</ccw-span>{{ debt20Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout
-            >
-            <ccw-readout v-else-if="currentModule == 6"
               >${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout
             >
+            <ccw-readout v-else-if="currentModule == 6"
+              >${{ actnowValue }}<ccw-span></ccw-span><ccw-span>Trillion</ccw-span></ccw-readout
+            >
+            <ccw-readout v-else-if="currentModule == 7"
+              >${{ subsidiesValue }}<ccw-span></ccw-span><ccw-span>Billion</ccw-span></ccw-readout
+            >
+            <ccw-readout v-else-if="currentModule == 8"
+              >{{ initiativeValue }}<ccw-span></ccw-span>{{ initiative.unit_labels[0] }}<ccw-span></ccw-span
+            ></ccw-readout>
             <ccw-readout v-else
               >{{ customValues[0] }}<ccw-span>{{ units1 }}</ccw-span
               >{{ customValues[1] }}<ccw-span>{{ units2 }}</ccw-span></ccw-readout
@@ -310,6 +318,18 @@ export default {
       let val = this.regen.initial + (tElapsed / 1000) * this.regen.rate
       return val.toLocaleString("en-us")
     },
+    actnowValue() {
+      let tElapsed = this.now - new Date(this.actnow.timestamp).getTime()
+      return (this.actnow.initial + (tElapsed / 1000) * this.actnow.rate).toFixed(1)
+    },
+    subsidiesValue() {
+      let tElapsed = this.now - new Date(this.subsidies.timestamp).getTime()
+      return (this.subsidies.initial + (tElapsed / 1000) * this.subsidies.rate).toFixed(1)
+    },
+    initiativeValue() {
+      let tElapsed = this.now - new Date(this.initiative.timestamp).getTime()
+      return (this.initiative.initial + (tElapsed / 1000) * this.initiative.rate).toFixed(1)
+    },
     // Supplied as props (html attributes value1/units1, value2/units2)
     customValues() {
       let countUpMs = 5000
@@ -412,6 +432,10 @@ export default {
         this.divestment = modules.ff_divestment_stand_dot_earth
         this.divestment.count_up_ms = this.divestment.count_up_duration * 1000
 
+        this.actnow = modules.actnow
+        this.subsidies = modules.end_subsidies
+        this.initiative = modules.initiative_30x30
+
         this.deadline = DateTime.fromISO(this.carbon.timestamp)
 
         this.regen = modules.regen_agriculture
@@ -442,7 +466,7 @@ export default {
       // currentModule is selected as an offset from when the widget was opened
       setInterval(() => {
         this.currentModuleStart = this.now
-        this.currentModule = (this.currentModule + 1) % 7
+        this.currentModule = (this.currentModule + 1) % 9
       }, 5000)
     }
 
