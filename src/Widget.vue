@@ -320,11 +320,11 @@ export default {
     },
     actnowValue() {
       let tElapsed = this.now - new Date(this.actnow.timestamp).getTime()
-      return (this.actnow.initial + (tElapsed / 1000) * this.actnow.rate).toFixed(1)
+      return (this.actnow.initial + (tElapsed / 1000) * this.actnow.rate).toFixed(0)
     },
     subsidiesValue() {
       let tElapsed = this.now - new Date(this.subsidies.timestamp).getTime()
-      return (this.subsidies.initial + (tElapsed / 1000) * this.subsidies.rate).toFixed(1)
+      return (this.subsidies.initial + (tElapsed / 1000) * this.subsidies.rate).toFixed(0)
     },
     initiativeValue() {
       let tElapsed = this.now - new Date(this.initiative.timestamp).getTime()
