@@ -30,11 +30,11 @@
             <ccw-div>
               <ccw-span>LIFELINE</ccw-span>
               <ccw-span v-if="currentModule == 0">{{ renewables.labels && renewables.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 1">{{ regen.labels && regen.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 2">{{ divestment.labels && divestment.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 1">{{ indie.labels && indie.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 2">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
               <ccw-span v-else-if="currentModule == 3">{{ women.labels && women.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 4">{{ indie.labels && indie.labels[0] }}</ccw-span>
-              <ccw-span v-else-if="currentModule == 5">{{ debt7.labels && debt7.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 4">{{ divestment.labels && divestment.labels[0] }}</ccw-span>
+              <ccw-span v-else-if="currentModule == 5">{{ regen.labels && regen.labels[0] }}</ccw-span>
               <ccw-span v-else-if="currentModule == 6">{{ actnow.labels && actnow.labels[0] }}</ccw-span>
               <ccw-span v-else-if="currentModule == 7">{{ subsidies.labels && subsidies.labels[0] }}</ccw-span>
               <ccw-span v-else-if="currentModule == 8">{{ initiative.labels && initiative.labels[0] }}</ccw-span>
@@ -44,18 +44,18 @@
               >{{ renewableValue.split(".")[0] }}<ccw-span>.</ccw-span>{{ renewableValue.split(".")[1] }}%</ccw-readout
             >
             <ccw-readout v-else-if="currentModule == 1"
-              >{{ regenValue }}<ccw-span>{{ regen.unit_labels[0] }}</ccw-span></ccw-readout
+              >{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>km²</ccw-readout
             >
             <ccw-readout v-else-if="currentModule == 2"
+              >${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout
+            >
+            <ccw-readout v-else-if="currentModule == 3">{{ womenValue }}% WOMEN</ccw-readout>
+            <ccw-readout v-else-if="currentModule == 4"
               >${{ divestmentValue[0] }}<ccw-span>.</ccw-span>{{ divestmentValue[1]
               }}<ccw-span>Trillion</ccw-span></ccw-readout
             >
-            <ccw-readout v-else-if="currentModule == 3">{{ womenValue }}% Women</ccw-readout>
-            <ccw-readout v-else-if="currentModule == 4"
-              >{{ indieValue }}<ccw-span v-if="size != 'lg'"> </ccw-span>KM²</ccw-readout
-            >
             <ccw-readout v-else-if="currentModule == 5"
-              >${{ debt7Value[0] }}<ccw-span>.</ccw-span>{{ debt7Value[1] }}<ccw-span>Trillion</ccw-span></ccw-readout
+              >{{ regenValue }}<ccw-span>{{ regen.unit_labels[0] }}</ccw-span></ccw-readout
             >
             <ccw-readout v-else-if="currentModule == 6"
               >${{ actnowValue }}<ccw-span></ccw-span><ccw-span>Trillion</ccw-span></ccw-readout
@@ -664,7 +664,6 @@ ccw-panel {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  text-transform: uppercase;
   color: black;
   letter-spacing: -1px;
 
@@ -709,6 +708,7 @@ ccw-panel {
   }
   ccw-span {
     padding: $txtPad $txtPad * 2;
+    text-transform: uppercase;
   }
   > ccw-div > ccw-span:nth-of-type(2) {
     font-family: "katwijk_monolight", "Lucida Console", Monaco, monospace;
