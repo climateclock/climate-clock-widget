@@ -64,7 +64,7 @@
               >${{ subsidiesValue }}<ccw-span></ccw-span><ccw-span>Billion</ccw-span></ccw-readout
             >
             <ccw-readout v-else-if="currentModule == 8"
-              >{{ initiativeValue }}<ccw-span></ccw-span>{{ initiative.unit_labels[0] }}<ccw-span></ccw-span
+              >{{ initiativeValue[0] }}<ccw-span></ccw-span>{{ initiativeValue[1] }}<ccw-span></ccw-span
             ></ccw-readout>
             <ccw-readout v-else
               >{{ customValues[0] }}<ccw-span>{{ units1 }}</ccw-span
@@ -194,6 +194,8 @@
 import { DateTime, Settings } from "luxon"
 import debounce from "lodash.debounce"
 
+const lifelineCycleDuration = 5000
+
 Settings.defaultZone = "utc"
 
 export default {
@@ -226,7 +228,6 @@ export default {
     // Modules
     currentModule: 0,
     currentModuleStart: 2 ** 42,
-    newsfeed: {},
     carbon: {},
     renewables: {},
     gcf: {},
@@ -328,11 +329,29 @@ export default {
     },
     initiativeValue() {
       let tElapsed = this.now - new Date(this.initiative.timestamp).getTime()
-      return (this.initiative.initial + (tElapsed / 1000) * this.initiative.rate).toFixed(1)
+      let val = this.initiative.initial + (tElapsed / 1000) * this.initiative.rate
+
+      // TODO: PLEASE simplify this after a proper night's sleep
+      let pauseMs = 1000
+      let currentYear = new Date().getFullYear()
+
+      let animationYearSpan = 2030 - currentYear + 1
+      let animationReductionPerYear = (30 - val) / animationYearSpan
+      let animationYearDurationMs = (lifelineCycleDuration - pauseMs) / animationYearSpan
+      let animationTimeElapsed = this.now - this.currentModuleStart.getTime()
+      let animationYear = 2030 - Math.floor(animationTimeElapsed / animationYearDurationMs)
+      let animationVal = val - animationReductionPerYear * (currentYear - animationYear)
+
+      if (animationYear > currentYear) {
+        return [animationVal.toFixed(1), `% by ${animationYear}`]
+      } else {
+        return [val, `% in ${currentYear}`]
+      }
     },
+
     // Supplied as props (html attributes value1/units1, value2/units2)
     customValues() {
-      let countUpMs = 5000
+      let countUpMs = lifelineCycleDuration
 
       let currentRunningDuration = this.now - this.currentModuleStart
       let val1 = this.value1
@@ -467,7 +486,7 @@ export default {
       setInterval(() => {
         this.currentModuleStart = this.now
         this.currentModule = (this.currentModule + 1) % 9
-      }, 5000)
+      }, lifelineCycleDuration)
     }
 
     if (this.flatten || new URLSearchParams(window.location.search).has("flatten")) {
